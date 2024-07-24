@@ -4,7 +4,17 @@ import { ErrorType } from '../../utils/errorType';
 interface setPositionProps {
   param: string;
   value: string;
-  node: FrameNode | PolygonNode | RectangleNode | EllipseNode | StarNode | LineNode | VectorNode;
+  node:
+    | FrameNode
+    | ComponentNode
+    | ComponentSetNode
+    | InstanceNode
+    | PolygonNode
+    | RectangleNode
+    | EllipseNode
+    | StarNode
+    | LineNode
+    | VectorNode;
 }
 
 export default function setPosition({ param, value, node }: setPositionProps) {

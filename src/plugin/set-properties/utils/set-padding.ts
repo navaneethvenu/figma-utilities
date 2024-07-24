@@ -4,7 +4,17 @@ import { ErrorType } from '../../utils/errorType';
 interface setPaddingProps {
   param: string;
   value: string;
-  node: FrameNode | PolygonNode | RectangleNode | EllipseNode | StarNode | LineNode | VectorNode;
+  node:
+    | FrameNode
+    | ComponentNode
+    | ComponentSetNode
+    | InstanceNode
+    | PolygonNode
+    | RectangleNode
+    | EllipseNode
+    | StarNode
+    | LineNode
+    | VectorNode;
 }
 
 export default function setPadding({ param, value, node }: setPaddingProps) {
