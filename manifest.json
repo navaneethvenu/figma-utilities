@@ -1,8 +1,57 @@
 {
-  "name": "Figma Plugin Template",
+  "name": "Figma Utils",
   "id": "00000000",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "dist/ui.html",
-  "editorType": ["figma", "figjam"]
+  "editorType": ["figma", "figjam"],
+  "menu": [
+    {
+      "name": "Count",
+      "command": "count",
+      "parameters": [
+        {
+          "name": "Type",
+          "key": "type",
+          "optional": true,
+          "description": "Count top-level nodes or all nested nodes"
+        }
+      ]
+    },
+    {
+      "name": "Set Properties",
+      "command": "set-properties",
+      "parameters": [
+        {
+          "name": "Property",
+          "key": "property",
+          "optional": true,
+          "description": "Set Property",
+          "allowFreeform": true
+        }
+      ]
+    },
+    {
+      "name": "Copy Properties",
+      "command": "copy-properties",
+      "parameters": [
+        {
+          "name": "Scale",
+          "key": "scale",
+          "description": "enter a relative scale factor"
+        }
+      ]
+    },
+    {
+      "name": "Case",
+      "command": "case",
+      "parameters": [
+        {
+          "name": "Scale",
+          "key": "scale",
+          "description": "enter a relative scale factor"
+        }
+      ]
+    }
+  ]
 }
