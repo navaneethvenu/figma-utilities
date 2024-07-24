@@ -109,8 +109,6 @@ export default function setStroke({ param, value, node }: setStrokeProps) {
 
       //All Strokes
       else if (/st\b/.test(param)) {
-        console.log('reached stroke');
-
         node.strokeWeight = strokeWidth;
       }
 
@@ -126,8 +124,6 @@ export default function setStroke({ param, value, node }: setStrokeProps) {
       if (node.strokes.length === 0) {
         node.strokes = [defaultStroke];
       }
-
-      console.log(node.strokes);
     }
 
     //Invalid Value
@@ -142,7 +138,7 @@ export default function setStroke({ param, value, node }: setStrokeProps) {
   //   else {
   //     notifyError({
   //       type: ErrorType.UNSUPPORTED_PROP,
-  //       message: `Radius is not applicable on node type ${node.type}`,
+  //       message: `Stroke is not applicable on node type ${node.type}`,
   //     });
   //   }
 }
