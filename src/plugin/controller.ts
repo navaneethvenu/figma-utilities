@@ -1,26 +1,39 @@
-figma.showUI(__html__);
+import getCount from './count/get-count';
+import setProperties from './set-properties/set-properties';
 
-figma.ui.onmessage = (msg) => {
-  if (msg.type === 'create-rectangles') {
-    const nodes = [];
-
-    for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
-    }
-
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
-
-    // This is how figma responds back to the ui
-    figma.ui.postMessage({
-      type: 'create-rectangles',
-      message: `Created ${msg.count} Rectangles`,
-    });
+figma.parameters.on('input', ({ key, result }) => {
+  switch (key) {
+    case 'type':
+      const suggestions = [
+        { name: `Top-Level`, data: { name: 'Top-Level', id: 'top-level' } },
+        { name: `Nested`, data: { name: 'Nested', id: 'nested' } },
+      ];
+      result.setSuggestions(suggestions);
+      break;
+    default:
+      return;
   }
+});
 
+figma.on('run', ({ command, parameters }: RunEvent) => {
+  if (command == 'count') {
+    if (parameters !== null && parameters !== undefined) {
+      if (parameters['type'] !== null && parameters['type'] !== undefined) {
+        if (parameters['type'].id === 'nested') {
+          getCount(true);
+        } else {
+          getCount(false);
+        }
+      } else {
+        getCount(false);
+      }
+    }
+  } else if (command == 'set-properties') {
+    if (parameters !== null && parameters !== undefined) {
+      setProperties(parameters);
+    }
+  } else {
+    figma.notify('hey');
+  }
   figma.closePlugin();
-};
+});
