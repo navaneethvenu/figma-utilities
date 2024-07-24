@@ -10,6 +10,9 @@ export default function setProperties(parameters: { [key: string]: string }) {
       for (const node of selection) {
         if (
           node.type === 'FRAME' ||
+          node.type === 'COMPONENT' ||
+          node.type === 'COMPONENT_SET' ||
+          node.type === 'INSTANCE' ||
           node.type === 'POLYGON' ||
           node.type === 'RECTANGLE' ||
           node.type === 'ELLIPSE' ||
@@ -22,7 +25,7 @@ export default function setProperties(parameters: { [key: string]: string }) {
 
             const values = value.split(' ');
 
-            const regex = /([A-Za-z]+)([0-9]+\.*[0-9]*)\b/g;
+            const regex = /([A-Za-z]+)([0-9]*\.*[0-9]*)\b/g;
             for (const value of values) {
               const match = value.match(regex);
               if (match !== null) {
@@ -56,7 +59,17 @@ export default function setProperties(parameters: { [key: string]: string }) {
 interface parameterRoutingProps {
   param: string;
   value: string;
-  node: FrameNode | PolygonNode | RectangleNode | EllipseNode | StarNode | LineNode | VectorNode;
+  node:
+    | FrameNode
+    | ComponentNode
+    | ComponentSetNode
+    | InstanceNode
+    | PolygonNode
+    | RectangleNode
+    | EllipseNode
+    | StarNode
+    | LineNode
+    | VectorNode;
 }
 
 function parameterRouting({ param, value, node }: parameterRoutingProps) {
@@ -80,6 +93,10 @@ function parameterRouting({ param, value, node }: parameterRoutingProps) {
     setPadding({ param, value, node });
   } else if (/\bst.*\.*.*/.test(param)) {
     setStroke({ param, value, node });
+  } else if (/\bclip\b/.test(param)) {
+    if (node.type === 'FRAME') {
+      node.clipsContent = !node.clipsContent;
+    }
   } else {
     console.log('missed all');
   }
