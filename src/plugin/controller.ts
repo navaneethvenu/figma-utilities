@@ -1,13 +1,18 @@
 import getCount from './count/get-count';
 import setProperties from './set-properties/set-properties';
 
-figma.parameters.on('input', ({ key, result }) => {
+figma.parameters.on('input', ({ key, query, result }) => {
+  let suggestions: any;
   switch (key) {
     case 'type':
-      const suggestions = [
+      suggestions = [
         { name: `Top-Level`, data: { name: 'Top-Level', id: 'top-level' } },
         { name: `Nested`, data: { name: 'Nested', id: 'nested' } },
       ];
+      result.setSuggestions(suggestions);
+      break;
+    case 'property':
+      suggestions = [query];
       result.setSuggestions(suggestions);
       break;
     default:
