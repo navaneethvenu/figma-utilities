@@ -8,7 +8,7 @@ interface setRadiusProps {
 }
 
 export default function setRadius({ param, value, node }: setRadiusProps) {
-  const radius = parseInt(value);
+  const radius = parseFloat(value);
   const nodeTypeCheck =
     node.type === 'FRAME' ||
     node.type === 'RECTANGLE' ||

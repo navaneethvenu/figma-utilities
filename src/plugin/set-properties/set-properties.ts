@@ -1,4 +1,5 @@
 import setPadding from './utils/set-padding';
+import setPosition from './utils/set-pos';
 import setRadius from './utils/set-radius';
 import setStroke from './utils/set-stroke';
 
@@ -21,7 +22,7 @@ export default function setProperties(parameters: { [key: string]: string }) {
 
             const values = value.split(' ');
 
-            const regex = /([A-Za-z]+)([0-9]+)\b/g;
+            const regex = /([A-Za-z]+)([0-9]+\.*[0-9]*)\b/g;
             for (const value of values) {
               const match = value.match(regex);
               if (match !== null) {
@@ -59,23 +60,25 @@ interface parameterRoutingProps {
 }
 
 function parameterRouting({ param, value, node }: parameterRoutingProps) {
-  if (/\bw.*/.test(param)) {
+  if (/\bpos.*\.*.*/.test(param)) {
+    setPosition({ param, value, node });
+  } else if (/\bw.*\.*.*/.test(param)) {
     const width = parseFloat(value);
     console.log(`setting width to ${width}`);
     if (!isNaN(width)) {
       node.resize(width, node.height);
     }
-  } else if (/\bh.*/.test(param)) {
+  } else if (/\bh.*\.*.*/.test(param)) {
     const height = parseFloat(value);
     console.log(`setting height to ${height}`);
     if (!isNaN(height)) {
       node.resize(node.width, height);
     }
-  } else if (/\br.*/.test(param)) {
+  } else if (/\br.*\.*.*/.test(param)) {
     setRadius({ param, value, node });
-  } else if (/\bp.*/.test(param)) {
+  } else if (/\bp.*\.*.*/.test(param)) {
     setPadding({ param, value, node });
-  } else if (/\bst.*/.test(param)) {
+  } else if (/\bst.*\.*.*/.test(param)) {
     setStroke({ param, value, node });
   } else {
     console.log('missed all');

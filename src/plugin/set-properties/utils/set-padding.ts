@@ -8,7 +8,7 @@ interface setPaddingProps {
 }
 
 export default function setPadding({ param, value, node }: setPaddingProps) {
-  const padding = parseInt(value);
+  const padding = parseFloat(value);
   const nodeTypeCheck = node.type === 'FRAME' && node.layoutMode !== 'NONE';
 
   if (nodeTypeCheck) {
