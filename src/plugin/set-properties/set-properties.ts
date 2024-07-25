@@ -1,3 +1,4 @@
+import setConstraints from './utils/set-constraints';
 import setPadding from './utils/set-padding';
 import setPosition from './utils/set-pos';
 import setRadius from './utils/set-radius';
@@ -93,6 +94,8 @@ function parameterRouting({ param, value, node }: parameterRoutingProps) {
     setPadding({ param, value, node });
   } else if (/\bst.*\.*.*/.test(param)) {
     setStroke({ param, value, node });
+  } else if (/\bc.*\b/.test(param)) {
+    setConstraints({ param, node });
   } else if (/\bclip\b/.test(param)) {
     if (node.type === 'FRAME') {
       node.clipsContent = !node.clipsContent;
