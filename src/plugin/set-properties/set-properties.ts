@@ -94,12 +94,12 @@ function parameterRouting({ param, value, node }: parameterRoutingProps) {
     setPadding({ param, value, node });
   } else if (/\bst.*\.*.*/.test(param)) {
     setStroke({ param, value, node });
-  } else if (/\bc.*\b/.test(param)) {
-    setConstraints({ param, node });
   } else if (/\bclip\b/.test(param)) {
     if (node.type === 'FRAME') {
       node.clipsContent = !node.clipsContent;
     }
+  } else if (/\bc.*\b/.test(param)) {
+    setConstraints({ param, node });
   } else {
     console.log('missed all');
   }
