@@ -1,5 +1,6 @@
 import getCount from './count/get-count';
 import setProperties from './set-properties/set-properties';
+import getSuggestions from './set-properties/suggestions';
 
 figma.parameters.on('input', ({ key, query, result }) => {
   let suggestions: any;
@@ -12,7 +13,9 @@ figma.parameters.on('input', ({ key, query, result }) => {
       result.setSuggestions(suggestions);
       break;
     case 'property':
-      suggestions = [query];
+      const suggestion = getSuggestions({ query });
+      if (suggestion != null) suggestions = [getSuggestions({ query })];
+      else suggestions = [];
       result.setSuggestions(suggestions);
       break;
     default:

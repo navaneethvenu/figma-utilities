@@ -27,7 +27,7 @@
           "key": "property",
           "optional": true,
           "description": "Set Property",
-          "allowFreeform": true
+          "allowFreeform": false
         }
       ]
     },
