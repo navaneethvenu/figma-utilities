@@ -60,8 +60,13 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
         const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
         let lastMessage = '';
         if (lastCommand.command.hasValue) {
-          if (lastCommand.value !== '') lastMessage = `Set ${lastCommand.command.name} to ${lastCommand.value}px`;
-          else lastMessage = `Set ${lastCommand.command.name} to (Enter Value)`;
+          if (lastCommand.value !== '') {
+            if (Math.sign(parseFloat(lastCommand.value)) >= 0 || lastCommand.command.allowsNegative === true) {
+              lastMessage = `Set ${lastCommand.command.name} to ${lastCommand.value}px`;
+            } else {
+              lastMessage = `Error: ${lastCommand.command.name} cannot have negative values`;
+            }
+          } else lastMessage = `Set ${lastCommand.command.name} to (Enter Value)`;
         } else {
           lastMessage = lastCommand.command.name;
         }

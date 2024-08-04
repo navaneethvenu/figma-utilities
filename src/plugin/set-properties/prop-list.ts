@@ -3,6 +3,7 @@ export interface PropItem {
   shortcut: string;
   hasValue: boolean;
   subcommands?: Record<string, PropItem>;
+  allowsNegative?: boolean;
 }
 
 export const propList: Record<string, PropItem> = {
@@ -16,13 +17,16 @@ export const propList: Record<string, PropItem> = {
         name: 'Position X',
         shortcut: 'posx',
         hasValue: true,
+        allowsNegative: true,
       },
       posy: {
         name: 'Position Y',
         shortcut: 'posy',
         hasValue: true,
+        allowsNegative: true,
       },
     },
+    allowsNegative: true,
   },
   //Width
   w: {
