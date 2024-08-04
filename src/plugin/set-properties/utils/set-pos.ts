@@ -33,19 +33,19 @@ export default function setPosition({ param, value, node }: setPositionProps) {
     if (!isNaN(position)) {
       //X Position
       if (/posx\b/.test(param)) {
-        if (node.parent.type === 'FRAME' && node.parent.layoutMode !== null) node.layoutPositioning = 'ABSOLUTE';
+        if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
         node.x = position;
       }
 
       //Y Position
       else if (/posy\b/.test(param)) {
-        if (node.parent.type === 'FRAME' && node.parent.layoutMode !== null) node.layoutPositioning = 'ABSOLUTE';
+        if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
         node.y = position;
       }
 
       //All Strokes
       else if (/pos\b/.test(param)) {
-        if (node.parent.type === 'FRAME' && node.parent.layoutMode !== null) node.layoutPositioning = 'ABSOLUTE';
+        if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
         node.x = position;
         node.y = position;
       }
