@@ -25,7 +25,7 @@
         {
           "name": "Property",
           "key": "property",
-          "optional": true,
+          "optional": false,
           "description": "Set Property",
           "allowFreeform": false
         }

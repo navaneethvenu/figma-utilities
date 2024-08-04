@@ -1,9 +1,10 @@
 import getCount from './count/get-count';
 import setProperties from './set-properties/set-properties';
-import getSuggestions from './set-properties/suggestions';
+import getSuggestions, { getDefaultSuggestions } from './set-properties/suggestions';
 
-figma.parameters.on('input', ({ key, query, result }) => {
-  let suggestions: any;
+figma.parameters.on('input', async ({ key, query, result }) => {
+  let suggestions: { name: string; data: any }[] = [];
+
   switch (key) {
     case 'type':
       suggestions = [
@@ -13,9 +14,20 @@ figma.parameters.on('input', ({ key, query, result }) => {
       result.setSuggestions(suggestions);
       break;
     case 'property':
-      const suggestion = getSuggestions({ query });
-      if (suggestion != null) suggestions = [getSuggestions({ query })];
-      else suggestions = [];
+      suggestions = [];
+
+      suggestions.push(...(await getDefaultSuggestions()));
+
+      //filter duplicates
+      suggestions = suggestions.filter(
+        (item1, index, array) => array.findIndex((item2) => item1.data === item2.data) === index
+      );
+
+      if (query !== '' && query !== undefined) {
+        suggestions.unshift(...getSuggestions({ query }));
+      }
+
+      if (suggestions === null || suggestions === undefined) suggestions = [];
       result.setSuggestions(suggestions);
       break;
     default:
@@ -23,7 +35,7 @@ figma.parameters.on('input', ({ key, query, result }) => {
   }
 });
 
-figma.on('run', ({ command, parameters }: RunEvent) => {
+figma.on('run', async ({ command, parameters }: RunEvent) => {
   if (command == 'count') {
     if (parameters !== null && parameters !== undefined) {
       if (parameters['type'] !== null && parameters['type'] !== undefined) {
@@ -38,7 +50,7 @@ figma.on('run', ({ command, parameters }: RunEvent) => {
     }
   } else if (command == 'set-properties') {
     if (parameters !== null && parameters !== undefined) {
-      setProperties(parameters);
+      await setProperties(parameters);
     }
   } else {
     figma.notify('hey');
