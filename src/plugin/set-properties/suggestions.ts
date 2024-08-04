@@ -1,3 +1,4 @@
+import { baseRegex } from './base-regex';
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
 
@@ -16,20 +17,17 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
   if (query !== undefined) {
     const values = query.split(' ');
-    const regex = /([A-Za-z]+)([0-9]*\.*[0-9]*)\b/g;
 
     const suggestions: { name: string; data: string }[] = [];
     let suggestionRow: BindedCommand[] = [];
 
     for (const value of values) {
-      const match = value.match(regex);
+      const match = value.match(baseRegex);
       if (match !== null) {
-        const subgroups = regex.exec(value);
-        console.log(subgroups);
+        const subgroups = baseRegex.exec(value);
         if (subgroups.length === 3) {
           const param = subgroups[1];
           const paramVal = subgroups[2];
-          console.log(query, values, param);
           if (param in flattenedCommands) {
             const propItem = flattenedCommands[param];
             suggestionRow.push({
@@ -52,10 +50,6 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
       for (const commandVariant of commandVariants) {
         suggestionCommands.push([...suggestionRow.slice(0, suggestionRow.length - 1), commandVariant]);
       }
-
-      console.log('commvar', commandVariants);
-
-      console.log('sugg', suggestionCommands);
 
       for (const suggestionCommandList of suggestionCommands) {
         let suggestionData: { name: string; data: string } = { name: '', data: '' };
@@ -98,7 +92,6 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
           commands.push(...subCommandVariants);
         }
       }
-      console.log(commands);
       return commands;
     }
   }
@@ -107,8 +100,6 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 export async function getDefaultSuggestions() {
   const history = await getHistory();
   const suggestions: { name: string; data: string }[] = [];
-
-  console.log('default', history);
 
   for (const historySuggestion of history) {
     const suggestionText = historySuggestion.map((item) => item.param + item.value).join(' ');
