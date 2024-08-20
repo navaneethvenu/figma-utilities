@@ -1,9 +1,20 @@
+import { parameterRoutingProps } from './param-routing';
+import setConstraints from './utils/set-constraints';
+import setHeight from './utils/set-height';
+import setPadding from './utils/set-padding';
+import setPosition from './utils/set-pos';
+import setRadius from './utils/set-radius';
+import setStroke from './utils/set-stroke';
+import setWidth from './utils/set-width';
+import toggleClip from './utils/toggle-clip';
+
 export interface PropItem {
   name: string;
   shortcut: string;
   hasValue: boolean;
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
+  action?: ({ param, value, node }: parameterRoutingProps) => void;
 }
 
 export const propList: Record<string, PropItem> = {
@@ -27,19 +38,27 @@ export const propList: Record<string, PropItem> = {
       },
     },
     allowsNegative: true,
+    action: ({ param, value, node }) => setPosition({ param, value, node }),
   },
+
   //Width
   w: {
     name: 'Width',
     shortcut: 'w',
     hasValue: true,
+    allowsNegative: false,
+    action: ({ param, value, node }) => setWidth({ param, value, node }),
   },
+
   //Height
   h: {
     name: 'Height',
     shortcut: 'h',
     hasValue: true,
+    allowsNegative: false,
+    action: ({ param, value, node }) => setHeight({ param, value, node }),
   },
+
   //Radius
   r: {
     name: 'Corner Radius',
@@ -81,6 +100,7 @@ export const propList: Record<string, PropItem> = {
         },
       },
     },
+    action: ({ param, value, node }) => setRadius({ param, value, node }),
   },
 
   //Padding
@@ -120,6 +140,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
       },
     },
+    action: ({ param, value, node }) => setPadding({ param, value, node }),
   },
 
   //Stroke
@@ -159,6 +180,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
       },
     },
+    action: ({ param, value, node }) => setStroke({ param, value, node }),
   },
 
   //Clip
@@ -166,6 +188,7 @@ export const propList: Record<string, PropItem> = {
     name: 'Toggle Clipping',
     shortcut: 'clip',
     hasValue: false,
+    action: ({ node }) => toggleClip({ node }),
   },
   //Corner Radius
   c: {
@@ -238,6 +261,7 @@ export const propList: Record<string, PropItem> = {
         },
       },
     },
+    action: ({ param, node }) => setConstraints({ param, node }),
   },
 };
 
