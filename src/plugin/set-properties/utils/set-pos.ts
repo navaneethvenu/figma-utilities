@@ -18,7 +18,6 @@ interface setPositionProps {
 }
 
 export default function setPosition({ param, value, node }: setPositionProps) {
-  console.log(value);
   const position = parseFloat(value);
   const nodeTypeCheck =
     node.type === 'FRAME' ||
