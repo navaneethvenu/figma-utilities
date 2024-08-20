@@ -5,10 +5,21 @@ interface regexShorthandProps {
 }
 
 export default function regexShorthand({ prop, hasValue = true, continueEnd = true }: regexShorthandProps) {
+  const escapedProp = escapeRegex(prop);
+  //   console.log('espc', escapedProp);
+
   if (hasValue) {
-    if (continueEnd) return new RegExp(`\\b${prop}\\-*.*\\.*.*`, 'gi');
+    return new RegExp(`\\b${escapedProp}\\-*.*\\.*.*`, 'gi');
   } else {
-    if (continueEnd) return new RegExp(`\\b${prop}.*\\b`, 'gi');
-    return new RegExp(`\\b${prop}\\b`, 'gi');
+    if (continueEnd) return new RegExp(`\\b${escapedProp}.*\\b`, 'gi');
+    return new RegExp(`\\b${escapedProp}\\b`, 'gi');
   }
+}
+
+function escapeRegex(input: string): string {
+  const regexMetacharacters = /[h]/g;
+  if (regexMetacharacters.test(input)) {
+    return `\\${input}`;
+  }
+  return input;
 }
