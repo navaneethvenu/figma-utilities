@@ -6,5 +6,6 @@ interface notifyErrorProps {
 }
 
 export default function notifyError({ type, message }: notifyErrorProps) {
+  console.error(`${type}: ${message}`);
   throw new Error(`${type}: ${message}`);
 }

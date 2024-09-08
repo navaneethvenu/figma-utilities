@@ -1,13 +1,26 @@
-import { SupportedNodes } from './supported-nodes';
+import notifyError from '../../../utils/error';
+import { ErrorType } from '../../../utils/errorType';
+import { supportedNodes, SupportedNodes } from './supported-nodes';
 
 interface setXMaxConstraintsProps {
   param: string;
-  node: SupportedNodes;
+  node: SceneNode;
 }
 
 export default function setXMaxConstraints({ node }: setXMaxConstraintsProps) {
-  node.constraints = {
-    horizontal: 'MAX',
-    vertical: node.constraints.vertical,
-  };
+  const nodeCheck = supportedNodes.find((type) => node.type === type);
+  let assertedNode = node as SupportedNodes;
+
+  if (nodeCheck !== undefined)
+    assertedNode.constraints = {
+      horizontal: 'MAX',
+      vertical: assertedNode.constraints.vertical,
+    };
+  //Unsupported Prop
+  else {
+    notifyError({
+      type: ErrorType.UNSUPPORTED_PROP,
+      message: `Constraints are not applicable on node type ${node.type}`,
+    });
+  }
 }
