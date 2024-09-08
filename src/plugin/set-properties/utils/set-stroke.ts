@@ -4,17 +4,7 @@ import { ErrorType } from '../../utils/errorType';
 interface setStrokeProps {
   param: string;
   value: string;
-  node:
-    | FrameNode
-    | ComponentNode
-    | ComponentSetNode
-    | InstanceNode
-    | PolygonNode
-    | RectangleNode
-    | EllipseNode
-    | StarNode
-    | LineNode
-    | VectorNode;
+  node: SceneNode;
 }
 
 export default function setStroke({ param, value, node }: setStrokeProps) {

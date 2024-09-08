@@ -2,17 +2,7 @@ import notifyError from '../../utils/error';
 import { ErrorType } from '../../utils/errorType';
 
 interface toggleClipProps {
-  node:
-    | FrameNode
-    | ComponentNode
-    | ComponentSetNode
-    | InstanceNode
-    | PolygonNode
-    | RectangleNode
-    | EllipseNode
-    | StarNode
-    | LineNode
-    | VectorNode;
+  node: SceneNode;
 }
 
 export default function toggleClip({ node }: toggleClipProps) {
