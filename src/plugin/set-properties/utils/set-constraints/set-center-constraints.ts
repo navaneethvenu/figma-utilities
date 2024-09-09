@@ -20,7 +20,7 @@ export default function setCenterConstraints({ node }: setCenterConstraintsProps
   else {
     notifyError({
       type: ErrorType.UNSUPPORTED_PROP,
-      message: `Padding is not applicable on node type ${node.type}`,
+      message: `Constraints are not applicable on node type ${node.type}`,
     });
   }
 }
