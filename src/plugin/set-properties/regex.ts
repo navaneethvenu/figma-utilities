@@ -17,9 +17,5 @@ export default function regexShorthand({ prop, hasValue = true, continueEnd = tr
 }
 
 function escapeRegex(input: string): string {
-  const regexMetacharacters = /[h]/g;
-  if (regexMetacharacters.test(input)) {
-    return `\\${input}`;
-  }
-  return input;
+  return input.replace(/h/g, '\\h');
 }
