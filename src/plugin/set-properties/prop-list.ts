@@ -23,6 +23,7 @@ import setSize from './utils/set-dimensions/set-size';
 import setScale from './utils/set-dimensions/set-scale';
 import setScaleHeight from './utils/set-dimensions/set-scale-height';
 import setScaleWidth from './utils/set-dimensions/set-scale-width';
+import setQuickSelect from './utils/set-quick-select';
 
 export interface PropItem {
   name: string;
@@ -324,6 +325,50 @@ export const propList: Record<string, PropItem> = {
             hasValue: false,
             action: ({ param, node }) => setYMaxConstraints({ param, node }),
           },
+        },
+      },
+    },
+  },
+  sel: {
+    name: 'Quick Select',
+    shortcut: 'sel',
+    hasValue: false,
+    allowsNegative: false,
+    subcommands: {
+      selr: {
+        name: 'Select Right',
+        shortcut: 'selr',
+        hasValue: false,
+        allowsNegative: false,
+        action: ({ param, node }) => {
+          setQuickSelect({ param, node });
+        },
+      },
+      sell: {
+        name: 'Select Left',
+        shortcut: 'sell',
+        hasValue: false,
+        allowsNegative: false,
+        action: ({ param, node }) => {
+          setQuickSelect({ param, node });
+        },
+      },
+      selt: {
+        name: 'Select Top',
+        shortcut: 'selt',
+        hasValue: false,
+        allowsNegative: false,
+        action: ({ param, node }) => {
+          setQuickSelect({ param, node });
+        },
+      },
+      selb: {
+        name: 'Select Bottom',
+        shortcut: 'selb',
+        hasValue: false,
+        allowsNegative: false,
+        action: ({ param, node }) => {
+          setQuickSelect({ param, node });
         },
       },
     },
