@@ -9,7 +9,6 @@ export interface parameterRoutingProps {
 
 export default function parameterRouting({ param, value, node }: parameterRoutingProps, propItems = propList): boolean {
   let match = false;
-  console.log('current');
 
   for (const prop of Object.values(propItems)) {
     const regex = regexShorthand({
@@ -17,8 +16,6 @@ export default function parameterRouting({ param, value, node }: parameterRoutin
       hasValue: prop.hasValue,
       continueEnd: prop.subcommands !== undefined,
     });
-
-    console.log(prop.shortcut, prop, regex.source);
 
     if (regex.test(param)) {
       regex.lastIndex = 0; // Reset regex lastIndex in case of global flag usage
@@ -33,7 +30,7 @@ export default function parameterRouting({ param, value, node }: parameterRoutin
       }
 
       // If no subcommand matches, and the parent itself matches, execute the parent's action
-      if (prop.action) {
+      if (prop.action && param === prop.shortcut) {
         prop.action({ param, value, node });
         match = true; // Action executed
         break; // Stop processing as action is executed
