@@ -62,7 +62,8 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
         if (lastCommand.command.hasValue) {
           if (lastCommand.value !== '') {
             if (Math.sign(parseFloat(lastCommand.value)) >= 0 || lastCommand.command.allowsNegative === true) {
-              lastMessage = `Set ${lastCommand.command.name} to ${lastCommand.value}px`;
+              const unit = lastCommand.command.unit === undefined ? 'px' : lastCommand.command.unit;
+              lastMessage = `Set ${lastCommand.command.name} to ${lastCommand.value}${unit}`;
             } else {
               lastMessage = `Error: ${lastCommand.command.name} cannot have negative values`;
             }
