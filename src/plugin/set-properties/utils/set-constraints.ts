@@ -1,6 +1,6 @@
-import notifyError from '../../../utils/error';
-import { ErrorType } from '../../../utils/errorType';
-import { supportedNodes, SupportedNodes } from './supported-nodes';
+import notifyError from '../../utils/error';
+import { ErrorType } from '../../utils/errorType';
+import { supportedNodes, SupportedNodes } from './node-types/supported-nodes';
 
 interface setConstraintsProps {
   shortcut: string;

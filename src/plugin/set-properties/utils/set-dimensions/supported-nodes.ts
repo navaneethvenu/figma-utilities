@@ -1,5 +1,5 @@
-import { figjamNodes, FigjamNodes } from '../figjam-nodes';
-import { sceneNode } from '../scene-node';
+import { figjamNodes, FigjamNodes } from '../set-constraints/figjam-nodes';
+import { sceneNode } from '../set-constraints/scene-node';
 
 type UnsupportedNodes = SliceNode | BooleanOperationNode | SectionNode | FigjamNodes;
 
