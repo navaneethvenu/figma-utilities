@@ -39,8 +39,6 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
           }
         }
       }
-
-      // count++;
     }
 
     if (suggestionRow.length > 0) {
