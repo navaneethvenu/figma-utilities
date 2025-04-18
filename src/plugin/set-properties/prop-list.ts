@@ -309,19 +309,19 @@ export const propList: Record<string, PropItem> = {
           },
           cys: {
             name: 'Scale all Vertical Constraints',
-            shortcut: 'cxs',
+            shortcut: 'cys',
             hasValue: false,
             action: ({ param, node }) => setYScaleConstraints({ param, node }),
           },
           cyt: {
             name: 'Set Vertical Constraints to Top',
-            shortcut: 'cyl',
+            shortcut: 'cyt',
             hasValue: false,
             action: ({ param, node }) => setYMinConstraints({ param, node }),
           },
           cyb: {
             name: 'Set Vertical Constraints to Bottom',
-            shortcut: 'cyr',
+            shortcut: 'cyb',
             hasValue: false,
             action: ({ param, node }) => setYMaxConstraints({ param, node }),
           },
