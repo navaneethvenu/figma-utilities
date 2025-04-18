@@ -1,5 +1,5 @@
-import { figjamNodes, FigjamNodes } from './figjam-nodes';
-import { sceneNode } from './scene-node';
+import { figjamNodes, FigjamNodes } from '../figjam-nodes';
+import { sceneNode } from '../scene-node';
 
 type UnsupportedNodes = SliceNode | GroupNode | BooleanOperationNode | SectionNode | FigjamNodes;
 
