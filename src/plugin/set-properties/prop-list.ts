@@ -11,7 +11,7 @@ import setScale from './utils/set-dimensions/set-scale';
 import setScaleHeight from './utils/set-dimensions/set-scale-height';
 import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
-import setConstraints from './utils/set-constraints';
+import setConstraints from './utils/set-constraints/set-constraints';
 
 export interface PropItem {
   name: string;
