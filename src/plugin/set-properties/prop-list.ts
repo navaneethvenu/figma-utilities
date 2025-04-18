@@ -1,17 +1,4 @@
 import { parameterRoutingProps } from './param-routing';
-import setCenterConstraints from './utils/set-constraints/set-center-constraints';
-import setScaleConstraints from './utils/set-constraints/set-scale-constraints';
-import setStretchConstraints from './utils/set-constraints/set-stretch-constraints';
-import setXCenterConstraints from './utils/set-constraints/set-x-center-constraints';
-import setXMaxConstraints from './utils/set-constraints/set-x-max-constraints';
-import setXMinConstraints from './utils/set-constraints/set-x-min-constraints';
-import setXScaleConstraints from './utils/set-constraints/set-x-scale-constraints';
-import setXStretchConstraints from './utils/set-constraints/set-x-stretch-constraints';
-import setYCenterConstraints from './utils/set-constraints/set-y-center-constraints';
-import setYMaxConstraints from './utils/set-constraints/set-y-max-constraints';
-import setYMinConstraints from './utils/set-constraints/set-y-min-constraints';
-import setYScaleConstraints from './utils/set-constraints/set-y-scale-constraints';
-import setYStretchConstraints from './utils/set-constraints/set-y-stretch-constraints';
 import setHeight from './utils/set-dimensions/set-height';
 import setPadding from './utils/set-padding';
 import setPosition from './utils/set-pos';
@@ -24,6 +11,7 @@ import setScale from './utils/set-dimensions/set-scale';
 import setScaleHeight from './utils/set-dimensions/set-scale-height';
 import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
+import setConstraints from './utils/set-constraints';
 
 export interface PropItem {
   name: string;
@@ -248,50 +236,50 @@ export const propList: Record<string, PropItem> = {
     name: 'Stretch all Constraints',
     shortcut: 'c',
     hasValue: false,
-    action: ({ param, node }) => setStretchConstraints({ param, node }),
+    action: ({ param, node }) => setConstraints({ shortcut: param, node }),
     subcommands: {
       cc: {
         name: 'Center all Constraints',
         shortcut: 'cc',
         hasValue: false,
-        action: ({ param, node }) => setCenterConstraints({ param, node }),
+        action: ({ param, node }) => setConstraints({ shortcut: param, node }),
       },
       cs: {
         name: 'Scale all Constraints',
         shortcut: 'cs',
         hasValue: false,
-        action: ({ param, node }) => setScaleConstraints({ param, node }),
+        action: ({ param, node }) => setConstraints({ shortcut: param, node }),
       },
       cx: {
         name: 'Stretch all Horizontal Constraints',
         shortcut: 'cx',
         hasValue: false,
-        action: ({ param, node }) => setXStretchConstraints({ param, node }),
+        action: ({ param, node }) => setConstraints({ shortcut: param, node }),
 
         subcommands: {
           cxc: {
             name: 'Center all Horizontal Constraints',
             shortcut: 'cxc',
             hasValue: false,
-            action: ({ param, node }) => setXCenterConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
           cxs: {
             name: 'Scale all Horizontal Constraints',
             shortcut: 'cxs',
             hasValue: false,
-            action: ({ param, node }) => setXScaleConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
           cxl: {
             name: 'Set Horizontal Constraints to Left',
             shortcut: 'cxl',
             hasValue: false,
-            action: ({ param, node }) => setXMinConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
           cxr: {
             name: 'Set Horizontal Constraints to Right',
             shortcut: 'cxr',
             hasValue: false,
-            action: ({ param, node }) => setXMaxConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
         },
       },
@@ -299,31 +287,31 @@ export const propList: Record<string, PropItem> = {
         name: 'Stretch all Vertical Constraints',
         shortcut: 'cy',
         hasValue: false,
-        action: ({ param, node }) => setYStretchConstraints({ param, node }),
+        action: ({ param, node }) => setConstraints({ shortcut: param, node }),
         subcommands: {
           cyc: {
             name: 'Center all Vertical Constraints',
             shortcut: 'cyc',
             hasValue: false,
-            action: ({ param, node }) => setYCenterConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
           cys: {
             name: 'Scale all Vertical Constraints',
             shortcut: 'cys',
             hasValue: false,
-            action: ({ param, node }) => setYScaleConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
           cyt: {
             name: 'Set Vertical Constraints to Top',
             shortcut: 'cyt',
             hasValue: false,
-            action: ({ param, node }) => setYMinConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
           cyb: {
             name: 'Set Vertical Constraints to Bottom',
             shortcut: 'cyb',
             hasValue: false,
-            action: ({ param, node }) => setYMaxConstraints({ param, node }),
+            action: ({ param, node }) => setConstraints({ shortcut: param, node }),
           },
         },
       },
