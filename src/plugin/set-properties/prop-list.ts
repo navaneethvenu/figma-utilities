@@ -12,6 +12,7 @@ import setScaleHeight from './utils/set-dimensions/set-scale-height';
 import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
 import setConstraints from './utils/set-constraints/set-constraints';
+import move from './utils/move/move';
 
 export interface PropItem {
   name: string;
@@ -231,7 +232,41 @@ export const propList: Record<string, PropItem> = {
     hasValue: false,
     action: ({ node }) => toggleClip({ node }),
   },
-  //Corner Radius
+
+  //Move
+  m: {
+    name: 'Move',
+    shortcut: 'm',
+    hasValue: false,
+    subcommands: {
+      ml: {
+        name: 'Move Left',
+        shortcut: 'ml',
+        hasValue: true,
+        action: ({ param, node, value }) => move({ param, node, value }),
+      },
+      mr: {
+        name: 'Move Right',
+        shortcut: 'mr',
+        hasValue: true,
+        action: ({ param, node, value }) => move({ param, node, value }),
+      },
+      mt: {
+        name: 'Move Top',
+        shortcut: 'mt',
+        hasValue: true,
+        action: ({ param, node, value }) => move({ param, node, value }),
+      },
+      mb: {
+        name: 'Move Bottom',
+        shortcut: 'mb',
+        hasValue: true,
+        action: ({ param, node, value }) => move({ param, node, value }),
+      },
+    },
+  },
+
+  //Constraints
   c: {
     name: 'Stretch all Constraints',
     shortcut: 'c',
@@ -317,6 +352,7 @@ export const propList: Record<string, PropItem> = {
       },
     },
   },
+
   sel: {
     name: 'Quick Select',
     shortcut: 'sel',
