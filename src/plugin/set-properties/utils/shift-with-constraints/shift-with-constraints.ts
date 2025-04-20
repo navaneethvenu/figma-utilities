@@ -2,13 +2,13 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { supportedNodes, SupportedNodes } from './supported-nodes';
 
-interface shiftProps {
+interface dockProps {
   param: string;
   node: SceneNode;
   value: string;
 }
 
-export default function shiftWithConstraints({ param, node, value }: shiftProps) {
+export default function dockWithConstraints({ param, node, value }: dockProps) {
   const nodeCheck = supportedNodes.find((type) => node.type === type);
   let assertedNode = node as SupportedNodes;
 

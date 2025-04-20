@@ -13,8 +13,7 @@ import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
 import setConstraints from './utils/set-constraints/set-constraints';
 import move from './utils/move/move';
-import shift from './utils/shift/shift';
-import shiftWithConstraints from './utils/shift-with-constraints/shift-with-constraints';
+import dockWithConstraints from './utils/shift-with-constraints/shift-with-constraints';
 
 export interface PropItem {
   name: string;
@@ -268,68 +267,40 @@ export const propList: Record<string, PropItem> = {
     },
   },
 
-  //Shift
-  sh: {
-    name: 'Shift',
-    shortcut: 'sh',
+  //Dock with Constraints
+  d: {
+    name: 'Dock',
+    shortcut: 'd',
     hasValue: false,
+    allowsNegative: true,
     subcommands: {
-      shl: {
-        name: 'Shift Left',
-        shortcut: 'shl',
+      dl: {
+        name: 'Dock Left with Constraints',
+        shortcut: 'dl',
         hasValue: true,
-        action: ({ param, node, value }) => shift({ param, node, value }),
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockWithConstraints({ param, node, value }),
       },
-      shr: {
-        name: 'Shift Right',
-        shortcut: 'shr',
+      dr: {
+        name: 'Dock Right with Constraints',
+        shortcut: 'dr',
         hasValue: true,
-        action: ({ param, node, value }) => shift({ param, node, value }),
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockWithConstraints({ param, node, value }),
       },
-      sht: {
-        name: 'Shift Top',
-        shortcut: 'sht',
+      dt: {
+        name: 'Dock Top with Constraints',
+        shortcut: 'dt',
         hasValue: true,
-        action: ({ param, node, value }) => shift({ param, node, value }),
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockWithConstraints({ param, node, value }),
       },
-      shb: {
-        name: 'Shift Bottom',
-        shortcut: 'shb',
+      db: {
+        name: 'Dock Bottom with Constraints',
+        shortcut: 'db',
         hasValue: true,
-        action: ({ param, node, value }) => shift({ param, node, value }),
-      },
-    },
-  },
-
-  //Shift with Constraints
-  shc: {
-    name: 'Shift',
-    shortcut: 'shc',
-    hasValue: false,
-    subcommands: {
-      shcl: {
-        name: 'Shift Left with Constraints',
-        shortcut: 'shcl',
-        hasValue: true,
-        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
-      },
-      shcr: {
-        name: 'Shift Righ with Constraintst',
-        shortcut: 'shcr',
-        hasValue: true,
-        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
-      },
-      shct: {
-        name: 'Shift Top with Constraints',
-        shortcut: 'shct',
-        hasValue: true,
-        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
-      },
-      shcb: {
-        name: 'Shift Bottom with Constraints',
-        shortcut: 'shcb',
-        hasValue: true,
-        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockWithConstraints({ param, node, value }),
       },
     },
   },
