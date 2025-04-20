@@ -8,7 +8,7 @@ interface dockProps {
   value: string;
 }
 
-export default function dockWithConstraints({ param, node, value }: dockProps) {
+export default function dockOutWithConstraints({ param, node, value }: dockProps) {
   const nodeCheck = supportedNodes.find((type) => node.type === type);
   let assertedNode = node as SupportedNodes;
 
@@ -18,33 +18,33 @@ export default function dockWithConstraints({ param, node, value }: dockProps) {
   if (parentNode === figma.currentPage)
     notifyError({
       type: ErrorType.UNSUPPORTED_PROP,
-      message: `Dock is not applicable on top level objects`,
+      message: `Dock out is not applicable on top level objects`,
     });
   else {
     if (nodeCheck !== undefined) {
-      if (param.includes('l')) {
-        assertedNode.x = Number(value);
+      if (param.includes('L')) {
+        assertedNode.x = -Number(value) - assertedNode.width;
         assertedNode.constraints = {
           horizontal: 'MIN',
           vertical: assertedNode.constraints.vertical,
         };
       }
-      if (param.includes('r')) {
-        assertedNode.x = (parentNode as SupportedNodes).width - Number(value) - assertedNode.width;
+      if (param.includes('R')) {
+        assertedNode.x = (parentNode as SupportedNodes).width + Number(value);
         assertedNode.constraints = {
           horizontal: 'MAX',
           vertical: assertedNode.constraints.vertical,
         };
       }
-      if (param.includes('t')) {
-        assertedNode.y = Number(value);
+      if (param.includes('T')) {
+        assertedNode.y = -Number(value) - assertedNode.height;
         assertedNode.constraints = {
           horizontal: assertedNode.constraints.horizontal,
           vertical: 'MIN',
         };
       }
-      if (param.includes('b')) {
-        assertedNode.y = (parentNode as SupportedNodes).height - Number(value) - assertedNode.height;
+      if (param.includes('B')) {
+        assertedNode.y = (parentNode as SupportedNodes).height + Number(value);
         assertedNode.constraints = {
           horizontal: assertedNode.constraints.horizontal,
           vertical: 'MAX',
@@ -56,7 +56,7 @@ export default function dockWithConstraints({ param, node, value }: dockProps) {
     else {
       notifyError({
         type: ErrorType.UNSUPPORTED_PROP,
-        message: `Dock is not applicable on node type ${node.type}`,
+        message: `Dock out is not applicable on node type ${node.type}`,
       });
     }
   }

@@ -14,6 +14,7 @@ import setQuickSelect from './utils/set-quick-select';
 import setConstraints from './utils/set-constraints/set-constraints';
 import move from './utils/move/move';
 import dockWithConstraints from './utils/dock-with-constraints/dock-with-constraints';
+import dockOutWithConstraints from './utils/dock-out-with-constraints/dock-out-with-constraints';
 
 export interface PropItem {
   name: string;
@@ -301,6 +302,44 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: true,
         action: ({ param, node, value }) => dockWithConstraints({ param, node, value }),
+      },
+    },
+  },
+
+  //Dock out with Constraints
+  D: {
+    name: 'Dock',
+    shortcut: 'D',
+    hasValue: false,
+    allowsNegative: true,
+    subcommands: {
+      DL: {
+        name: 'Dock out Left with Constraints',
+        shortcut: 'DL',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
+      },
+      DR: {
+        name: 'Dock out Right with Constraints',
+        shortcut: 'DR',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
+      },
+      DT: {
+        name: 'Dock out Top with Constraints',
+        shortcut: 'DT',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
+      },
+      DB: {
+        name: 'Dock out Bottom with Constraints',
+        shortcut: 'DB',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
       },
     },
   },
