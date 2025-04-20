@@ -13,7 +13,7 @@ import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
 import setConstraints from './utils/set-constraints/set-constraints';
 import move from './utils/move/move';
-import dockWithConstraints from './utils/shift-with-constraints/shift-with-constraints';
+import dockWithConstraints from './utils/dock-with-constraints/dock-with-constraints';
 
 export interface PropItem {
   name: string;
