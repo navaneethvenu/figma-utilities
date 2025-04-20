@@ -24,7 +24,7 @@ export default function move({ param, node, value }: moveProps) {
   else {
     notifyError({
       type: ErrorType.UNSUPPORTED_PROP,
-      message: `Constraints are not applicable on node type ${node.type}`,
+      message: `Moving is not applicable on node type ${node.type}`,
     });
   }
 }
