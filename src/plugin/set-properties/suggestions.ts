@@ -81,7 +81,9 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
         suggestionData.data = suggestionCommandList
           .map((command) => command.command.shortcut + command.value)
           .join(' ');
-        suggestions.push(suggestionData);
+        if (lastCommand.command.action) {
+          suggestions.push(suggestionData);
+        }
       }
 
       return suggestions;
