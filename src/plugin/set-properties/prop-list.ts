@@ -14,6 +14,7 @@ import setQuickSelect from './utils/set-quick-select';
 import setConstraints from './utils/set-constraints/set-constraints';
 import move from './utils/move/move';
 import shift from './utils/shift/shift';
+import shiftWithConstraints from './utils/shift-with-constraints/shift-with-constraints';
 
 export interface PropItem {
   name: string;
@@ -296,6 +297,39 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'shb',
         hasValue: true,
         action: ({ param, node, value }) => shift({ param, node, value }),
+      },
+    },
+  },
+
+  //Shift with Constraints
+  shc: {
+    name: 'Shift',
+    shortcut: 'shc',
+    hasValue: false,
+    subcommands: {
+      shcl: {
+        name: 'Shift Left with Constraints',
+        shortcut: 'shcl',
+        hasValue: true,
+        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
+      },
+      shcr: {
+        name: 'Shift Righ with Constraintst',
+        shortcut: 'shcr',
+        hasValue: true,
+        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
+      },
+      shct: {
+        name: 'Shift Top with Constraints',
+        shortcut: 'shct',
+        hasValue: true,
+        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
+      },
+      shcb: {
+        name: 'Shift Bottom with Constraints',
+        shortcut: 'shcb',
+        hasValue: true,
+        action: ({ param, node, value }) => shiftWithConstraints({ param, node, value }),
       },
     },
   },
