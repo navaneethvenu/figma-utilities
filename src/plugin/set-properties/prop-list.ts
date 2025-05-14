@@ -479,13 +479,19 @@ export const propList: Record<string, PropItem> = {
 
 export function flattenCommands(
   commands: Record<string, PropItem>,
-  flattenedCommands: Record<string, PropItem>
+  flattenedCommands: Record<string, PropItem> = {}
 ): Record<string, PropItem> {
   for (const key in commands) {
     flattenedCommands[key] = commands[key];
+
     if (commands[key].subcommands) {
       flattenCommands(commands[key].subcommands!, flattenedCommands);
     }
+  }
+
+  // Only sort at the topmost call
+  if (flattenedCommands === arguments[1]) {
+    return Object.fromEntries(Object.entries(flattenedCommands).sort(([a], [b]) => a.localeCompare(b)));
   }
 
   return flattenedCommands;

@@ -11,98 +11,120 @@ interface BindedCommand {
   value: string;
 }
 
+interface Suggestion {
+  name: string;
+  data: string;
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
-  const suggestionCommands: BindedCommand[][] = [];
 
-  if (query !== undefined) {
-    const values = query.split(' ');
+  if (!query) return [];
 
-    const suggestions: { name: string; data: string }[] = [];
-    let suggestionRow: BindedCommand[] = [];
+  const values = query.split(' ');
 
-    for (const value of values) {
-      const match = value.match(baseRegex);
-      if (match !== null) {
-        const subgroups = baseRegex.exec(value);
-        if (subgroups.length === 3) {
-          const param = subgroups[1];
-          const paramVal = subgroups[2];
-          if (param in flattenedCommands) {
-            const propItem = flattenedCommands[param];
-            suggestionRow.push({
-              command: propItem,
-              value: paramVal,
-            });
-          } else {
-            console.log('missed all suggestions');
-          }
-        }
-      }
-    }
+  let suggestions: Suggestion[] = [];
+  let suggestionRow: BindedCommand[] = [];
 
-    if (suggestionRow.length > 0) {
-      const lastItem: BindedCommand = suggestionRow[suggestionRow.length - 1];
-      const commandVariants: BindedCommand[] = getNestedCommands(lastItem);
-
-      for (const commandVariant of commandVariants) {
-        suggestionCommands.push([...suggestionRow.slice(0, suggestionRow.length - 1), commandVariant]);
-      }
-
-      for (const suggestionCommandList of suggestionCommands) {
-        let suggestionData: { name: string; data: string } = { name: '', data: '' };
-        suggestionData.name = suggestionCommandList
-          .map((command) => command.command.shortcut + command.value)
-          .slice(0, suggestionCommandList.length - 1)
-          .join(', ');
-        const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
-        let lastMessage = '';
-        if (lastCommand.command.hasValue) {
-          if (lastCommand.value !== '') {
-            if (Math.sign(parseFloat(lastCommand.value)) >= 0 || lastCommand.command.allowsNegative === true) {
-              const unit = lastCommand.command.unit === undefined ? 'px' : lastCommand.command.unit;
-              lastMessage = `Set ${lastCommand.command.name} to ${lastCommand.value}${unit}`;
-            } else {
-              lastMessage = `Error: ${lastCommand.command.name} cannot have negative values`;
-            }
-          } else lastMessage = `Set ${lastCommand.command.name} to (Enter Value)`;
+  for (const value of values) {
+    const isLast = value === values[values.length - 1];
+    const match = value.match(baseRegex);
+    console.log(match);
+    if (match !== null) {
+      const [, param, paramVal] = baseRegex.exec(value);
+      if (isLast) {
+        suggestionRow.push({
+          command: getClosestSuggestion(param, flattenedCommands),
+          value: paramVal,
+        });
+      } else {
+        if (param in flattenedCommands) {
+          const propItem = flattenedCommands[param];
+          suggestionRow.push({
+            command: propItem,
+            value: paramVal,
+          });
         } else {
-          lastMessage = lastCommand.command.name;
-        }
-
-        if (suggestionData.name === '')
-          suggestionData.name = lastCommand.command.shortcut + lastCommand.value + ' - ' + lastMessage;
-        else
-          suggestionData.name = [
-            suggestionData.name,
-            lastCommand.command.shortcut + lastCommand.value + ' - ' + lastMessage,
-          ].join(', ');
-
-        suggestionData.data = suggestionCommandList
-          .map((command) => command.command.shortcut + command.value)
-          .join(' ');
-        if (lastCommand.command.action) {
-          suggestions.push(suggestionData);
+          console.log('missed all suggestions');
         }
       }
-
-      return suggestions;
     }
+  }
 
-    function getNestedCommands(item: BindedCommand) {
-      const commands: BindedCommand[] = [];
-      commands.push(item);
-      if (item.command.subcommands) {
-        for (const subPropItem of Object.values(item.command.subcommands)) {
-          const subCommandVariants = getNestedCommands({ command: subPropItem, value: item.value });
-          commands.push(...subCommandVariants);
-        }
-      }
-      return commands;
+  suggestions = generateSuggestions(suggestionRow);
+
+  return suggestions;
+}
+
+function getClosestSuggestion(param: string, flattenedCommands: Record<string, PropItem>): PropItem {
+  for (const command in flattenedCommands) {
+    if (command.startsWith(param)) {
+      console.log('command;' + command, flattenCommands[command]);
+      return flattenedCommands[command];
     }
   }
 }
 
+function generateSuggestions(suggestionRow: BindedCommand[]): Suggestion[] {
+  let suggestions: Suggestion[] = [];
+  const suggestionCommands: BindedCommand[][] = [];
+
+  if (suggestionRow.length === 0) return;
+
+  const lastItem: BindedCommand = suggestionRow[suggestionRow.length - 1];
+  const commandVariants: BindedCommand[] = getNestedCommands(lastItem);
+
+  for (const commandVariant of commandVariants) {
+    suggestionCommands.push([...suggestionRow.slice(0, suggestionRow.length - 1), commandVariant]);
+  }
+
+  for (const suggestionCommandList of suggestionCommands) {
+    let suggestionData: { name: string; data: string } = { name: '', data: '' };
+    suggestionData.name = suggestionCommandList
+      .map((command) => command.command.shortcut + command.value)
+      .slice(0, suggestionCommandList.length - 1)
+      .join(', ');
+
+    const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
+
+    let lastMessage = '';
+    const { value, command } = lastCommand;
+    if (command.hasValue) {
+      if (lastCommand.value !== '') {
+        if (Math.sign(parseFloat(value)) >= 0 || command.allowsNegative === true) {
+          const unit = command.unit === undefined ? 'px' : command.unit;
+          lastMessage = `Set ${command.name} to ${value}${unit}`;
+        } else {
+          lastMessage = `Error: ${command.name} cannot have negative values`;
+        }
+      } else lastMessage = `Set ${command.name} to (Enter Value)`;
+    } else {
+      lastMessage = command.name;
+    }
+
+    const newName = `${command.shortcut}${value} - ${lastMessage}`;
+    suggestionData.name = suggestionData.name ? `${suggestionData.name}, ${newName}` : newName;
+
+    suggestionData.data = suggestionCommandList.map((command) => command.command.shortcut + command.value).join(' ');
+    if (command.action) {
+      suggestions.push(suggestionData);
+    }
+  }
+
+  return suggestions;
+}
+
+function getNestedCommands(item: BindedCommand) {
+  const commands: BindedCommand[] = [];
+  commands.push(item);
+  if (item.command.subcommands) {
+    for (const subPropItem of Object.values(item.command.subcommands)) {
+      const subCommandVariants = getNestedCommands({ command: subPropItem, value: item.value });
+      commands.push(...subCommandVariants);
+    }
+  }
+  return commands;
+}
 export async function getDefaultSuggestions() {
   const history = await getHistory();
   const suggestions: { name: string; data: string }[] = [];
