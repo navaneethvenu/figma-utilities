@@ -51,7 +51,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
     }
   }
 
-  suggestions = generateSuggestions(suggestionRow);
+  suggestions = generateSuggestions(suggestionRow, flattenedCommands);
 
   return suggestions;
 }
@@ -65,14 +65,17 @@ function getClosestSuggestion(param: string, flattenedCommands: Record<string, P
   }
 }
 
-function generateSuggestions(suggestionRow: BindedCommand[]): Suggestion[] {
+function generateSuggestions(
+  suggestionRow: BindedCommand[],
+  flattenedCommands: Record<string, PropItem>
+): Suggestion[] {
   let suggestions: Suggestion[] = [];
   const suggestionCommands: BindedCommand[][] = [];
 
   if (suggestionRow.length === 0) return;
 
   const lastItem: BindedCommand = suggestionRow[suggestionRow.length - 1];
-  const commandVariants: BindedCommand[] = getNestedCommands(lastItem);
+  const commandVariants: BindedCommand[] = getSuggestedCommands(lastItem, flattenedCommands);
 
   for (const commandVariant of commandVariants) {
     suggestionCommands.push([...suggestionRow.slice(0, suggestionRow.length - 1), commandVariant]);
@@ -114,17 +117,16 @@ function generateSuggestions(suggestionRow: BindedCommand[]): Suggestion[] {
   return suggestions;
 }
 
-function getNestedCommands(item: BindedCommand) {
+function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<string, PropItem>) {
   const commands: BindedCommand[] = [];
-  commands.push(item);
-  if (item.command.subcommands) {
-    for (const subPropItem of Object.values(item.command.subcommands)) {
-      const subCommandVariants = getNestedCommands({ command: subPropItem, value: item.value });
-      commands.push(...subCommandVariants);
+  for (const command in flattenedCommands) {
+    if (command.startsWith(item.command.shortcut)) {
+      commands.push({ command: flattenedCommands[command], value: item.value });
     }
   }
   return commands;
 }
+
 export async function getDefaultSuggestions() {
   const history = await getHistory();
   const suggestions: { name: string; data: string }[] = [];
