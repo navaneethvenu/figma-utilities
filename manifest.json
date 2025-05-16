@@ -1,5 +1,5 @@
 {
-  "name": "Figma Utils",
+  "name": "Hotkey",
 "id": "1504713278524433842",
   "api": "1.0.0",
   "main": "dist/code.js",
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "name": "Set Properties",
+      "name": "Quick Command",
       "command": "set-properties",
       "parameters": [
         {
@@ -32,28 +32,6 @@
           "optional": false,
           "description": "Set Property",
           "allowFreeform": false
-        }
-      ]
-    },
-    {
-      "name": "Copy Properties",
-      "command": "copy-properties",
-      "parameters": [
-        {
-          "name": "Scale",
-          "key": "scale",
-          "description": "enter a relative scale factor"
-        }
-      ]
-    },
-    {
-      "name": "Case",
-      "command": "case",
-      "parameters": [
-        {
-          "name": "Scale",
-          "key": "scale",
-          "description": "enter a relative scale factor"
         }
       ]
     }
