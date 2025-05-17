@@ -290,6 +290,12 @@ export const propList: Record<string, PropItem> = {
         hasValue: false,
         action: ({ param, node }) => filterSelection({ param, node }),
       },
+      fscs: {
+        name: 'Filter Selection to Component Sets',
+        shortcut: 'fscs',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
       fsi: {
         name: 'Filter Selection to Instances',
         shortcut: 'fsi',
@@ -317,6 +323,12 @@ export const propList: Record<string, PropItem> = {
       fsp: {
         name: 'Filter Selection to Polygons',
         shortcut: 'fsp',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fss: {
+        name: 'Filter Selection to Stars',
+        shortcut: 'fss',
         hasValue: false,
         action: ({ param, node }) => filterSelection({ param, node }),
       },
@@ -365,6 +377,12 @@ export const propList: Record<string, PropItem> = {
         hasValue: false,
         action: ({ param, node }) => excludeSelection({ param, node }),
       },
+      escs: {
+        name: 'Exclude Component Sets from Selection',
+        shortcut: 'escs',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
       esi: {
         name: 'Exclude Instances from Selection',
         shortcut: 'esi',
@@ -392,6 +410,12 @@ export const propList: Record<string, PropItem> = {
       esp: {
         name: 'Exclude Polygons from Selection',
         shortcut: 'esp',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      ess: {
+        name: 'Exclude Stars from Selection',
+        shortcut: 'ess',
         hasValue: false,
         action: ({ param, node }) => excludeSelection({ param, node }),
       },
