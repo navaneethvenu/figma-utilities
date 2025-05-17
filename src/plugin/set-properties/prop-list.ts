@@ -3,7 +3,7 @@ import setHeight from './utils/set-dimensions/set-height';
 import setPadding from './utils/set-padding';
 import setPosition from './utils/set-pos';
 import setRadius from './utils/set-radius';
-import setStroke from './utils/set-stroke';
+import setStrokeWidth from './utils/stroke/set-stroke-width';
 import setWidth from './utils/set-dimensions/set-width';
 import toggleClip from './utils/toggle-clip';
 import setSize from './utils/set-dimensions/set-size';
@@ -15,6 +15,7 @@ import setConstraints from './utils/set-constraints/set-constraints';
 import move from './utils/move/move';
 import dockWithConstraints from './utils/dock-with-constraints/dock-with-constraints';
 import dockOutWithConstraints from './utils/dock-out-with-constraints/dock-out-with-constraints';
+import setStrokeAlign from './utils/stroke/set-stroke-align';
 
 export interface PropItem {
   name: string;
@@ -23,6 +24,7 @@ export interface PropItem {
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
   unit?: string;
+  message?: string;
   action?: ({ param, value, node }: parameterRoutingProps) => void;
 }
 
@@ -187,7 +189,7 @@ export const propList: Record<string, PropItem> = {
     action: ({ param, value, node }) => setPadding({ param, value, node }),
   },
 
-  //Stroke
+  //Set Stroke Width
   st: {
     name: 'Strokes',
     shortcut: 'st',
@@ -197,34 +199,63 @@ export const propList: Record<string, PropItem> = {
         name: 'Left Stroke',
         shortcut: 'stl',
         hasValue: true,
+        action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
       },
       str: {
         name: 'Right Stroke',
         shortcut: 'str',
         hasValue: true,
+        action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
       },
       stt: {
         name: 'Top Stroke',
         shortcut: 'stt',
         hasValue: true,
+        action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
       },
       stb: {
         name: 'Bottom Stroke',
         shortcut: 'stb',
         hasValue: true,
+        action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
       },
       stx: {
         name: 'Horizontal Strokes',
         shortcut: 'stx',
         hasValue: true,
+        action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
       },
       sty: {
         name: 'Vertical Strokes',
         shortcut: 'sty',
         hasValue: true,
+        action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
       },
     },
-    action: ({ param, value, node }) => setStroke({ param, value, node }),
+    action: ({ param, value, node }) => setStrokeWidth({ param, value, node }),
+  },
+
+  //Set Stroke Align
+  sti: {
+    name: 'Stroke Align Inside',
+    message: 'Set alignment of stroke to inside',
+    shortcut: 'sti',
+    hasValue: false,
+    action: ({ param, node }) => setStrokeAlign({ param, node }),
+  },
+  stc: {
+    name: 'Stroke Align Center',
+    message: 'Set alignment of stroke to center',
+    shortcut: 'stc',
+    hasValue: false,
+    action: ({ param, node }) => setStrokeAlign({ param, node }),
+  },
+  sto: {
+    name: 'Stroke Align Outside',
+    message: 'Set alignment of stroke to outside',
+    shortcut: 'sto',
+    hasValue: false,
+    action: ({ param, node }) => setStrokeAlign({ param, node }),
   },
 
   //Clip
