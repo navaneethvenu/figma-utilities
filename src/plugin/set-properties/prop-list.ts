@@ -377,28 +377,28 @@ export const propList: Record<string, PropItem> = {
     allowsNegative: true,
     subcommands: {
       DL: {
-        name: 'Dock out Left with Constraints',
+        name: 'Dock out Lefts',
         shortcut: 'DL',
         hasValue: true,
         allowsNegative: true,
         action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
       },
       DR: {
-        name: 'Dock out Right with Constraints',
+        name: 'Dock out Right',
         shortcut: 'DR',
         hasValue: true,
         allowsNegative: true,
         action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
       },
       DT: {
-        name: 'Dock out Top with Constraints',
+        name: 'Dock out Top',
         shortcut: 'DT',
         hasValue: true,
         allowsNegative: true,
         action: ({ param, node, value }) => dockOutWithConstraints({ param, node, value }),
       },
       DB: {
-        name: 'Dock out Bottom with Constraints',
+        name: 'Dock out Bottom',
         shortcut: 'DB',
         hasValue: true,
         allowsNegative: true,
