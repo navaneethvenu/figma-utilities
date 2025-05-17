@@ -16,6 +16,8 @@ import move from './utils/move/move';
 import dockWithConstraints from './utils/dock-with-constraints/dock-with-constraints';
 import dockOutWithConstraints from './utils/dock-out-with-constraints/dock-out-with-constraints';
 import setStrokeAlign from './utils/stroke/set-stroke-align';
+import filterSelection from './utils/selection/filter-selection';
+import excludeSelection from './utils/selection/exclude-selection';
 
 export interface PropItem {
   name: string;
@@ -256,6 +258,156 @@ export const propList: Record<string, PropItem> = {
     shortcut: 'sto',
     hasValue: false,
     action: ({ param, node }) => setStrokeAlign({ param, node }),
+  },
+
+  //Filter Selection
+  fs: {
+    name: 'Filter Selection',
+    shortcut: 'fs',
+    hasValue: false,
+    subcommands: {
+      fsf: {
+        name: 'Filter Selection to Frames',
+        shortcut: 'fsf',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsg: {
+        name: 'Filter Selection to Groups',
+        shortcut: 'fsg',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fst: {
+        name: 'Filter Selection to Text',
+        shortcut: 'fst',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsc: {
+        name: 'Filter Selection to Components',
+        shortcut: 'fsc',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsi: {
+        name: 'Filter Selection to Instances',
+        shortcut: 'fsi',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsl: {
+        name: 'Filter Selection to Lines',
+        shortcut: 'fsl',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsv: {
+        name: 'Filter Selection to Vectors',
+        shortcut: 'fsv',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fse: {
+        name: 'Filter Selection to Ellipses',
+        shortcut: 'fse',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsp: {
+        name: 'Filter Selection to Polygons',
+        shortcut: 'fsp',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsr: {
+        name: 'Filter Selection to Rectangles',
+        shortcut: 'fsr',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+      fsb: {
+        name: 'Filter Selection to Boolean Operations',
+        shortcut: 'fsb',
+        hasValue: false,
+        action: ({ param, node }) => filterSelection({ param, node }),
+      },
+    },
+  },
+
+  //Exclude from Selection
+  es: {
+    name: 'Exclude Selection',
+    shortcut: 'es',
+    hasValue: false,
+    subcommands: {
+      esf: {
+        name: 'Exclude Frames from Selection',
+        shortcut: 'esf',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esg: {
+        name: 'Exclude Groups from Selection',
+        shortcut: 'esg',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      est: {
+        name: 'Exclude Text from Selection',
+        shortcut: 'est',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esc: {
+        name: 'Exclude Components from Selection',
+        shortcut: 'esc',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esi: {
+        name: 'Exclude Instances from Selection',
+        shortcut: 'esi',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esl: {
+        name: 'Exclude Lines from Selection',
+        shortcut: 'esl',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esv: {
+        name: 'Exclude Vectors from Selection',
+        shortcut: 'esv',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      ese: {
+        name: 'Exclude Ellipses from Selection',
+        shortcut: 'ese',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esp: {
+        name: 'Exclude Polygons from Selection',
+        shortcut: 'esp',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esr: {
+        name: 'Exclude Rectangles from Selection',
+        shortcut: 'esr',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+      esb: {
+        name: 'Exclude Boolean Operations from Selection',
+        shortcut: 'esb',
+        hasValue: false,
+        action: ({ param, node }) => excludeSelection({ param, node }),
+      },
+    },
   },
 
   //Clip
