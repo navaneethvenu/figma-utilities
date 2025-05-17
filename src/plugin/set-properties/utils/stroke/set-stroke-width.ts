@@ -1,5 +1,5 @@
-import notifyError from '../../utils/error';
-import { ErrorType } from '../../utils/errorType';
+import notifyError from '../../../utils/error';
+import { ErrorType } from '../../../utils/errorType';
 
 interface setStrokeProps {
   param: string;
@@ -7,7 +7,7 @@ interface setStrokeProps {
   node: SceneNode;
 }
 
-export default function setStroke({ param, value, node }: setStrokeProps) {
+export default function setStrokeWidth({ param, value, node }: setStrokeProps) {
   const strokeWidth = parseFloat(value);
   const nodeTypeCheck =
     node.type === 'FRAME' ||

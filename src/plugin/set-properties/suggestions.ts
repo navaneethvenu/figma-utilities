@@ -92,17 +92,20 @@ function generateSuggestions(
 
     let lastMessage = '';
     const { value, command } = lastCommand;
+
     if (command.hasValue) {
       if (lastCommand.value !== '') {
         if (Math.sign(parseFloat(value)) >= 0 || command.allowsNegative === true) {
           const unit = command.unit === undefined ? 'px' : command.unit;
-          lastMessage = `Set ${command.name} to ${value}${unit}`;
+          if (command.message) lastMessage = `${command.message} ${value}${unit}`;
+          else lastMessage = `Set ${command.name} to ${value}${unit}`;
         } else {
           lastMessage = `Error: ${command.name} cannot have negative values`;
         }
       } else lastMessage = `Set ${command.name} to (Enter Value)`;
     } else {
-      lastMessage = command.name;
+      if (command.message) lastMessage = command.message;
+      else lastMessage = command.name;
     }
 
     const newName = `${command.shortcut}${value} - ${lastMessage}`;
