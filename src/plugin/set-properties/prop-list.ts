@@ -18,6 +18,7 @@ import dockOutWithConstraints from './utils/dock-out-with-constraints/dock-out-w
 import setStrokeAlign from './utils/stroke/set-stroke-align';
 import filterSelection from './utils/selection/filter-selection';
 import excludeSelection from './utils/selection/exclude-selection';
+import countSelectedElements from './utils/count/count';
 
 export interface PropItem {
   name: string;
@@ -440,6 +441,24 @@ export const propList: Record<string, PropItem> = {
     shortcut: 'clip',
     hasValue: false,
     action: ({ node }) => toggleClip({ node }),
+  },
+
+  // Count
+  count: {
+    name: 'Count Elements',
+    shortcut: 'count',
+    hasValue: false,
+    message: 'Count top-level selected elements',
+    action: ({ param }) => countSelectedElements({ param }),
+    subcommands: {
+      countn: {
+        name: 'Count Nested Elements',
+        shortcut: 'countn',
+        hasValue: false,
+        message: 'Count all nested elements within the selection',
+        action: ({ param }) => countSelectedElements({ param }),
+      },
+    },
   },
 
   //Move
