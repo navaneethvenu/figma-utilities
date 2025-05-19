@@ -20,6 +20,7 @@ import filterSelection from './utils/selection/filter-selection';
 import excludeSelection from './utils/selection/exclude-selection';
 import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap';
+import { fitToParent } from './utils/fit/fit';
 
 export interface PropItem {
   name: string;
@@ -725,6 +726,31 @@ export const propList: Record<string, PropItem> = {
             action: ({ param, nodes }) => setConstraints({ shortcut: param, nodes }),
           },
         },
+      },
+    },
+  },
+
+  // Fit
+  fit: {
+    name: 'Fit to Parent',
+    shortcut: 'fit',
+    hasValue: false,
+    message: 'Fit element to parent width and height',
+    action: ({ param, nodes }) => fitToParent({ param, nodes }),
+    subcommands: {
+      fitw: {
+        name: 'Fit to Parent Width',
+        shortcut: 'fitw',
+        hasValue: false,
+        message: 'Fit element to parent width only',
+        action: ({ param, nodes }) => fitToParent({ param, nodes }),
+      },
+      fith: {
+        name: 'Fit to Parent Height',
+        shortcut: 'fith',
+        hasValue: false,
+        message: 'Fit element to parent height only',
+        action: ({ param, nodes }) => fitToParent({ param, nodes }),
       },
     },
   },
