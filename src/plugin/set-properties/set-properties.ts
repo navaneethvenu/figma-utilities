@@ -8,10 +8,8 @@ export default async function setProperties(parameters: { [key: string]: string 
     if (selection && selection.length > 0) {
       const parsedParams = parseParameters(parameters);
 
-      for (const node of selection) {
-        for (const { param, value } of parsedParams) {
-          parameterRouting({ param, value, node });
-        }
+      for (const { param, value } of parsedParams) {
+        parameterRouting({ param, value, nodes: selection });
       }
 
       await addHistory(parsedParams);

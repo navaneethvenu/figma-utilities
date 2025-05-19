@@ -3,4 +3,5 @@ export enum ErrorType {
   INVALID_VAL = 'Invalid Value',
   UNSUPPORTED_PROP = 'Unsupported Property',
   NO_SELECTION = 'No Selection',
+  INV_SELECTION = 'Invalid Selection',
 }
