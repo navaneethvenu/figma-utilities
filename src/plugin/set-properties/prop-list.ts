@@ -19,6 +19,7 @@ import setStrokeAlign from './utils/stroke/set-stroke-align';
 import filterSelection from './utils/selection/filter-selection';
 import excludeSelection from './utils/selection/exclude-selection';
 import countSelectedElements from './utils/count/count';
+import { swapSelectedElements } from './utils/swap/swap';
 
 export interface PropItem {
   name: string;
@@ -471,6 +472,31 @@ export const propList: Record<string, PropItem> = {
         hasValue: false,
         message: 'Count all nested elements within the selection',
         action: ({ param }) => countSelectedElements({ param }),
+      },
+    },
+  },
+
+  // Swap
+  swap: {
+    name: 'Swap Elements',
+    shortcut: 'swap',
+    hasValue: false,
+    message: 'Swap position of two selected elements',
+    action: ({ param, nodes }) => swapSelectedElements({ param, nodes }),
+    subcommands: {
+      swapx: {
+        name: 'Swap Horizontally',
+        shortcut: 'swapx',
+        hasValue: false,
+        message: 'Swap elements based on their x (horizontal) position',
+        action: ({ param, nodes }) => swapSelectedElements({ param, nodes }),
+      },
+      swapy: {
+        name: 'Swap Vertically',
+        shortcut: 'swapy',
+        hasValue: false,
+        message: 'Swap elements based on their y (vertical) position',
+        action: ({ param, nodes }) => swapSelectedElements({ param, nodes }),
       },
     },
   },
