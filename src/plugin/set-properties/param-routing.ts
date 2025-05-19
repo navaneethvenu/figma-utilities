@@ -4,10 +4,13 @@ import regexShorthand from './regex';
 export interface parameterRoutingProps {
   param: string;
   value: string;
-  node: SceneNode;
+  nodes: readonly SceneNode[];
 }
 
-export default function parameterRouting({ param, value, node }: parameterRoutingProps, propItems = propList): boolean {
+export default function parameterRouting(
+  { param, value, nodes: node }: parameterRoutingProps,
+  propItems = propList
+): boolean {
   let match = false;
 
   for (const prop of Object.values(propItems)) {
@@ -22,7 +25,7 @@ export default function parameterRouting({ param, value, node }: parameterRoutin
 
       // Check for subcommand matches
       if (prop.subcommands) {
-        const subcommandMatch = parameterRouting({ param, value, node }, prop.subcommands);
+        const subcommandMatch = parameterRouting({ param, value, nodes: node }, prop.subcommands);
         if (subcommandMatch) {
           match = true; // Subcommand executed
           break; // Stop processing further as a subcommand is executed
@@ -31,7 +34,7 @@ export default function parameterRouting({ param, value, node }: parameterRoutin
 
       // If no subcommand matches, and the parent itself matches, execute the parent's action
       if (prop.action && param === prop.shortcut) {
-        prop.action({ param, value, node });
+        prop.action({ param, value, nodes: node });
         match = true; // Action executed
         break; // Stop processing as action is executed
       }

@@ -4,77 +4,79 @@ import { ErrorType } from '../../utils/errorType';
 interface setPaddingProps {
   param: string;
   value: string;
-  node: SceneNode;
+  nodes: readonly SceneNode[];
 }
 
-export default function setPadding({ param, value, node }: setPaddingProps) {
+export default function setPadding({ param, value, nodes }: setPaddingProps) {
   const padding = parseFloat(value);
-  const nodeTypeCheck = node.type === 'FRAME' && node.layoutMode !== 'NONE';
+  for (const node of nodes) {
+    const nodeTypeCheck = node.type === 'FRAME' && node.layoutMode !== 'NONE';
 
-  if (nodeTypeCheck) {
-    if (!isNaN(padding)) {
-      //Left Padding
-      if (/pl\b/.test(param)) {
-        node.paddingLeft = padding;
+    if (nodeTypeCheck) {
+      if (!isNaN(padding)) {
+        //Left Padding
+        if (/pl\b/.test(param)) {
+          node.paddingLeft = padding;
+        }
+
+        //Right Padding
+        else if (/pr\b/.test(param)) {
+          node.paddingRight = padding;
+        }
+
+        //Top Padding
+        else if (/pt\b/.test(param)) {
+          node.paddingTop = padding;
+        }
+
+        //Bottom Padding
+        else if (/pb\b/.test(param)) {
+          node.paddingBottom = padding;
+        }
+
+        //Horizontal Padding
+        else if (/px\b/.test(param)) {
+          node.paddingLeft = padding;
+          node.paddingRight = padding;
+        }
+
+        //Vertical Padding
+        else if (/py\b/.test(param)) {
+          node.paddingTop = padding;
+          node.paddingBottom = padding;
+        }
+
+        //Complete Padding
+        else if (/p\b/.test(param)) {
+          node.paddingLeft = padding;
+          node.paddingRight = padding;
+          node.paddingTop = padding;
+          node.paddingBottom = padding;
+        }
+
+        //Invalid Command
+        else {
+          notifyError({
+            type: ErrorType.INVALID_CMD,
+            message: param,
+          });
+        }
       }
 
-      //Right Padding
-      else if (/pr\b/.test(param)) {
-        node.paddingRight = padding;
-      }
-
-      //Top Padding
-      else if (/pt\b/.test(param)) {
-        node.paddingLeft = padding;
-      }
-
-      //Bottom Padding
-      else if (/pb\b/.test(param)) {
-        node.paddingRight = padding;
-      }
-
-      //Horizontal Padding
-      else if (/px\b/.test(param)) {
-        node.paddingLeft = padding;
-        node.paddingRight = padding;
-      }
-
-      //Vertical Padding
-      else if (/py\b/.test(param)) {
-        node.paddingTop = padding;
-        node.paddingBottom = padding;
-      }
-
-      //Complete Padding
-      else if (/p\b/.test(param)) {
-        node.paddingLeft = padding;
-        node.paddingRight = padding;
-        node.paddingTop = padding;
-        node.paddingBottom = padding;
-      }
-
-      //Invalid Command
+      //Invalid Value
       else {
         notifyError({
-          type: ErrorType.INVALID_CMD,
+          type: ErrorType.INVALID_VAL,
           message: param,
         });
       }
     }
-
-    //Invalid Value
+    //Unsupported Prop
     else {
       notifyError({
-        type: ErrorType.INVALID_VAL,
-        message: param,
+        type: ErrorType.UNSUPPORTED_PROP,
+        message: `Padding is not applicable on node type ${node.type}`,
       });
     }
-  }
-  //Unsupported Prop
-  else {
-    notifyError({
-      type: ErrorType.UNSUPPORTED_PROP,
-      message: `Padding is not applicable on node type ${node.type}`,
-    });
   }
 }

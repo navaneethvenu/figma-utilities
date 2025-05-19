@@ -4,27 +4,29 @@ import { supportedNodes, SupportedNodes } from './supported-nodes';
 
 interface setConstraintsProps {
   shortcut: string;
-  node: SceneNode;
+  nodes: readonly SceneNode[];
 }
 
-export default function setConstraints({ node, shortcut }: setConstraintsProps) {
-  const nodeCheck = supportedNodes.find((type) => node.type === type);
-  let assertedNode = node as SupportedNodes;
+export default function setConstraints({ nodes, shortcut }: setConstraintsProps) {
+  for (const node of nodes) {
+    const nodeCheck = supportedNodes.find((type) => node.type === type);
+    let assertedNode = node as SupportedNodes;
 
-  if (nodeCheck !== undefined) {
-    (assertedNode as SupportedNodes).constraints = parseConstraints(
-      shortcut,
-      assertedNode.constraints.horizontal,
-      assertedNode.constraints.vertical
-    );
-  }
+    if (nodeCheck !== undefined) {
+      (assertedNode as SupportedNodes).constraints = parseConstraints(
+        shortcut,
+        assertedNode.constraints.horizontal,
+        assertedNode.constraints.vertical
+      );
+    }
 
-  //Unsupported Prop
-  else {
-    notifyError({
-      type: ErrorType.UNSUPPORTED_PROP,
-      message: `Constraints are not applicable on node type ${node.type}`,
-    });
+    //Unsupported Prop
+    else {
+      notifyError({
+        type: ErrorType.UNSUPPORTED_PROP,
+        message: `Constraints are not applicable on node type ${node.type}`,
+      });
+    }
   }
 }
 
