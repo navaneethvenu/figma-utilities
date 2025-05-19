@@ -9,22 +9,7 @@
     "allowedDomains": ["none"]
   },
   "documentAccess": "dynamic-page",
-  "menu": [
-    {
-      "name": "Count",
-      "command": "count",
-      "parameters": [
-        {
-          "name": "Type",
-          "key": "type",
-          "optional": true,
-          "description": "Count top-level nodes or all nested nodes"
-        }
-      ]
-    },
-    {
-      "name": "Quick Command",
-      "command": "set-properties",
+ 
       "parameters": [
         {
           "name": "Property",
@@ -34,6 +19,5 @@
           "allowFreeform": false
         }
       ]
-    }
-  ]
+   
 }
