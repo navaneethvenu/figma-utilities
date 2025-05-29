@@ -117,7 +117,6 @@ function generateSuggestions(
     }
 
     const newName = `${command.shortcut}${command.hasValue ? value : ''} - ${lastMessage}`;
-
     suggestionData.name = suggestionData.name ? `${suggestionData.name}, ${newName}` : newName;
 
     suggestionData.data = suggestionCommandList.map((command) => command.command.shortcut + command.value).join(' ');
