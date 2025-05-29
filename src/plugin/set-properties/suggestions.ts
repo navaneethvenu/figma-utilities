@@ -84,7 +84,9 @@ function generateSuggestions(
   for (const suggestionCommandList of suggestionCommands) {
     let suggestionData: { name: string; data: string } = { name: '', data: '' };
     suggestionData.name = suggestionCommandList
-      .map((command) => command.command.shortcut + command.value)
+      .map((command) =>
+        command.command.hasValue ? command.command.shortcut + command.value : command.command.shortcut
+      )
       .slice(0, suggestionCommandList.length - 1)
       .join(', ');
 
@@ -95,12 +97,18 @@ function generateSuggestions(
 
     if (command.hasValue) {
       if (lastCommand.value !== '') {
-        if (Math.sign(parseFloat(value)) >= 0 || command.allowsNegative === true) {
+        const isFillCommand = command.shortcut.toLowerCase() === 'f';
+
+        const isValidValue = isFillCommand
+          ? /^#?[0-9a-fA-F]+$/.test(value) // hex color validation, accepts optional leading #
+          : !isNaN(parseFloat(value)) && (parseFloat(value) >= 0 || command.allowsNegative === true);
+
+        if (isValidValue) {
           const unit = command.unit === undefined ? 'px' : command.unit;
           if (command.message) lastMessage = `${command.message} ${value}${unit}`;
           else lastMessage = `Set ${command.name} to ${value}${unit}`;
         } else {
-          lastMessage = `Error: ${command.name} cannot have negative values`;
+          lastMessage = `Error: ${command.name} cannot have invalid or negative values`;
         }
       } else lastMessage = `Set ${command.name} to (Enter Value)`;
     } else {
@@ -108,7 +116,8 @@ function generateSuggestions(
       else lastMessage = command.name;
     }
 
-    const newName = `${command.shortcut}${value} - ${lastMessage}`;
+    const newName = `${command.shortcut}${command.hasValue ? value : ''} - ${lastMessage}`;
+
     suggestionData.name = suggestionData.name ? `${suggestionData.name}, ${newName}` : newName;
 
     suggestionData.data = suggestionCommandList.map((command) => command.command.shortcut + command.value).join(' ');
