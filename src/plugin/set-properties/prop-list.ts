@@ -21,6 +21,7 @@ import excludeSelection from './utils/selection/exclude-selection';
 import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap';
 import { fitToParent } from './utils/fit/fit';
+import setFill from './utils/color/replace-fill';
 
 export interface PropItem {
   name: string;
@@ -500,6 +501,18 @@ export const propList: Record<string, PropItem> = {
         action: ({ param, nodes }) => swapSelectedElements({ param, nodes }),
       },
     },
+  },
+
+  //Replace Fill
+
+  f: {
+    name: 'Replace Fill Color',
+    shortcut: 'f',
+    hasValue: true, // expects a hex color value after 'f#'
+    message: 'Replace fill color with',
+    action: ({ param, value, nodes }) => setFill({ param, value, nodes }),
+    unit: '',
+    // No subcommands for fill
   },
 
   //Move
