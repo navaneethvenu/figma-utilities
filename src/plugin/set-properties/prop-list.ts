@@ -645,6 +645,22 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: true,
         action: ({ param, nodes, value }) => dockOutWithConstraints({ param, nodes, value }),
+        subcommands: {
+          DTL: {
+            name: 'Dock out to Top Left',
+            shortcut: 'DTL',
+            hasValue: true,
+            allowsNegative: true,
+            action: ({ param, nodes, value }) => dockOutWithConstraints({ param, nodes, value }),
+          },
+          DTR: {
+            name: 'Dock out to Top Right',
+            shortcut: 'DTR',
+            hasValue: true,
+            allowsNegative: true,
+            action: ({ param, nodes, value }) => dockOutWithConstraints({ param, nodes, value }),
+          },
+        },
       },
       DB: {
         name: 'Dock out Bottom',
@@ -652,6 +668,22 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: true,
         action: ({ param, nodes, value }) => dockOutWithConstraints({ param, nodes, value }),
+        subcommands: {
+          DBL: {
+            name: 'Dock out to Bottom Left',
+            shortcut: 'DBL',
+            hasValue: true,
+            allowsNegative: true,
+            action: ({ param, nodes, value }) => dockOutWithConstraints({ param, nodes, value }),
+          },
+          DBR: {
+            name: 'Dock out to Bottom Right',
+            shortcut: 'DBR',
+            hasValue: true,
+            allowsNegative: true,
+            action: ({ param, nodes, value }) => dockOutWithConstraints({ param, nodes, value }),
+          },
+        },
       },
     },
   },
