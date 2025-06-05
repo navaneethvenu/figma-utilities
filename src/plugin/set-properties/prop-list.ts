@@ -19,7 +19,7 @@ import setStrokeAlign from './utils/stroke/set-stroke-align';
 import filterSelection from './utils/selection/filter-selection';
 import excludeSelection from './utils/selection/exclude-selection';
 import countSelectedElements from './utils/count/count';
-import { swapSelectedElements } from './utils/swap/swap';
+import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
 import setFill from './utils/color/replace-fill';
 
