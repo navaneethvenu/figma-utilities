@@ -6,31 +6,29 @@ interface setWidthProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
+  mode: 'set' | 'increase' | 'decrease';
 }
 
-export default function setWidth({ param, value, nodes }: setWidthProps) {
-  const width = parseFloat(value);
+export default function setWidth({ param, value, nodes, mode }: setWidthProps) {
+  const parsedValue = parseFloat(value);
 
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      if (!isNaN(width)) {
-        assertedNode.resize(width, node.height);
-      }
+      const newWidth =
+        mode === 'increase' ? node.width + parsedValue : mode === 'decrease' ? node.width - parsedValue : parsedValue;
 
-      //Invalid Value
-      else {
+      if (!isNaN(newWidth)) {
+        assertedNode.resize(newWidth, node.height);
+      } else {
         notifyError({
           type: ErrorType.INVALID_VAL,
           message: param,
         });
       }
-    }
-
-    //Unsupported Prop
-    else {
+    } else {
       notifyError({
         type: ErrorType.UNSUPPORTED_PROP,
         message: `Width is not applicable on node type ${node.type}`,

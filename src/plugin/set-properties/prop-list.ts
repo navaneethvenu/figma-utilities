@@ -66,7 +66,23 @@ export const propList: Record<string, PropItem> = {
     shortcut: 'w',
     hasValue: true,
     allowsNegative: false,
-    action: ({ param, value, nodes }) => setWidth({ param, value, nodes }),
+    action: ({ param, value, nodes }) => setWidth({ param, value, nodes, mode: 'set' }),
+    subcommands: {
+      '+w': {
+        name: 'Increase Width By',
+        shortcut: '+w',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, value, nodes }) => setWidth({ param, value, nodes, mode: 'increase' }),
+      },
+      '-w': {
+        name: 'Decrease Width By',
+        shortcut: '-w',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, value, nodes }) => setWidth({ param, value, nodes, mode: 'decrease' }),
+      },
+    },
   },
 
   //Height
@@ -75,7 +91,23 @@ export const propList: Record<string, PropItem> = {
     shortcut: 'h',
     hasValue: true,
     allowsNegative: false,
-    action: ({ param, value, nodes }) => setHeight({ param, value, nodes }),
+    action: ({ param, value, nodes }) => setHeight({ param, value, nodes, mode: 'set' }),
+    subcommands: {
+      '+h': {
+        name: 'Increase Height By',
+        shortcut: '+h',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, value, nodes }) => setHeight({ param, value, nodes, mode: 'increase' }),
+      },
+      '-h': {
+        name: 'Decrease Height By',
+        shortcut: '-h',
+        hasValue: true,
+        allowsNegative: true,
+        action: ({ param, value, nodes }) => setHeight({ param, value, nodes, mode: 'decrease' }),
+      },
+    },
   },
 
   //Scale
