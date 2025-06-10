@@ -1,6 +1,6 @@
 import { parameterRoutingProps } from './param-routing';
 import setHeight from './utils/set-dimensions/set-height';
-import setPadding from './utils/set-padding';
+import setPadding from './utils/padding/set-padding';
 import setPosition from './utils/set-pos';
 import setRadius from './utils/set-radius';
 import setStrokeWidth from './utils/stroke/set-stroke-width';
