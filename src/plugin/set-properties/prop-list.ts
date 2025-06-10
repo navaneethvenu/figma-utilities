@@ -21,6 +21,7 @@ import excludeSelection from './utils/selection/exclude-selection';
 import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
+import { swapSelectedFills } from './utils/swap/swap-colours';
 import setFill from './utils/color/replace-fill';
 
 export interface PropItem {
@@ -533,6 +534,14 @@ export const propList: Record<string, PropItem> = {
         action: ({ param, nodes }) => swapSelectedElements({ param, nodes }),
       },
     },
+  },
+
+  swapf: {
+    name: 'Swap Fills',
+    shortcut: 'swapf',
+    hasValue: false,
+    message: 'Swap fills of two selected elements',
+    action: ({ param, nodes }) => swapSelectedFills({ param, nodes }),
   },
 
   //Replace Fill
