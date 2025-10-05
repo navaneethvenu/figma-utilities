@@ -59,7 +59,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 function getClosestSuggestion(param: string, flattenedCommands: Record<string, PropItem>): PropItem {
   for (const command in flattenedCommands) {
     if (command.startsWith(param)) {
-      console.log('command;' + command, flattenCommands[command]);
+      console.log('command:' + command, flattenedCommands[command]);
       return flattenedCommands[command];
     }
   }
