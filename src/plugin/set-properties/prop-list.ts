@@ -12,7 +12,6 @@ import setScaleHeight from './utils/set-dimensions/set-scale-height';
 import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
 import setConstraints from './utils/set-constraints/set-constraints';
-import move from './utils/move/move';
 import dockWithConstraints from './utils/dock-with-constraints/dock-with-constraints';
 import dockOutWithConstraints from './utils/dock-out-with-constraints/dock-out-with-constraints';
 import setStrokeAlign from './utils/stroke/set-stroke-align';
@@ -55,50 +54,47 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'x',
             hasValue: true,
             allowsNegative: true,
-            action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
+            action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
+            subcommands: {
+              '-x': {
+                name: 'Move Left',
+                shortcut: '-x',
+                hasValue: true,
+                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'decrease' }),
+              },
+              '+x': {
+                name: 'Move Right',
+                shortcut: '+x',
+                hasValue: true,
+                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'increase' }),
+              },
+            },
           },
           y: {
             name: 'Position Y',
             shortcut: 'y',
             hasValue: true,
             allowsNegative: true,
-            action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
-          },
-          //Move
-          m: {
-            name: 'Move',
-            shortcut: 'm',
-            hasValue: false,
+            action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
             subcommands: {
-              ml: {
-                name: 'Move Left',
-                shortcut: 'ml',
-                hasValue: true,
-                action: ({ param, nodes, value }) => move({ param, nodes, value }),
-              },
-              mr: {
-                name: 'Move Right',
-                shortcut: 'mr',
-                hasValue: true,
-                action: ({ param, nodes, value }) => move({ param, nodes, value }),
-              },
-              mt: {
+              '-y': {
                 name: 'Move Top',
-                shortcut: 'mt',
+                shortcut: '-y',
                 hasValue: true,
-                action: ({ param, nodes, value }) => move({ param, nodes, value }),
+                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'decrease' }),
               },
-              mb: {
+              '+y': {
                 name: 'Move Bottom',
-                shortcut: 'mb',
+                shortcut: '+y',
                 hasValue: true,
-                action: ({ param, nodes, value }) => move({ param, nodes, value }),
+                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'increase' }),
               },
             },
           },
+          //Move
         },
         allowsNegative: true,
-        action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
+        action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
       },
       //Dock In with Constraints
       d: {
