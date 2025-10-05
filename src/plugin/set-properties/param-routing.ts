@@ -1,4 +1,4 @@
-import { propList } from './prop-list';
+import { flattenCommands, propList } from './prop-list';
 import regexShorthand from './regex';
 
 export interface parameterRoutingProps {
@@ -12,8 +12,9 @@ export default function parameterRouting(
   propItems = propList
 ): boolean {
   let match = false;
+  const flattenedCommands = flattenCommands(propItems, {});
 
-  for (const prop of Object.values(propItems)) {
+  for (const prop of Object.values(flattenedCommands)) {
     const regex = regexShorthand({
       prop: prop.shortcut,
       hasValue: prop.hasValue,
@@ -23,16 +24,6 @@ export default function parameterRouting(
     if (regex.test(param)) {
       regex.lastIndex = 0; // Reset regex lastIndex in case of global flag usage
 
-      // Check for subcommand matches
-      if (prop.subcommands) {
-        const subcommandMatch = parameterRouting({ param, value, nodes: node }, prop.subcommands);
-        if (subcommandMatch) {
-          match = true; // Subcommand executed
-          break; // Stop processing further as a subcommand is executed
-        }
-      }
-
-      // If no subcommand matches, and the parent itself matches, execute the parent's action
       if (prop.action && param === prop.shortcut) {
         prop.action({ param, value, nodes: node });
         match = true; // Action executed
