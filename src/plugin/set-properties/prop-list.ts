@@ -411,6 +411,18 @@ export const propList: Record<string, PropItem> = {
               },
             },
           },
+          rl: {
+            name: 'Left Corner Radius',
+            shortcut: 'rl',
+            hasValue: true,
+            action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
+          },
+          rr: {
+            name: 'Right Corner Radius',
+            shortcut: 'rr',
+            hasValue: true,
+            action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
+          },
         },
       },
     },
