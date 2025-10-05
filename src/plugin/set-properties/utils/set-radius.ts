@@ -125,6 +125,34 @@ export default function setRadius({ param, value, nodes }: setRadiusProps) {
           }
         }
 
+        //Left Corner Radii
+        else if (/rl.*/.test(param)) {
+          if (specificRadiusNodeTypeCheck) {
+            node.topLeftRadius = radius;
+            node.bottomLeftRadius = radius;
+          } else {
+            //Unsupported Prop
+            notifyError({
+              type: ErrorType.UNSUPPORTED_PROP,
+              message: `${individualRadiiErrorMessage} ${node.type}`,
+            });
+          }
+        }
+
+        //Right Corner Radii
+        else if (/rr.*/.test(param)) {
+          if (specificRadiusNodeTypeCheck) {
+            node.topRightRadius = radius;
+            node.bottomRightRadius = radius;
+          } else {
+            //Unsupported Prop
+            notifyError({
+              type: ErrorType.UNSUPPORTED_PROP,
+              message: `${individualRadiiErrorMessage} ${node.type}`,
+            });
+          }
+        }
+
         //Complete Corner Radius
         else if (/r\b/.test(param)) {
           node.cornerRadius = radius;
