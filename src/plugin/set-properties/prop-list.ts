@@ -1,7 +1,7 @@
 import { parameterRoutingProps } from './param-routing';
 import setHeight from './utils/set-dimensions/set-height';
 import setPadding from './utils/padding/set-padding';
-import setPosition from './utils/set-pos';
+import setPosition from './utils/position/set-pos';
 import setRadius from './utils/set-radius';
 import setStrokeWidth from './utils/stroke/set-stroke-width';
 import setWidth from './utils/set-dimensions/set-width';
@@ -36,21 +36,21 @@ export interface PropItem {
 
 export const propList: Record<string, PropItem> = {
   //Position
-  pos: {
+  xy: {
     name: 'Position',
-    shortcut: 'pos',
+    shortcut: 'xy',
     hasValue: true,
     subcommands: {
-      posx: {
+      x: {
         name: 'Position X',
-        shortcut: 'posx',
+        shortcut: 'x',
         hasValue: true,
         allowsNegative: true,
         action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
       },
-      posy: {
+      y: {
         name: 'Position Y',
-        shortcut: 'posy',
+        shortcut: 'y',
         hasValue: true,
         allowsNegative: true,
         action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),

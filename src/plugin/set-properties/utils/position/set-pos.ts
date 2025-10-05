@@ -1,5 +1,5 @@
-import notifyError from '../../utils/error';
-import { ErrorType } from '../../utils/errorType';
+import notifyError from '../../../utils/error';
+import { ErrorType } from '../../../utils/errorType';
 
 interface setPositionProps {
   param: string;
@@ -9,6 +9,7 @@ interface setPositionProps {
 
 export default function setPosition({ param, value, nodes }: setPositionProps) {
   const position = parseFloat(value);
+  console.log('xxxxx');
 
   for (const node of nodes) {
     const nodeTypeCheck =
@@ -21,23 +22,23 @@ export default function setPosition({ param, value, nodes }: setPositionProps) {
       node.type === 'LINE';
 
     if (nodeTypeCheck) {
+      console.log(param);
       if (!isNaN(position)) {
+        //Both X and Y Positions
+        if (/xy\b/.test(param)) {
+          if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
+          node.x = position;
+          node.y = position;
+        }
         //X Position
-        if (/posx\b/.test(param)) {
+        else if (/x\b/.test(param)) {
           if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
           node.x = position;
         }
 
         //Y Position
-        else if (/posy\b/.test(param)) {
+        else if (/y\b/.test(param)) {
           if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
-          node.y = position;
-        }
-
-        //All Strokes
-        else if (/pos\b/.test(param)) {
-          if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') node.layoutPositioning = 'ABSOLUTE';
-          node.x = position;
           node.y = position;
         }
 
