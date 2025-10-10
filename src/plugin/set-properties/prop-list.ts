@@ -22,6 +22,7 @@ import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
 import setFill from './utils/color/replace-fill';
 import setAutolayoutBehavior from './utils/autolayout/set-autolayout-behavior';
+import wrapInFrame from './utils/wrap/wrap-in-frame';
 
 export interface PropItem {
   name: string;
@@ -1094,6 +1095,13 @@ export const propList: Record<string, PropItem> = {
             },
           },
         },
+      },
+      wf: {
+        name: 'Wrap in Frame',
+        shortcut: 'wf',
+        description: 'Wrap items in selection individually in frames',
+        hasValue: false,
+        action: ({ nodes }) => wrapInFrame({ nodes }),
       },
     },
   },
