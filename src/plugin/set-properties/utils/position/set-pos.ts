@@ -1,5 +1,6 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
+import { supportedNodes } from './supported-nodes';
 
 interface SetPositionProps {
   param: string;
@@ -23,20 +24,13 @@ export default function setPosition({ param, value, nodes, mode }: SetPositionPr
   }
 
   for (const node of nodes) {
-    const nodeTypeCheck =
-      node.type === 'FRAME' ||
-      node.type === 'RECTANGLE' ||
-      node.type === 'POLYGON' ||
-      node.type === 'ELLIPSE' ||
-      node.type === 'STAR' ||
-      node.type === 'VECTOR' ||
-      node.type === 'LINE';
+    const nodeCheck = supportedNodes.find((type) => node.type === type);
 
-    if (!nodeTypeCheck) continue;
+    if (!nodeCheck) continue;
 
     // Ensure absolute positioning for nodes inside frames with layout
     if (node.parent.type === 'FRAME' && node.parent.layoutMode !== 'NONE') {
-      node.layoutPositioning = 'ABSOLUTE';
+      (node as FrameNode).layoutPositioning = 'ABSOLUTE';
     }
 
     // Helper to calculate new value based on mode
