@@ -312,14 +312,38 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'scw',
             hasValue: true,
             allowsNegative: false,
-            action: ({ param, value, nodes }) => setScaleWidth({ param, value, nodes }),
+            action: ({ param, value, nodes }) => setScaleWidth({ param, value, nodes, mode: 'set' }),
+            subcommands: {
+              '+scw': {
+                name: 'Increase Scale Width',
+                shortcut: '+scw',
+                action: ({ param, value, nodes }) => setScaleWidth({ param, value, nodes, mode: 'increase' }),
+              },
+              '-scw': {
+                name: 'Decrease Scale Width',
+                shortcut: '-scw',
+                action: ({ param, value, nodes }) => setScaleWidth({ param, value, nodes, mode: 'decrease' }),
+              },
+            },
           },
           sch: {
             name: 'Scale Height',
             shortcut: 'sch',
             hasValue: true,
             allowsNegative: false,
-            action: ({ param, value, nodes }) => setScaleHeight({ param, value, nodes }),
+            action: ({ param, value, nodes }) => setScaleHeight({ param, value, nodes, mode: 'set' }),
+            subcommands: {
+              '+sch': {
+                name: 'Increase Scale Height',
+                shortcut: '+sch',
+                action: ({ param, value, nodes }) => setScaleHeight({ param, value, nodes, mode: 'increase' }),
+              },
+              '-sch': {
+                name: 'Decrease Scale Height',
+                shortcut: '-sch',
+                action: ({ param, value, nodes }) => setScaleHeight({ param, value, nodes, mode: 'decrease' }),
+              },
+            },
           },
         },
       },

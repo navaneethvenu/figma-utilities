@@ -16,7 +16,6 @@ const unsupportedNodes: NodeType[] = [
   'TABLE',
   'SLIDE_ROW',
   'SLIDE_GRID',
-  'BOOLEAN_OPERATION',
   'SECTION',
   'INTERACTIVE_SLIDE_ELEMENT',
   ...figjamNodes,

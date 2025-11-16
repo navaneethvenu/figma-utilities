@@ -6,31 +6,30 @@ interface setScaleHeightProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
+  mode: 'set' | 'increase' | 'decrease';
 }
 
-export default function setScaleHeight({ param, value, nodes }: setScaleHeightProps) {
+export default function setScaleHeight({ param, value, nodes, mode }: setScaleHeightProps) {
   const height = parseFloat(value);
-
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
-    console.log(nodeCheck);
 
     if (nodeCheck !== undefined) {
-      if (!isNaN(height)) {
-        assertedNode.rescale(height / node.height);
-      }
+      let newHeight;
+      if (mode === 'increase') newHeight = node.height + height;
+      else if (mode === 'decrease') newHeight = node.height - height;
+      else newHeight = height;
 
-      //Invalid Value
-      else {
+      if (!isNaN(newHeight)) {
+        assertedNode.rescale(newHeight / node.height);
+      } else {
         notifyError({
           type: ErrorType.INVALID_VAL,
           message: param,
         });
       }
-    }
-    //Unsupported Prop
-    else {
+    } else {
       notifyError({
         type: ErrorType.UNSUPPORTED_PROP,
         message: `ScaleHeight is not applicable on node type ${node.type}`,
