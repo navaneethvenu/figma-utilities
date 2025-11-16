@@ -3,3 +3,7 @@ dist
 settings.json
 yarn-error.log
 .vscode
+src/plugin/set-properties/.DS_Store
+src/plugin/.DS_Store
+src/.DS_Store
+.DS_Store
