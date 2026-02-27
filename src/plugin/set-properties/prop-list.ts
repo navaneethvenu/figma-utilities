@@ -304,7 +304,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'sc',
         hasValue: true,
         allowsNegative: true,
-        unit: '%',
+        unit: 'x',
         action: ({ param, value, nodes }) => setScale({ param, value, nodes }),
         subcommands: {
           scw: {

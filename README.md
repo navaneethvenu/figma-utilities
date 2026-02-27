@@ -21,3 +21,8 @@ This repo is using:
 - React + Webpack
 - TypeScript
 - Prettier precommit hook
+
+## Command Notes
+
+- `sc` uses a scale factor, not percent.
+- Examples: `sc2` scales to `2x`, `sc0.5` scales to `0.5x`.
