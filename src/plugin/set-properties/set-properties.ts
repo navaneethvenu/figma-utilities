@@ -4,12 +4,17 @@ import parseParameters from './parse-params';
 
 export default async function setProperties(parameters: { [key: string]: string }) {
   try {
-    const selection = figma.currentPage.selection;
-    if (selection && selection.length > 0) {
+    if (figma.currentPage.selection && figma.currentPage.selection.length > 0) {
       const parsedParams = parseParameters(parameters);
 
       for (const { param, value } of parsedParams) {
-        parameterRouting({ param, value, nodes: selection });
+        const currentSelection = figma.currentPage.selection;
+        if (!currentSelection || currentSelection.length === 0) {
+          figma.notify('Selection became empty while applying commands.');
+          return;
+        }
+
+        parameterRouting({ param, value, nodes: currentSelection });
       }
 
       await addHistory(parsedParams);
