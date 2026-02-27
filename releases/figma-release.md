@@ -1,6 +1,6 @@
 # Figma Release Tracker
 
-- Latest version: 13
-- Published on: 2025-10-05
+- Latest version: 14
+- Published on: 2026-02-27
 
 Update this file on every new Figma publish.
