@@ -1,3 +1,6 @@
+import notifyError from '../../../utils/error';
+import { ErrorType } from '../../../utils/errorType';
+
 interface setStrokeProps {
   param: string;
   nodes: readonly SceneNode[];
@@ -26,7 +29,17 @@ export default function setStrokeAlign({ param, nodes }: setStrokeProps) {
       //Outside Stroke
       else if (param === 'sto') {
         node.strokeAlign = 'OUTSIDE';
+      } else {
+        notifyError({
+          type: ErrorType.INVALID_CMD,
+          message: param,
+        });
       }
+    } else {
+      notifyError({
+        type: ErrorType.UNSUPPORTED_PROP,
+        message: `Stroke align is not applicable on node type ${node.type}`,
+      });
     }
   }
 }

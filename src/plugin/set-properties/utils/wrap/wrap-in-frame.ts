@@ -1,6 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { getWorldPosition, setNodeWorldPosition } from '../node-safety';
 
 interface wrapInFrameProps {
   nodes: readonly SceneNode[];
@@ -31,7 +32,7 @@ export default function wrapInFrame({ nodes }: wrapInFrameProps) {
 
     try {
       const parent = node.parent;
-      if (!parent || parent.type === 'PAGE' || parent.type === 'DOCUMENT') {
+      if (!parent || !('insertChild' in parent)) {
         notifyError({
           type: ErrorType.UNSUPPORTED_PROP,
           message: `Cannot wrap node "${node.name}" directly under ${parent?.type ?? 'unknown parent'}.`,
@@ -39,10 +40,7 @@ export default function wrapInFrame({ nodes }: wrapInFrameProps) {
         continue;
       }
 
-      // Capture absolute position BEFORE reparenting
-      const absTransform = node.absoluteTransform;
-      const absX = absTransform[0][2];
-      const absY = absTransform[1][2];
+      const world = getWorldPosition(assertedNode);
 
       // Create frame
       const frame = figma.createFrame();
@@ -56,20 +54,28 @@ export default function wrapInFrame({ nodes }: wrapInFrameProps) {
 
       // Get node’s index for insertion order
       const nodeIndex = parent.children.indexOf(node);
+      if (nodeIndex < 0) {
+        notifyError({
+          type: ErrorType.UNKNOWN,
+          message: `Failed to find "${node.name}" in its parent before wrapping.`,
+        });
+        continue;
+      }
 
       // Insert frame where node was
       parent.insertChild(nodeIndex, frame);
+      const framePositioned = setNodeWorldPosition(frame, world.x, world.y);
+      if (!framePositioned) {
+        notifyError({
+          type: ErrorType.UNKNOWN,
+          message: `Failed to place wrapper frame for ${node.name || node.id}.`,
+        });
+        continue;
+      }
 
       // Append node inside the frame
       frame.appendChild(assertedNode);
-
-      // Reset node’s local coordinates so it keeps the same absolute position
-      const newAbsTransform = frame.absoluteTransform;
-      const frameAbsX = newAbsTransform[0][2];
-      const frameAbsY = newAbsTransform[1][2];
-
-      assertedNode.x = absX - frameAbsX;
-      assertedNode.y = absY - frameAbsY;
+      setNodeWorldPosition(assertedNode, world.x, world.y);
 
       wrappedFrames.push(frame);
     } catch (error) {

@@ -1,6 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { parseFiniteNumber } from '../node-safety';
 
 interface setScaleHeightProps {
   param: string;
@@ -10,7 +11,15 @@ interface setScaleHeightProps {
 }
 
 export default function setScaleHeight({ param, value, nodes, mode }: setScaleHeightProps) {
-  const height = parseFloat(value);
+  const height = parseFiniteNumber(value);
+  if (height === null) {
+    notifyError({
+      type: ErrorType.INVALID_VAL,
+      message: param,
+    });
+    return;
+  }
+
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
@@ -21,9 +30,26 @@ export default function setScaleHeight({ param, value, nodes, mode }: setScaleHe
       else if (mode === 'decrease') newHeight = node.height - height;
       else newHeight = height;
 
-      if (!isNaN(newHeight)) {
-        assertedNode.rescale(newHeight / node.height);
-      } else {
+      if (!Number.isFinite(newHeight) || newHeight <= 0 || node.height <= 0) {
+        notifyError({
+          type: ErrorType.INVALID_VAL,
+          message: param,
+        });
+        continue;
+      }
+
+      const factor = newHeight / node.height;
+      if (!Number.isFinite(factor) || factor <= 0) {
+        notifyError({
+          type: ErrorType.INVALID_VAL,
+          message: param,
+        });
+        continue;
+      }
+
+      try {
+        assertedNode.rescale(factor);
+      } catch {
         notifyError({
           type: ErrorType.INVALID_VAL,
           message: param,

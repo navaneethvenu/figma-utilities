@@ -134,6 +134,11 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
           message: param,
         });
       }
+    } else {
+      notifyError({
+        type: ErrorType.UNSUPPORTED_PROP,
+        message: `Stroke width is not applicable on node type ${node.type}`,
+      });
     }
   }
 }

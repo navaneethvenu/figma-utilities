@@ -1,6 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { parseFiniteNumber } from '../node-safety';
 
 interface setScaleWidthProps {
   param: string;
@@ -10,7 +11,15 @@ interface setScaleWidthProps {
 }
 
 export default function setScaleWidth({ param, value, nodes, mode }: setScaleWidthProps) {
-  const width = parseFloat(value);
+  const width = parseFiniteNumber(value);
+  if (width === null) {
+    notifyError({
+      type: ErrorType.INVALID_VAL,
+      message: param,
+    });
+    return;
+  }
+
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
@@ -21,9 +30,26 @@ export default function setScaleWidth({ param, value, nodes, mode }: setScaleWid
       else if (mode === 'decrease') newWidth = node.width - width;
       else newWidth = width;
 
-      if (!isNaN(newWidth)) {
-        assertedNode.rescale(newWidth / node.width);
-      } else {
+      if (!Number.isFinite(newWidth) || newWidth <= 0 || node.width <= 0) {
+        notifyError({
+          type: ErrorType.INVALID_VAL,
+          message: param,
+        });
+        continue;
+      }
+
+      const factor = newWidth / node.width;
+      if (!Number.isFinite(factor) || factor <= 0) {
+        notifyError({
+          type: ErrorType.INVALID_VAL,
+          message: param,
+        });
+        continue;
+      }
+
+      try {
+        assertedNode.rescale(factor);
+      } catch {
         notifyError({
           type: ErrorType.INVALID_VAL,
           message: param,
