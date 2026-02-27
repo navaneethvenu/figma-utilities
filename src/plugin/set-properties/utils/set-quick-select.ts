@@ -7,48 +7,32 @@ interface setConstraintsProps {
 }
 
 export default function setQuickSelect({ param, nodes }: setConstraintsProps) {
+  const currentSelection = figma.currentPage.selection;
+  const updatedSelection = new Map<string, SceneNode>();
+
+  for (const selectedNode of currentSelection) {
+    updatedSelection.set(selectedNode.id, selectedNode);
+  }
+
   for (const node of nodes) {
     const parent = node.parent;
-    const currentSelection = figma.currentPage.selection;
+    let newSelection: readonly SceneNode[] = [];
+
     //Select Right
     if (/selr\b/.test(param)) {
-      const newselection = parent.findChildren((newnode) => newnode.x > node.x);
-      const updatedSelection = [...new Set([...currentSelection, ...newselection])];
-      updatedSelection.splice(
-        updatedSelection.findIndex((n) => n.id === node.id),
-        1
-      );
-      figma.currentPage.selection = updatedSelection;
+      newSelection = parent.findChildren((newnode) => newnode.x > node.x);
     }
     //Select Left
     else if (/sell\b/.test(param)) {
-      const newselection = parent.findChildren((newnode) => newnode.x < node.x);
-      const updatedSelection = [...new Set([...currentSelection, ...newselection])];
-      updatedSelection.splice(
-        updatedSelection.findIndex((n) => n.id === node.id),
-        1
-      );
-      figma.currentPage.selection = updatedSelection;
+      newSelection = parent.findChildren((newnode) => newnode.x < node.x);
     }
     //Select Top
     else if (/selt\b/.test(param)) {
-      const newselection = parent.findChildren((newnode) => newnode.y < node.y);
-      const updatedSelection = [...new Set([...currentSelection, ...newselection])];
-      updatedSelection.splice(
-        updatedSelection.findIndex((n) => n.id === node.id),
-        1
-      );
-      figma.currentPage.selection = updatedSelection;
+      newSelection = parent.findChildren((newnode) => newnode.y < node.y);
     }
     //Select Bottom
     else if (/selb\b/.test(param)) {
-      const newselection = parent.findChildren((newnode) => newnode.y > node.y);
-      const updatedSelection = [...new Set([...currentSelection, ...newselection])];
-      updatedSelection.splice(
-        updatedSelection.findIndex((n) => n.id === node.id),
-        1
-      );
-      figma.currentPage.selection = updatedSelection;
+      newSelection = parent.findChildren((newnode) => newnode.y > node.y);
     }
 
     //Invalid Command
@@ -58,5 +42,13 @@ export default function setQuickSelect({ param, nodes }: setConstraintsProps) {
         message: param,
       });
     }
+
+    for (const nextNode of newSelection) {
+      updatedSelection.set(nextNode.id, nextNode);
+    }
+
+    updatedSelection.delete(node.id);
   }
+
+  figma.currentPage.selection = Array.from(updatedSelection.values());
 }
