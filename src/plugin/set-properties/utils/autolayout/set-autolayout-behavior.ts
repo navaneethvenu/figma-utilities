@@ -1,6 +1,7 @@
 import notifyError, { notifyWarning } from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { isAutoLayoutParent } from '../node-safety';
 
 interface SetAutolayoutBehaviorProps {
   command: string;
@@ -60,7 +61,7 @@ export default function setAutolayoutBehavior({ command, nodes }: SetAutolayoutB
       } else (assertedNode as any)[key] = current === 'HUG' ? 'FILL' : 'HUG';
     };
 
-    const isAutolayout = assertedNode.type === 'FRAME' && assertedNode.layoutMode !== 'NONE';
+    const isAutolayout = 'layoutMode' in assertedNode && assertedNode.layoutMode !== 'NONE';
 
     // Apply command
     switch (command) {
@@ -107,12 +108,12 @@ export default function setAutolayoutBehavior({ command, nodes }: SetAutolayoutB
 
       case 'aa':
         // Auto mode: use parent layout if it exists
-        const parent = assertedNode.parent as FrameNode | null;
-        if (parent?.layoutMode === 'HORIZONTAL') {
+        const parent = assertedNode.parent;
+        if (isAutoLayoutParent(parent) && parent.layoutMode === 'HORIZONTAL') {
           setMode('width', 'FILL');
           if (isAutolayout) setMode('height', 'HUG');
           else setMode('height', 'FIXED');
-        } else if (parent?.layoutMode === 'VERTICAL') {
+        } else if (isAutoLayoutParent(parent) && parent.layoutMode === 'VERTICAL') {
           setMode('height', 'FILL');
           if (isAutolayout) setMode('width', 'HUG');
           else setMode('width', 'FIXED');

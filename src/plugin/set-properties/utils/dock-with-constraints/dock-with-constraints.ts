@@ -1,6 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { supportedNodes, SupportedNodes } from './supported-nodes';
+import { ensureAbsolutePositioning, parseFiniteNumber } from '../node-safety';
 
 interface dockProps {
   param: string;
@@ -9,6 +10,15 @@ interface dockProps {
 }
 
 export default function dockWithConstraints({ param, nodes, value }: dockProps) {
+  const offset = parseFiniteNumber(value);
+  if (offset === null) {
+    notifyError({
+      type: ErrorType.INVALID_VAL,
+      message: param,
+    });
+    return;
+  }
+
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
@@ -23,29 +33,39 @@ export default function dockWithConstraints({ param, nodes, value }: dockProps) 
       });
     else {
       if (nodeCheck !== undefined) {
+        if (!('width' in parentNode) || !('height' in parentNode)) {
+          notifyError({
+            type: ErrorType.UNSUPPORTED_PROP,
+            message: `Dock is not applicable for parent type ${parentNode.type}`,
+          });
+          continue;
+        }
+
+        ensureAbsolutePositioning(assertedNode);
+
         if (param.includes('l')) {
-          assertedNode.x = Number(value);
+          assertedNode.x = offset;
           assertedNode.constraints = {
             horizontal: 'MIN',
             vertical: assertedNode.constraints.vertical,
           };
         }
         if (param.includes('r')) {
-          assertedNode.x = (parentNode as SupportedNodes).width - Number(value) - assertedNode.width;
+          assertedNode.x = (parentNode as SupportedNodes).width - offset - assertedNode.width;
           assertedNode.constraints = {
             horizontal: 'MAX',
             vertical: assertedNode.constraints.vertical,
           };
         }
         if (param.includes('t')) {
-          assertedNode.y = Number(value);
+          assertedNode.y = offset;
           assertedNode.constraints = {
             horizontal: assertedNode.constraints.horizontal,
             vertical: 'MIN',
           };
         }
         if (param.includes('b')) {
-          assertedNode.y = (parentNode as SupportedNodes).height - Number(value) - assertedNode.height;
+          assertedNode.y = (parentNode as SupportedNodes).height - offset - assertedNode.height;
           assertedNode.constraints = {
             horizontal: assertedNode.constraints.horizontal,
             vertical: 'MAX',

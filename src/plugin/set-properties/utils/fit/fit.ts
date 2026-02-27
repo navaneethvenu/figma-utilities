@@ -1,6 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { supportedNodes, SupportedNodes } from './supported-nodes';
+import { ensureAbsolutePositioning } from '../node-safety';
 
 interface FitProps {
   param: string;
@@ -27,10 +28,12 @@ export function fitToParent({ param, nodes }: FitProps) {
 
       if (param === 'fit' || param === 'fitw') {
         assertedNode.resize(parentWidth, assertedNode.height);
+        ensureAbsolutePositioning(assertedNode);
         assertedNode.x = 0;
       }
       if (param === 'fit' || param === 'fith') {
         assertedNode.resize(assertedNode.width, parentHeight);
+        ensureAbsolutePositioning(assertedNode);
         assertedNode.y = 0;
       }
 

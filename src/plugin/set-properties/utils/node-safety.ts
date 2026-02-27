@@ -61,3 +61,8 @@ export function setNodeWorldPosition(node: SceneNode, worldX: number, worldY: nu
   node.y = local.y;
   return true;
 }
+
+export function parseFiniteNumber(value: string) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
