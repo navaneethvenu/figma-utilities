@@ -90,11 +90,14 @@ export function swapSelectedElements({ param, nodes }: SwapParams) {
     const parentFree = nodeFree.parent;
 
     if (parentAuto && parentFree) {
+      const indexFree = parentFree.children.indexOf(nodeFree);
+      const targetIndex = Math.max(0, Math.min(parentFree.children.length, indexFree));
+
       // Temporarily store free node position
       const { x, y } = nodeFree;
 
       // Move auto-layout node to free node’s parent at same level
-      parentFree.insertChild(Math.min(parentFree.children.length, 0), nodeAuto);
+      parentFree.insertChild(targetIndex, nodeAuto);
 
       // Move free node into auto-layout parent at matching index
       parentAuto.insertChild(indexAuto, nodeFree);
