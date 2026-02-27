@@ -1,30 +1,92 @@
-# Figma Plugin React Template
+# Hotkey (Figma/FigJam Plugin)
 
-![62862431-71537f00-bd0e-11e9-85db-d97c0fb729a4](https://user-images.githubusercontent.com/16322616/62862692-46b5f600-bd0f-11e9-93b0-75955d1de8f3.png)
+Hotkey is a command-driven Figma plugin for fast property edits on selected nodes.
+It runs through plugin parameters (Quick Actions), parses compact shortcuts, and applies them in sequence.
 
-This template contains the react example as shown on [Figma Docs](https://www.figma.com/plugin-docs/intro/), with some structural changes and extra tooling.
+## What It Does
 
-## Quickstart
+- Applies one or more commands to the current selection in a single run.
+- Supports Figma and FigJam (`editorType: ["figma", "figjam"]`).
+- Provides command suggestions while typing parameters.
+- Stores recent command sets in `clientStorage` and surfaces them as default suggestions.
 
-- Run `yarn` to install dependencies.
-- Run `yarn build:watch` to start webpack in watch mode.
-- Open `Figma` -> `Plugins` -> `Development` -> `Import plugin from manifest...` and choose `manifest.json` file from this repo.
+## Setup
 
-⭐ To change the UI of your plugin (the react code), start editing [App.tsx](./src/app/components/App.tsx).  
-⭐ To interact with the Figma API edit [controller.ts](./src/plugin/controller.ts).  
-⭐ Read more on the [Figma API Overview](https://www.figma.com/plugin-docs/api/api-overview/).
+1. Install dependencies:
 
-Note: this plugin currently runs through command parameters in `controller.ts`; the React UI bundle is kept as template code and is not invoked at runtime.
+```bash
+yarn
+```
 
-## Toolings
+2. Build once:
 
-This repo is using:
+```bash
+yarn build
+```
 
-- React + Webpack
-- TypeScript
-- Prettier precommit hook
+Or build in watch mode during development:
 
-## Command Notes
+```bash
+yarn build:watch
+```
 
-- `sc` uses a scale factor, not percent.
-- Examples: `sc2` scales to `2x`, `sc0.5` scales to `0.5x`.
+3. In Figma: `Plugins` -> `Development` -> `Import plugin from manifest...` and choose `manifest.json`.
+
+## How To Use
+
+1. Select one or more nodes in the canvas.
+2. Run the plugin (`Hotkey`) from Quick Actions or Development Plugins.
+3. Enter commands in the `Property` parameter field.
+4. You can chain commands with spaces.
+
+Example:
+
+```text
+x100 y120 w320 h64 r8 fFF6600
+```
+
+This sets X/Y, width/height, corner radius, and fill color in one execution.
+
+## Command Format
+
+- Pattern: `<shortcut><value>`
+- Multiple commands: space-separated
+- Value is optional for action-only shortcuts (for example `clip`, `fit`, `swapx`)
+- Numeric commands may allow `+`/`-` variants depending on shortcut
+- Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
+
+Notes:
+
+- `sc` uses scale factors, not percentages (`sc2` = 2x, `sc0.5` = 0.5x).
+- Invalid commands fail with `Invalid Command: ...`.
+
+## Command Families
+
+Commands are defined in [`src/plugin/set-properties/prop-list.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/set-properties/prop-list.ts).
+
+Main families:
+
+- Position: `x`, `y`, `+x`, `-y`, dock in/out (`dl`, `dtr`, `DBL`, ...)
+- Size: `w`, `h`, `+w`, `-h`, `s`, `sc`, `scw`, `sch`, `fit`, `fitw`, `fith`
+- Radius: `r`, `rt`, `rb`, `rtl`, `rbr`, ...
+- Padding: `p`, `px`, `py`, `pt`, `pr`, ...
+- Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)
+- Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), filter (`fs*`), exclude (`es*`)
+- Color: fill replace (`f<hex>`)
+- Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
+- Auto layout behavior: `ah`, `af`, `afi`, toggles (`ax`, `ay`), smart (`aa`)
+- Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`
+
+## Project Structure
+
+- Plugin entry: [`src/plugin/controller.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/controller.ts)
+- Command parsing: [`src/plugin/set-properties/parse-params.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/set-properties/parse-params.ts)
+- Command routing: [`src/plugin/set-properties/param-routing.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/set-properties/param-routing.ts)
+- Command catalog: [`src/plugin/set-properties/prop-list.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/set-properties/prop-list.ts)
+- Suggestions/history: [`src/plugin/set-properties/suggestions.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/set-properties/suggestions.ts), [`src/plugin/set-properties/history.ts`](/Users/navaneethvenu/Documents/Projects/figma-utils/src/plugin/set-properties/history.ts)
+
+## Development Notes
+
+- Runtime logic is in the plugin code (`src/plugin/**`), not in the React UI template.
+- Manifest uses `networkAccess.allowedDomains: ["none"]`.
+- Formatting script: `yarn prettier:format`
