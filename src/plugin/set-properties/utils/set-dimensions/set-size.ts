@@ -14,7 +14,6 @@ export default function setSize({ param, value, nodes }: setSizeProps) {
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
-    console.log(nodeCheck);
 
     if (nodeCheck !== undefined) {
       if (!isNaN(size)) {

@@ -4,12 +4,6 @@ interface regexShorthandProps {
   continueEnd?: boolean;
 }
 
-interface regexShorthandProps {
-  prop: string;
-  hasValue?: boolean;
-  continueEnd?: boolean;
-}
-
 function startsWithWordChar(str: string) {
   return /^[a-zA-Z0-9_]/.test(str);
 }

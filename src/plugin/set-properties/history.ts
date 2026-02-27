@@ -13,8 +13,8 @@ export async function addHistory(parsedParams: ParsedParameter[]) {
       (item1, index, array) => array.findIndex((item2) => JSON.stringify(item1) === JSON.stringify(item2)) === index
     );
 
-    //keep only top 8 history
-    history = history.splice(0, 7);
+    // Keep only top 8 history entries
+    history = history.slice(0, 8);
 
     // Save the updated history back to client storage
     await figma.clientStorage.setAsync('figmautilshistory', history);

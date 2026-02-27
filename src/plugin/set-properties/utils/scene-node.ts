@@ -23,5 +23,4 @@ export const sceneNode: NodeType[] = [
   'TEXT',
   'VECTOR',
   'WIDGET',
-  'MEDIA',
 ];

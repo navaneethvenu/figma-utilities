@@ -14,6 +14,8 @@ This template contains the react example as shown on [Figma Docs](https://www.fi
 ⭐ To interact with the Figma API edit [controller.ts](./src/plugin/controller.ts).  
 ⭐ Read more on the [Figma API Overview](https://www.figma.com/plugin-docs/api/api-overview/).
 
+Note: this plugin currently runs through command parameters in `controller.ts`; the React UI bundle is kept as template code and is not invoked at runtime.
+
 ## Toolings
 
 This repo is using:

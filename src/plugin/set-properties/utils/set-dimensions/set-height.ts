@@ -15,7 +15,6 @@ export default function setHeight({ param, value, nodes, mode }: setHeightProps)
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
-    console.log(nodeCheck);
 
     if (nodeCheck !== undefined) {
       const newHeight =

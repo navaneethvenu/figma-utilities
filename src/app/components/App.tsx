@@ -3,6 +3,7 @@ import logo from '../assets/logo.svg';
 import '../styles/ui.css';
 
 function App() {
+  // Template UI is currently not wired to plugin runtime execution.
   const textbox = React.useRef<HTMLInputElement>(undefined);
 
   const countRef = React.useCallback((element: HTMLInputElement) => {
