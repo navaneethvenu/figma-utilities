@@ -16,7 +16,8 @@ figma.parameters.on('input', async ({ key, query, result }) => {
       );
 
       if (query !== '' && query !== undefined) {
-        suggestions.unshift(...getSuggestions({ query }));
+        const querySuggestions = getSuggestions({ query }) ?? [];
+        suggestions.unshift(...querySuggestions);
       }
 
       if (suggestions === null || suggestions === undefined) suggestions = [];

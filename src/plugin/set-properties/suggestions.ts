@@ -29,12 +29,18 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   for (const value of values) {
     const isLast = value === values[values.length - 1];
     const match = value.match(baseRegex);
-    console.log(match);
     if (match !== null) {
-      const [, param, paramVal] = baseRegex.exec(value);
+      baseRegex.lastIndex = 0;
+      const parsedValue = baseRegex.exec(value);
+      if (!parsedValue) continue;
+
+      const [, param, paramVal] = parsedValue;
       if (isLast) {
+        const closestCommand = getClosestSuggestion(param, flattenedCommands);
+        if (!closestCommand) continue;
+
         suggestionRow.push({
-          command: getClosestSuggestion(param, flattenedCommands),
+          command: closestCommand,
           value: paramVal,
         });
       } else {
@@ -44,8 +50,6 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
             command: propItem,
             value: paramVal,
           });
-        } else {
-          console.log('missed all suggestions');
         }
       }
     }
@@ -56,10 +60,9 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   return suggestions;
 }
 
-function getClosestSuggestion(param: string, flattenedCommands: Record<string, PropItem>): PropItem {
+function getClosestSuggestion(param: string, flattenedCommands: Record<string, PropItem>): PropItem | undefined {
   for (const command in flattenedCommands) {
     if (command.startsWith(param)) {
-      console.log('command:' + command, flattenedCommands[command]);
       return flattenedCommands[command];
     }
   }
@@ -72,7 +75,7 @@ function generateSuggestions(
   let suggestions: Suggestion[] = [];
   const suggestionCommands: BindedCommand[][] = [];
 
-  if (suggestionRow.length === 0) return;
+  if (suggestionRow.length === 0) return [];
 
   const lastItem: BindedCommand = suggestionRow[suggestionRow.length - 1];
   const commandVariants: BindedCommand[] = getSuggestedCommands(lastItem, flattenedCommands);
