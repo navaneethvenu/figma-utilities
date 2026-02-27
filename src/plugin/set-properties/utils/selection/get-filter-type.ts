@@ -1,4 +1,4 @@
-export function getFilterType(type: string): NodeType {
+export function getFilterType(type: string): NodeType | undefined {
   let filterType: NodeType;
   switch (type) {
     //containers
