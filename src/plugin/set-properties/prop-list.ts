@@ -26,6 +26,7 @@ import wrapInFrame from './utils/wrap/wrap-in-frame';
 import setRotation from './utils/rotation/set-rotation';
 import setOpacity from './utils/opacity/set-opacity';
 import setGap from './utils/autolayout/set-gap';
+import setTextSpacing from './utils/text/set-text-spacing';
 
 export interface PropItem {
   name: string;
@@ -38,7 +39,7 @@ export interface PropItem {
   description?: string;
   notes?: string;
   type?: 'GROUP' | 'ACTION';
-  action?: ({ param, value, nodes }: parameterRoutingProps) => void;
+  action?: ({ param, value, nodes }: parameterRoutingProps) => void | Promise<void>;
 }
 
 export const propList: Record<string, PropItem> = {
@@ -1067,6 +1068,59 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'gapy',
         hasValue: true,
         action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
+      },
+    },
+  },
+
+  // Text
+  text: {
+    name: 'Text',
+    shortcut: 'text',
+    description: 'Shortcuts for text spacing controls.',
+    type: 'GROUP',
+    subcommands: {
+      ls: {
+        name: 'Letter Spacing',
+        shortcut: 'ls',
+        hasValue: true,
+        allowsNegative: true,
+        message: 'Set letter spacing (supports px or %)',
+        action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
+      },
+      lh: {
+        name: 'Line Height',
+        shortcut: 'lh',
+        hasValue: true,
+        message: 'Set line height (supports px or %)',
+        action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
+      },
+      lsp: {
+        name: 'Letter Spacing to %',
+        shortcut: 'lsp',
+        hasValue: false,
+        message: 'Convert current letter spacing to %',
+        action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
+      },
+      lspx: {
+        name: 'Letter Spacing to px',
+        shortcut: 'lspx',
+        hasValue: false,
+        message: 'Convert current letter spacing to px',
+        action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
+      },
+      lhp: {
+        name: 'Line Height to %',
+        shortcut: 'lhp',
+        hasValue: false,
+        message: 'Convert current line height to %',
+        action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
+      },
+      lhpx: {
+        name: 'Line Height to px',
+        shortcut: 'lhpx',
+        hasValue: false,
+        message: 'Convert current line height to px',
+        action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
       },
     },
   },

@@ -7,10 +7,10 @@ export interface parameterRoutingProps {
   nodes: readonly SceneNode[];
 }
 
-export default function parameterRouting(
+export default async function parameterRouting(
   { param, value, nodes: node }: parameterRoutingProps,
   propItems = propList
-): boolean {
+): Promise<boolean> {
   let match = false;
   const flattenedCommands = flattenCommands(propItems, {});
 
@@ -25,7 +25,7 @@ export default function parameterRouting(
       regex.lastIndex = 0; // Reset regex lastIndex in case of global flag usage
 
       if (prop.action && param === prop.shortcut) {
-        prop.action({ param, value, nodes: node });
+        await prop.action({ param, value, nodes: node });
         match = true; // Action executed
         break; // Stop processing as action is executed
       }

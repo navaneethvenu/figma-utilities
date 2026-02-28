@@ -54,6 +54,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Value is optional for action-only shortcuts (for example `clip`, `fit`, `swapx`)
 - Numeric commands may allow `+`/`-` variants depending on shortcut
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
+- Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
 
 Notes:
 
@@ -76,6 +77,7 @@ Main families:
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
 - Auto layout behavior: `ah`, `af`, `afi`, toggles (`ax`, `ay`), smart (`aa`)
 - Auto layout spacing: `gap`, `gapx`, `gapy`
+- Text spacing: `ls`, `lh` (set), `lsp`/`lspx` and `lhp`/`lhpx` (unit conversion)
 - Transform/appearance: `rot`, `op`
 - Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`
 

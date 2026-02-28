@@ -16,6 +16,10 @@ interface Suggestion {
   data: string;
 }
 
+function valueHasExplicitUnit(value: string) {
+  return /(px|%)$/i.test(value);
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
@@ -107,9 +111,10 @@ function generateSuggestions(
           : !isNaN(parseFloat(value)) && (parseFloat(value) >= 0 || command.allowsNegative === true);
 
         if (isValidValue) {
-          const unit = command.unit === undefined ? 'px' : command.unit;
-          if (command.message) lastMessage = `${command.message} ${value}${unit}`;
-          else lastMessage = `Set ${command.name} to ${value}${unit}`;
+          const defaultUnit = command.unit === undefined ? 'px' : command.unit;
+          const renderedValue = valueHasExplicitUnit(value) ? value : `${value}${defaultUnit}`;
+          if (command.message) lastMessage = `${command.message} ${renderedValue}`;
+          else lastMessage = `Set ${command.name} to ${renderedValue}`;
         } else {
           lastMessage = `Error: ${command.name} cannot have invalid or negative values`;
         }
