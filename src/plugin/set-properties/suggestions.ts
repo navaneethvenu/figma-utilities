@@ -8,6 +8,7 @@ interface getSuggestionsProps {
 interface BindedCommand {
   command: PropItem;
   value: string;
+  prefix: string;
 }
 
 interface Suggestion {
@@ -19,10 +20,126 @@ function valueHasExplicitUnit(value: string) {
   return /(px|%)$/i.test(value);
 }
 
-function splitToken(token: string) {
-  const match = token.match(/^([+\-]?[A-Za-z]+)(.*)$/);
+function parseScalarValue(value: string) {
+  const match = value.match(/^(-?\d*\.?\d+)(px|%)?$/i);
   if (!match) return null;
-  return { param: match[1], value: match[2] ?? '' };
+
+  const num = Number(match[1]);
+  if (!Number.isFinite(num)) return null;
+
+  return {
+    num,
+    unit: (match[2] ?? '').toLowerCase(),
+  };
+}
+
+function parseRangeValue(value: string) {
+  const match = value.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
+  if (!match) return null;
+
+  const start = Number(match[1]);
+  const end = Number(match[2]);
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
+
+  return { start, end };
+}
+
+function formatOperatorMessage(prefix: string, command: PropItem, renderedValue: string) {
+  if (prefix && !command.supportsModifiers) {
+    return `Error: ${command.name} does not support modifier operators`;
+  }
+
+  switch (prefix) {
+    case '+':
+      return `Increase ${command.name} by ${renderedValue}`;
+    case '-':
+      return `Decrease ${command.name} by ${renderedValue}`;
+    case '*':
+      return `Multiply ${command.name} by ${renderedValue}`;
+    case '/':
+      return `Divide ${command.name} by ${renderedValue}`;
+    case '++':
+      return `Sequentially increase ${command.name} by ${renderedValue}`;
+    case '--':
+      return `Sequentially decrease ${command.name} by ${renderedValue}`;
+    case '**':
+      return `Sequentially multiply ${command.name} by ${renderedValue}`;
+    case '//':
+      return `Sequentially divide ${command.name} by ${renderedValue}`;
+    default:
+      if (command.message) return `${command.message} ${renderedValue}`;
+      return `Set ${command.name} to ${renderedValue}`;
+  }
+}
+
+function formatOperatorPlaceholder(prefix: string, command: PropItem) {
+  if (prefix && !command.supportsModifiers) {
+    return `Error: ${command.name} does not support modifier operators`;
+  }
+
+  switch (prefix) {
+    case '+':
+      return `Increase ${command.name} by (Enter Value)`;
+    case '-':
+      return `Decrease ${command.name} by (Enter Value)`;
+    case '*':
+      return `Multiply ${command.name} by (Enter Value)`;
+    case '/':
+      return `Divide ${command.name} by (Enter Value)`;
+    case '++':
+      return `Sequentially increase ${command.name} by (Enter Value)`;
+    case '--':
+      return `Sequentially decrease ${command.name} by (Enter Value)`;
+    case '**':
+      return `Sequentially multiply ${command.name} by (Enter Value)`;
+    case '//':
+      return `Sequentially divide ${command.name} by (Enter Value)`;
+    default:
+      return `Set ${command.name} to (Enter Value)`;
+  }
+}
+
+function renderScalarValue(raw: string, defaultUnit: string) {
+  const parsed = parseScalarValue(raw);
+  if (!parsed) return raw;
+
+  const normalized = String(parsed.num);
+  if (parsed.unit) return `${normalized}${parsed.unit}`;
+  if (valueHasExplicitUnit(raw)) return raw;
+  return `${normalized}${defaultUnit}`;
+}
+
+function formatRangeMessage(prefix: string, command: PropItem, start: number, end: number, unit: string) {
+  if (prefix && !command.supportsModifiers) {
+    return `Error: ${command.name} does not support modifier operators`;
+  }
+
+  const from = `${start}${unit}`;
+  const to = `${end}${unit}`;
+
+  switch (prefix) {
+    case '+':
+      return `Increase ${command.name} from ${from} to ${to} across selection`;
+    case '-':
+      return `Decrease ${command.name} from ${from} to ${to} across selection`;
+    case '*':
+      return `Multiply ${command.name} from ${from} to ${to} across selection`;
+    case '/':
+      return `Divide ${command.name} from ${from} to ${to} across selection`;
+    case '++':
+    case '--':
+    case '**':
+    case '//':
+      return `Error: Sequential operators do not support range values`;
+    default:
+      return `Set ${command.name} from ${from} to ${to} across selection`;
+  }
+}
+
+function splitToken(token: string) {
+  const match = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+)(.*)$/);
+  if (!match) return null;
+  return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
 }
 
 export default function getSuggestions({ query }: getSuggestionsProps) {
@@ -40,7 +157,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
     const parsed = splitToken(value);
     if (!parsed) continue;
 
-    const { param, value: paramVal } = parsed;
+    const { prefix, param, value: paramVal } = parsed;
 
     if (isLast) {
       const closestCommand = getClosestSuggestion(param, flattenedCommands);
@@ -49,6 +166,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
       suggestionRow.push({
         command: closestCommand,
         value: paramVal,
+        prefix,
       });
     } else {
       if (param in flattenedCommands) {
@@ -56,6 +174,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
         suggestionRow.push({
           command: propItem,
           value: paramVal,
+          prefix,
         });
       }
     }
@@ -94,7 +213,9 @@ function generateSuggestions(
     let suggestionData: { name: string; data: string } = { name: '', data: '' };
     suggestionData.name = suggestionCommandList
       .map((command) =>
-        command.command.hasValue ? command.command.shortcut + command.value : command.command.shortcut
+        command.command.hasValue
+          ? command.prefix + command.command.shortcut + command.value
+          : command.prefix + command.command.shortcut
       )
       .slice(0, suggestionCommandList.length - 1)
       .join(', ');
@@ -107,29 +228,37 @@ function generateSuggestions(
     if (command.hasValue) {
       if (lastCommand.value !== '') {
         const isFillCommand = command.shortcut.toLowerCase() === 'f';
+        const range = parseRangeValue(value);
+        const scalar = parseScalarValue(value);
 
         const isValidValue = isFillCommand
           ? /^#?[0-9a-fA-F]+$/.test(value) // hex color validation, accepts optional leading #
-          : !isNaN(parseFloat(value)) && (parseFloat(value) >= 0 || command.allowsNegative === true);
+          : range !== null ||
+            (scalar !== null && (scalar.num >= 0 || command.allowsNegative === true));
 
         if (isValidValue) {
           const defaultUnit = command.unit === undefined ? 'px' : command.unit;
-          const renderedValue = valueHasExplicitUnit(value) ? value : `${value}${defaultUnit}`;
-          if (command.message) lastMessage = `${command.message} ${renderedValue}`;
-          else lastMessage = `Set ${command.name} to ${renderedValue}`;
+          if (range) {
+            lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
+          } else {
+            const renderedValue = renderScalarValue(value, defaultUnit);
+            lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
+          }
         } else {
           lastMessage = `Error: ${command.name} cannot have invalid or negative values`;
         }
-      } else lastMessage = `Set ${command.name} to (Enter Value)`;
+      } else lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
     } else {
       if (command.message) lastMessage = command.message;
       else lastMessage = command.name;
     }
 
-    const newName = `${command.shortcut}${command.hasValue ? value : ''} - ${lastMessage}`;
+    const newName = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''} - ${lastMessage}`;
     suggestionData.name = suggestionData.name ? `${suggestionData.name}, ${newName}` : newName;
 
-    suggestionData.data = suggestionCommandList.map((command) => command.command.shortcut + command.value).join(' ');
+    suggestionData.data = suggestionCommandList
+      .map((command) => command.prefix + command.command.shortcut + command.value)
+      .join(' ');
     if (command.action) {
       suggestions.push(suggestionData);
     }
@@ -142,7 +271,7 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
   const commands: BindedCommand[] = [];
   for (const command in flattenedCommands) {
     if (command.startsWith(item.command.shortcut)) {
-      commands.push({ command: flattenedCommands[command], value: item.value });
+      commands.push({ command: flattenedCommands[command], value: item.value, prefix: item.prefix });
     }
   }
   return commands;

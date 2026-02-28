@@ -2,8 +2,6 @@ import parameterRouting from '../param-routing';
 import parseModifiedToken, { ModifiedToken } from './parse-modified-token';
 import { ErrorType } from '../../utils/errorType';
 
-const supportedCommands = new Set(['h', 'w', 'x', 'y', 'op']);
-
 function getCurrentValue(node: SceneNode, command: string): number | null {
   if (command === 'h') return 'height' in node ? node.height : null;
   if (command === 'w') return 'width' in node ? node.width : null;
@@ -77,10 +75,6 @@ function computeTarget(current: number, i: number, n: number, token: ModifiedTok
 export async function applyModifiedCommand(tokenText: string, nodes: readonly SceneNode[]) {
   const token = parseModifiedToken(tokenText);
   if (!token) {
-    throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
-  }
-
-  if (!supportedCommands.has(token.command)) {
     throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
   }
 

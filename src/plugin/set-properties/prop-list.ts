@@ -36,6 +36,7 @@ export interface PropItem {
   hasValue?: boolean;
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
+  supportsModifiers?: boolean;
   unit?: string;
   message?: string;
   description?: string;
@@ -62,6 +63,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'x',
             hasValue: true,
             allowsNegative: true,
+            supportsModifiers: true,
             action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
             subcommands: {
               '-x': {
@@ -83,6 +85,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'y',
             hasValue: true,
             allowsNegative: true,
+            supportsModifiers: true,
             action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
             subcommands: {
               '-y': {
@@ -260,6 +263,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'w',
         hasValue: true,
         allowsNegative: false,
+        supportsModifiers: true,
         action: ({ param, value, nodes }) => setWidth({ param, value, nodes, mode: 'set' }),
         subcommands: {
           '+w': {
@@ -285,6 +289,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'h',
         hasValue: true,
         allowsNegative: false,
+        supportsModifiers: true,
         action: ({ param, value, nodes }) => setHeight({ param, value, nodes, mode: 'set' }),
         subcommands: {
           '+h': {
@@ -1285,6 +1290,7 @@ export const propList: Record<string, PropItem> = {
         name: 'Set Opacity',
         shortcut: 'op',
         hasValue: true,
+        supportsModifiers: true,
         unit: '%',
         action: ({ param, value, nodes }) => setOpacity({ param, value, nodes }),
       },

@@ -35,6 +35,12 @@ function parseToken(token: string): ParsedParameter | null {
   return null;
 }
 
+function isModifierEnabledCommand(command: string) {
+  const flattened = flattenCommands(propList, {});
+  const prop = flattened[command];
+  return Boolean(prop?.supportsModifiers);
+}
+
 export default function parseParameters(parameters: { [key: string]: string }): ParsedParameter[] {
   const parsedParams: ParsedParameter[] = [];
 
@@ -48,12 +54,14 @@ export default function parseParameters(parameters: { [key: string]: string }): 
         value.startsWith('--') ||
         value.startsWith('**') ||
         value.startsWith('//') ||
+        value.startsWith('+') ||
+        value.startsWith('-') ||
         value.startsWith('*') ||
         value.startsWith('/');
 
       if (mayBeModified) {
         const parsedModified = parseModifiedToken(value);
-        if (parsedModified) {
+        if (parsedModified && isModifierEnabledCommand(parsedModified.command)) {
           parsedParams.push({ param: value, value: '', raw: value, modified: true });
           continue;
         }
