@@ -1,6 +1,7 @@
 import { addHistory } from './history';
 import parameterRouting from './param-routing';
 import parseParameters from './parse-params';
+import { ErrorType } from '../utils/errorType';
 
 export default async function setProperties(parameters: { [key: string]: string }) {
   try {
@@ -14,7 +15,10 @@ export default async function setProperties(parameters: { [key: string]: string 
           return;
         }
 
-        parameterRouting({ param, value, nodes: currentSelection });
+        const matched = await parameterRouting({ param, value, nodes: currentSelection });
+        if (!matched) {
+          throw new Error(`${ErrorType.INVALID_CMD}: ${param}${value}`);
+        }
       }
 
       await addHistory(parsedParams);
