@@ -1,6 +1,6 @@
 export type TransformOrigin = 'tl' | 't' | 'tr' | 'l' | 'c' | 'r' | 'bl' | 'b' | 'br';
 
-const ORIGIN_TOKENS: readonly TransformOrigin[] = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
+export const ORIGIN_TOKENS: readonly TransformOrigin[] = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
 
 export function parseOriginToken(token: string): TransformOrigin | null {
   const match = token.trim().toLowerCase().match(/^([a-z]+):$/);
@@ -8,6 +8,29 @@ export function parseOriginToken(token: string): TransformOrigin | null {
 
   const candidate = match[1] as TransformOrigin;
   return ORIGIN_TOKENS.includes(candidate) ? candidate : null;
+}
+
+export function getOriginLabel(origin: TransformOrigin) {
+  switch (origin) {
+    case 'tl':
+      return 'Top Left';
+    case 't':
+      return 'Top';
+    case 'tr':
+      return 'Top Right';
+    case 'l':
+      return 'Left';
+    case 'c':
+      return 'Center';
+    case 'r':
+      return 'Right';
+    case 'bl':
+      return 'Bottom Left';
+    case 'b':
+      return 'Bottom';
+    case 'br':
+      return 'Bottom Right';
+  }
 }
 
 function getOriginFactors(origin: TransformOrigin) {
@@ -63,4 +86,3 @@ export function runWithOrigin(node: SceneNode, origin: TransformOrigin | undefin
   node.x = before.x - deltaW * ax;
   node.y = before.y - deltaH * ay;
 }
-

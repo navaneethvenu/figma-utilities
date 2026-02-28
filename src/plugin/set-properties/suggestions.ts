@@ -1,5 +1,6 @@
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
+import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken } from './origin';
 
 interface getSuggestionsProps {
   query: string;
@@ -14,6 +15,50 @@ interface BindedCommand {
 interface Suggestion {
   name: string;
   data: string;
+}
+
+function hasOperatorPrefix(token: string) {
+  return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
+}
+
+function isOriginQueryToken(token: string) {
+  if (!token) return false;
+  if (hasOperatorPrefix(token)) return false;
+  return /^[a-z]{1,2}:?$/i.test(token);
+}
+
+function buildOriginSuggestions(values: string[], lastToken: string): Suggestion[] {
+  const trimmed = lastToken.trim().toLowerCase();
+  const prefix = trimmed.endsWith(':') ? trimmed.slice(0, -1) : trimmed;
+
+  const base = values
+    .slice(0, values.length - 1)
+    .filter((value) => value.trim() !== '')
+    .join(' ');
+
+  const suggestions: Suggestion[] = [];
+  for (const origin of ORIGIN_TOKENS) {
+    if (!origin.startsWith(prefix)) continue;
+
+    const token = `${origin}:`;
+    const label = getOriginLabel(origin);
+    const name = base ? `${base}, ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
+    const data = base ? `${base} ${token}` : token;
+    suggestions.push({ name, data });
+  }
+
+  if (suggestions.length === 0) {
+    const exact = parseOriginToken(lastToken);
+    if (exact) {
+      const token = `${exact}:`;
+      const label = getOriginLabel(exact);
+      const name = base ? `${base}, ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
+      const data = base ? `${base} ${token}` : token;
+      suggestions.push({ name, data });
+    }
+  }
+
+  return suggestions;
 }
 
 function valueHasExplicitUnit(value: string) {
@@ -165,6 +210,11 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   if (!query) return [];
 
   const values = query.split(' ');
+  const lastToken = values[values.length - 1];
+
+  if (isOriginQueryToken(lastToken)) {
+    return buildOriginSuggestions(values, lastToken);
+  }
 
   let suggestions: Suggestion[] = [];
   let suggestionRow: BindedCommand[] = [];
