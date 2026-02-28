@@ -8,6 +8,8 @@ export interface ParsedParameter {
   modified?: boolean;
 }
 
+const OP_PREFIX_RE = /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?/;
+
 function isValidValue(value: string) {
   return /^#?-?(?:[0-9]*\.?[0-9]+(?:px|%)?|[0-9a-fA-F]+)*$/.test(value);
 }
@@ -41,6 +43,29 @@ function isModifierEnabledCommand(command: string) {
   return Boolean(prop?.supportsModifiers);
 }
 
+function isInvalidValueForKnownCommand(token: string): boolean {
+  const flattened = flattenCommands(propList, {});
+  const commands = Object.values(flattened).sort((a, b) => b.shortcut.length - a.shortcut.length);
+
+  const prefixMatch = token.match(OP_PREFIX_RE);
+  const prefix = prefixMatch?.[0] ?? '';
+  const rest = token.slice(prefix.length);
+
+  for (const command of commands) {
+    if (!rest.startsWith(command.shortcut)) continue;
+    if (command.hasValue === false) return false;
+
+    const value = rest.slice(command.shortcut.length);
+    if (value === '') return false;
+    if (isValidValue(value)) return false;
+    if (value.includes('..')) return true;
+    if (value.startsWith('.') || value.endsWith('.')) return true;
+    return true;
+  }
+
+  return false;
+}
+
 export default function parseParameters(parameters: { [key: string]: string }): ParsedParameter[] {
   const parsedParams: ParsedParameter[] = [];
 
@@ -69,6 +94,9 @@ export default function parseParameters(parameters: { [key: string]: string }): 
 
       const parsed = parseToken(value);
       if (!parsed) {
+        if (isInvalidValueForKnownCommand(value)) {
+          throw new Error(`Invalid Value: ${value}`);
+        }
         throw new Error(`Invalid Command: ${value}`);
       }
       parsedParams.push(parsed);

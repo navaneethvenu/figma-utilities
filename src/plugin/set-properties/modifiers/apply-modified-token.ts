@@ -139,6 +139,11 @@ function computeTarget(current: number, i: number, n: number, token: ModifiedTok
   }
 }
 
+function rangeTouchesOrCrossesZero(start: number, end: number) {
+  if (start === 0 || end === 0) return true;
+  return (start < 0 && end > 0) || (start > 0 && end < 0);
+}
+
 export async function applyModifiedCommand(tokenText: string, nodes: readonly SceneNode[]) {
   const token = parseModifiedToken(tokenText);
   if (!token) {
@@ -148,14 +153,27 @@ export async function applyModifiedCommand(tokenText: string, nodes: readonly Sc
   if ((token.mode === 'div' || token.mode === 'seq_div') && token.start === 0) {
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
+  if (
+    token.mode === 'div' &&
+    token.operandMode === 'range' &&
+    token.end !== undefined &&
+    rangeTouchesOrCrossesZero(token.start, token.end)
+  ) {
+    throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
+  }
 
   const orderedNodes = sortSelectionByLayerIndex(nodes);
   const n = orderedNodes.length;
+  let appliedCount = 0;
+  let skippedCount = 0;
 
   for (let i = 0; i < n; i++) {
     const node = orderedNodes[i];
     const current = getCurrentValue(node, token.command);
-    if (current === null) continue;
+    if (current === null) {
+      skippedCount++;
+      continue;
+    }
 
     const next = computeTarget(current, i, n, token);
     if (!Number.isFinite(next)) {
@@ -171,5 +189,15 @@ export async function applyModifiedCommand(tokenText: string, nodes: readonly Sc
     if (!matched) {
       throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
     }
+
+    appliedCount++;
+  }
+
+  if (appliedCount === 0) {
+    throw new Error(`${ErrorType.UNSUPPORTED_PROP}: ${token.command} is not applicable to current selection`);
+  }
+
+  if (skippedCount > 0) {
+    figma.notify(`${token.command}: skipped ${skippedCount} unsupported node(s)`);
   }
 }

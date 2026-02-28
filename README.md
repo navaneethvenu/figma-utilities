@@ -63,6 +63,7 @@ Notes:
 
 - `sc` uses scale factors, not percentages (`sc2` = 2x, `sc0.5` = 0.5x).
 - Sequential operators with ranges are invalid (for example `++h1..24`).
+- Division operators cannot use `0` (including ranges that touch/cross `0`, for example `/h10..0`).
 - Invalid commands fail with `Invalid Command: ...`.
 
 ## Command Families
