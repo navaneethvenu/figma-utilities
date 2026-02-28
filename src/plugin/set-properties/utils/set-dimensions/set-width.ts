@@ -1,15 +1,17 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setWidthProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
   mode: 'set' | 'increase' | 'decrease';
+  origin?: TransformOrigin;
 }
 
-export default function setWidth({ param, value, nodes, mode }: setWidthProps) {
+export default function setWidth({ param, value, nodes, mode, origin }: setWidthProps) {
   const parsedValue = parseFloat(value);
 
   for (const node of nodes) {
@@ -21,7 +23,7 @@ export default function setWidth({ param, value, nodes, mode }: setWidthProps) {
         mode === 'increase' ? node.width + parsedValue : mode === 'decrease' ? node.width - parsedValue : parsedValue;
 
       if (!isNaN(newWidth)) {
-        assertedNode.resize(newWidth, node.height);
+        runWithOrigin(assertedNode, origin, () => assertedNode.resize(newWidth, node.height));
       } else {
         notifyError({
           type: ErrorType.INVALID_VAL,

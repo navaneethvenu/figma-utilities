@@ -1,15 +1,17 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setHeightProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
   mode: 'set' | 'increase' | 'decrease';
+  origin?: TransformOrigin;
 }
 
-export default function setHeight({ param, value, nodes, mode }: setHeightProps) {
+export default function setHeight({ param, value, nodes, mode, origin }: setHeightProps) {
   const parsedValue = parseFloat(value);
 
   for (const node of nodes) {
@@ -21,7 +23,7 @@ export default function setHeight({ param, value, nodes, mode }: setHeightProps)
         mode === 'increase' ? node.height + parsedValue : mode === 'decrease' ? node.height - parsedValue : parsedValue;
 
       if (!isNaN(newHeight)) {
-        assertedNode.resize(node.width, newHeight);
+        runWithOrigin(assertedNode, origin, () => assertedNode.resize(node.width, newHeight));
       }
 
       //Invalid Value

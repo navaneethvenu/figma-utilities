@@ -2,15 +2,17 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
 import { parseFiniteNumber } from '../node-safety';
+import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setScaleWidthProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
   mode: 'set' | 'increase' | 'decrease';
+  origin?: TransformOrigin;
 }
 
-export default function setScaleWidth({ param, value, nodes, mode }: setScaleWidthProps) {
+export default function setScaleWidth({ param, value, nodes, mode, origin }: setScaleWidthProps) {
   const width = parseFiniteNumber(value);
   if (width === null) {
     notifyError({
@@ -48,7 +50,7 @@ export default function setScaleWidth({ param, value, nodes, mode }: setScaleWid
       }
 
       try {
-        assertedNode.rescale(factor);
+        runWithOrigin(assertedNode, origin, () => assertedNode.rescale(factor));
       } catch {
         notifyError({
           type: ErrorType.INVALID_VAL,

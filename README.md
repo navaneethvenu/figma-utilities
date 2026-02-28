@@ -56,6 +56,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Global numeric operators (supported for `h`, `w`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`): `+`, `-`, `*`, `/`
 - Sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Range operands are supported with `start..end` (for example `+h1..24`, `w10..100`)
+- Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
 

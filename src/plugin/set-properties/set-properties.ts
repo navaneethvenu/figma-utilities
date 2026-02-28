@@ -3,25 +3,36 @@ import parameterRouting from './param-routing';
 import parseParameters from './parse-params';
 import { ErrorType } from '../utils/errorType';
 import { applyModifiedCommand } from './modifiers/apply-modified-token';
+import { parseOriginToken, TransformOrigin } from './origin';
 
 export default async function setProperties(parameters: { [key: string]: string }) {
   try {
     if (figma.currentPage.selection && figma.currentPage.selection.length > 0) {
       const parsedParams = parseParameters(parameters);
+      let currentOrigin: TransformOrigin | undefined;
 
-      for (const { param, value, raw, modified } of parsedParams) {
+      for (const { param, value, raw, modified, originModifier } of parsedParams) {
         const currentSelection = figma.currentPage.selection;
         if (!currentSelection || currentSelection.length === 0) {
           figma.notify('Selection became empty while applying commands.');
           return;
         }
 
-        if (modified) {
-          await applyModifiedCommand(raw ?? param, currentSelection);
+        if (originModifier) {
+          const parsedOrigin = parseOriginToken(raw ?? param);
+          if (!parsedOrigin) {
+            throw new Error(`${ErrorType.INVALID_VAL}: ${raw ?? param}`);
+          }
+          currentOrigin = parsedOrigin;
           continue;
         }
 
-        const matched = await parameterRouting({ param, value, nodes: currentSelection });
+        if (modified) {
+          await applyModifiedCommand(raw ?? param, currentSelection, currentOrigin);
+          continue;
+        }
+
+        const matched = await parameterRouting({ param, value, nodes: currentSelection, origin: currentOrigin });
         if (!matched) {
           throw new Error(`${ErrorType.INVALID_CMD}: ${param}${value}`);
         }

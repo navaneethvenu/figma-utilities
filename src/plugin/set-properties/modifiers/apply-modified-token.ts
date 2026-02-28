@@ -2,6 +2,7 @@ import parameterRouting from '../param-routing';
 import parseModifiedToken, { ModifiedToken } from './parse-modified-token';
 import { ErrorType } from '../../utils/errorType';
 import { flattenCommands, propList } from '../prop-list';
+import { TransformOrigin } from '../origin';
 
 const flattenedCommands = flattenCommands(propList, {});
 
@@ -70,7 +71,11 @@ function rangeTouchesOrCrossesZero(start: number, end: number) {
   return (start < 0 && end > 0) || (start > 0 && end < 0);
 }
 
-export async function applyModifiedCommand(tokenText: string, nodes: readonly SceneNode[]) {
+export async function applyModifiedCommand(
+  tokenText: string,
+  nodes: readonly SceneNode[],
+  origin?: TransformOrigin
+) {
   const token = parseModifiedToken(tokenText);
   if (!token) {
     throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
@@ -114,6 +119,7 @@ export async function applyModifiedCommand(tokenText: string, nodes: readonly Sc
       param: token.command,
       value: String(roundOperand(next)),
       nodes: [node],
+      origin,
     });
 
     if (!matched) {

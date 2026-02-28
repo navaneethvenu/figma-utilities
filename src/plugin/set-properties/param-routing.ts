@@ -1,10 +1,12 @@
 import { flattenCommands, propList } from './prop-list';
 import regexShorthand from './regex';
+import { TransformOrigin } from './origin';
 
 export interface parameterRoutingProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
+  origin?: TransformOrigin;
 }
 
 export default async function parameterRouting(

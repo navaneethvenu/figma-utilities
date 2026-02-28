@@ -1,11 +1,13 @@
 import { flattenCommands, propList } from './prop-list';
 import parseModifiedToken from './modifiers/parse-modified-token';
+import { parseOriginToken } from './origin';
 
 export interface ParsedParameter {
   param: string;
   value: string;
   raw?: string;
   modified?: boolean;
+  originModifier?: boolean;
 }
 
 const OP_PREFIX_RE = /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?/;
@@ -73,6 +75,12 @@ export default function parseParameters(parameters: { [key: string]: string }): 
     const values = parameters[key].split(' ');
 
     for (const value of values) {
+      const parsedOrigin = parseOriginToken(value);
+      if (parsedOrigin) {
+        parsedParams.push({ param: value, value: '', raw: value, originModifier: true });
+        continue;
+      }
+
       const mayBeModified =
         value.includes('..') ||
         value.startsWith('++') ||

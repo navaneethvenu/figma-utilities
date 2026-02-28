@@ -2,14 +2,16 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
 import { parseFiniteNumber } from '../node-safety';
+import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setScaleProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
+  origin?: TransformOrigin;
 }
 
-export default function setScale({ param, value, nodes }: setScaleProps) {
+export default function setScale({ param, value, nodes, origin }: setScaleProps) {
   const scale = parseFiniteNumber(value);
 
   if (scale === null || scale === 0) {
@@ -35,7 +37,7 @@ export default function setScale({ param, value, nodes }: setScaleProps) {
 
     if (nodeCheck !== undefined) {
       try {
-        assertedNode.rescale(factor);
+        runWithOrigin(assertedNode, origin, () => assertedNode.rescale(factor));
       } catch {
         notifyError({
           type: ErrorType.INVALID_VAL,

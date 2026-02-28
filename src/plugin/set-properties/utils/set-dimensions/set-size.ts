@@ -1,14 +1,16 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
+import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setSizeProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
+  origin?: TransformOrigin;
 }
 
-export default function setSize({ param, value, nodes }: setSizeProps) {
+export default function setSize({ param, value, nodes, origin }: setSizeProps) {
   const size = parseFloat(value);
 
   for (const node of nodes) {
@@ -17,7 +19,7 @@ export default function setSize({ param, value, nodes }: setSizeProps) {
 
     if (nodeCheck !== undefined) {
       if (!isNaN(size)) {
-        assertedNode.resize(size, size);
+        runWithOrigin(assertedNode, origin, () => assertedNode.resize(size, size));
       }
 
       //Invalid Value
