@@ -37,12 +37,72 @@ export interface PropItem {
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
   supportsModifiers?: boolean;
+  getModifierValue?: (node: SceneNode) => number | null;
   unit?: string;
   message?: string;
   description?: string;
   notes?: string;
   type?: 'GROUP' | 'ACTION';
   action?: ({ param, value, nodes }: parameterRoutingProps) => void | Promise<void>;
+}
+
+function asFiniteNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function readNumberProp(prop: string) {
+  return (node: SceneNode): number | null => {
+    if (!(prop in node)) return null;
+    return asFiniteNumber((node as any)[prop]);
+  };
+}
+
+function readOpacityPct(node: SceneNode): number | null {
+  if (!('opacity' in node)) return null;
+  return asFiniteNumber(node.opacity * 100);
+}
+
+function readPaddingLeft(node: SceneNode): number | null {
+  if (!('layoutMode' in node) || node.layoutMode === 'NONE') return null;
+  return asFiniteNumber(node.paddingLeft);
+}
+
+function readPaddingRight(node: SceneNode): number | null {
+  if (!('layoutMode' in node) || node.layoutMode === 'NONE') return null;
+  return asFiniteNumber(node.paddingRight);
+}
+
+function readPaddingTop(node: SceneNode): number | null {
+  if (!('layoutMode' in node) || node.layoutMode === 'NONE') return null;
+  return asFiniteNumber(node.paddingTop);
+}
+
+function readPaddingBottom(node: SceneNode): number | null {
+  if (!('layoutMode' in node) || node.layoutMode === 'NONE') return null;
+  return asFiniteNumber(node.paddingBottom);
+}
+
+function isAutoLayoutContainer(node: SceneNode): node is SceneNode & AutoLayoutMixin {
+  return 'layoutMode' in node && 'itemSpacing' in node;
+}
+
+function readGap(node: SceneNode): number | null {
+  if (!isAutoLayoutContainer(node) || node.layoutMode === 'NONE') return null;
+  return asFiniteNumber(node.itemSpacing);
+}
+
+function readGapX(node: SceneNode): number | null {
+  if (!isAutoLayoutContainer(node) || node.layoutMode === 'NONE') return null;
+  if (node.layoutMode === 'HORIZONTAL') return asFiniteNumber(node.itemSpacing);
+  if (node.layoutWrap === 'WRAP' && node.counterAxisSpacing !== null) return asFiniteNumber(node.counterAxisSpacing);
+  return null;
+}
+
+function readGapY(node: SceneNode): number | null {
+  if (!isAutoLayoutContainer(node) || node.layoutMode === 'NONE') return null;
+  if (node.layoutMode === 'VERTICAL') return asFiniteNumber(node.itemSpacing);
+  if (node.layoutWrap === 'WRAP' && node.counterAxisSpacing !== null) return asFiniteNumber(node.counterAxisSpacing);
+  return null;
 }
 
 export const propList: Record<string, PropItem> = {
@@ -64,6 +124,7 @@ export const propList: Record<string, PropItem> = {
             hasValue: true,
             allowsNegative: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('x'),
             action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
             subcommands: {
               '-x': {
@@ -86,6 +147,7 @@ export const propList: Record<string, PropItem> = {
             hasValue: true,
             allowsNegative: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('y'),
             action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
             subcommands: {
               '-y': {
@@ -264,6 +326,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: false,
         supportsModifiers: true,
+        getModifierValue: readNumberProp('width'),
         action: ({ param, value, nodes }) => setWidth({ param, value, nodes, mode: 'set' }),
         subcommands: {
           '+w': {
@@ -290,6 +353,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: false,
         supportsModifiers: true,
+        getModifierValue: readNumberProp('height'),
         action: ({ param, value, nodes }) => setHeight({ param, value, nodes, mode: 'set' }),
         subcommands: {
           '+h': {
@@ -407,6 +471,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'r',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readNumberProp('cornerRadius'),
         action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
         subcommands: {
           rt: {
@@ -414,6 +479,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'rt',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('topLeftRadius'),
             action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
             subcommands: {
               rtl: {
@@ -421,6 +487,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'rtl',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('topLeftRadius'),
                 action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
               },
               rtr: {
@@ -428,6 +495,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'rtr',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('topRightRadius'),
                 action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
               },
             },
@@ -437,6 +505,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'rb',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('bottomLeftRadius'),
             action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
             subcommands: {
               rbl: {
@@ -444,6 +513,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'rbl',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('bottomLeftRadius'),
                 action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
               },
               rbr: {
@@ -451,6 +521,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'rbr',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('bottomRightRadius'),
                 action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
               },
             },
@@ -460,6 +531,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'rl',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('topLeftRadius'),
             action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
           },
           rr: {
@@ -467,6 +539,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'rr',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('topRightRadius'),
             action: ({ param, value, nodes }) => setRadius({ param, value, nodes }),
           },
         },
@@ -487,12 +560,14 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'p',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readPaddingLeft,
         subcommands: {
           pl: {
             name: 'Left Padding',
             shortcut: 'pl',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readPaddingLeft,
             action: ({ param, value, nodes }) => setPadding({ param, value, nodes }),
           },
           pr: {
@@ -500,6 +575,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'pr',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readPaddingRight,
             action: ({ param, value, nodes }) => setPadding({ param, value, nodes }),
           },
           pt: {
@@ -507,6 +583,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'pt',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readPaddingTop,
             action: ({ param, value, nodes }) => setPadding({ param, value, nodes }),
           },
           pb: {
@@ -514,6 +591,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'pb',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readPaddingBottom,
             action: ({ param, value, nodes }) => setPadding({ param, value, nodes }),
           },
           px: {
@@ -521,6 +599,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'px',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readPaddingLeft,
             action: ({ param, value, nodes }) => setPadding({ param, value, nodes }),
           },
           py: {
@@ -528,6 +607,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'py',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readPaddingTop,
             action: ({ param, value, nodes }) => setPadding({ param, value, nodes }),
           },
         },
@@ -555,12 +635,14 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'st',
             hasValue: true,
             supportsModifiers: true,
+            getModifierValue: readNumberProp('strokeWeight'),
             subcommands: {
               stl: {
                 name: 'Left Stroke',
                 shortcut: 'stl',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('strokeLeftWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
               str: {
@@ -568,6 +650,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'str',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('strokeRightWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
               stt: {
@@ -575,6 +658,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'stt',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('strokeTopWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
               stb: {
@@ -582,6 +666,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'stb',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('strokeBottomWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
               stx: {
@@ -589,6 +674,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'stx',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('strokeLeftWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
               sty: {
@@ -596,6 +682,7 @@ export const propList: Record<string, PropItem> = {
                 shortcut: 'sty',
                 hasValue: true,
                 supportsModifiers: true,
+                getModifierValue: readNumberProp('strokeTopWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
             },
@@ -1149,6 +1236,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'gap',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readGap,
         action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
       },
       gapx: {
@@ -1156,6 +1244,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'gapx',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readGapX,
         action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
       },
       gapy: {
@@ -1163,6 +1252,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'gapy',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readGapY,
         action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
       },
     },
@@ -1310,6 +1400,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'rot',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readNumberProp('rotation'),
         unit: 'deg',
         action: ({ param, value, nodes }) => setRotation({ param, value, nodes }),
       },
@@ -1318,6 +1409,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'op',
         hasValue: true,
         supportsModifiers: true,
+        getModifierValue: readOpacityPct,
         unit: '%',
         action: ({ param, value, nodes }) => setOpacity({ param, value, nodes }),
       },
