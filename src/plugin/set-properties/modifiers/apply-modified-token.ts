@@ -10,6 +10,20 @@ function isAutoLayoutContainer(node: SceneNode): node is SceneNode & AutoLayoutM
   return 'layoutMode' in node && 'itemSpacing' in node;
 }
 
+function getPaddingValue(node: SceneNode, command: string): number | null {
+  if (!('layoutMode' in node) || node.layoutMode === 'NONE') return null;
+
+  if (command === 'p') return asFiniteNumber(node.paddingLeft);
+  if (command === 'pl') return asFiniteNumber(node.paddingLeft);
+  if (command === 'pr') return asFiniteNumber(node.paddingRight);
+  if (command === 'pt') return asFiniteNumber(node.paddingTop);
+  if (command === 'pb') return asFiniteNumber(node.paddingBottom);
+  if (command === 'px') return asFiniteNumber(node.paddingLeft);
+  if (command === 'py') return asFiniteNumber(node.paddingTop);
+
+  return null;
+}
+
 function getGapValue(node: SceneNode, command: string): number | null {
   if (!isAutoLayoutContainer(node) || node.layoutMode === 'NONE') return null;
 
@@ -53,6 +67,12 @@ function getCurrentValue(node: SceneNode, command: string): number | null {
   if (command === 'str') return 'strokeRightWeight' in node ? asFiniteNumber(node.strokeRightWeight) : null;
   if (command === 'stt') return 'strokeTopWeight' in node ? asFiniteNumber(node.strokeTopWeight) : null;
   if (command === 'stb') return 'strokeBottomWeight' in node ? asFiniteNumber(node.strokeBottomWeight) : null;
+  if (command === 'stx') return 'strokeLeftWeight' in node ? asFiniteNumber(node.strokeLeftWeight) : null;
+  if (command === 'sty') return 'strokeTopWeight' in node ? asFiniteNumber(node.strokeTopWeight) : null;
+
+  if (command === 'p' || command === 'pl' || command === 'pr' || command === 'pt' || command === 'pb' || command === 'px' || command === 'py') {
+    return getPaddingValue(node, command);
+  }
 
   if (command === 'gap' || command === 'gapx' || command === 'gapy') return getGapValue(node, command);
 
