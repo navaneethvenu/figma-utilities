@@ -44,9 +44,23 @@ function parseRangeValue(value: string) {
   return { start, end };
 }
 
+function hasMalformedRangeValue(value: string) {
+  if (!value.includes('..')) return false;
+  return parseRangeValue(value) === null;
+}
+
+function rangeTouchesOrCrossesZero(start: number, end: number) {
+  if (start === 0 || end === 0) return true;
+  return (start < 0 && end > 0) || (start > 0 && end < 0);
+}
+
 function formatOperatorMessage(prefix: string, command: PropItem, renderedValue: string) {
   if (prefix && !command.supportsModifiers) {
     return `Error: ${command.name} does not support modifier operators`;
+  }
+
+  if ((prefix === '/' || prefix === '//') && Number(renderedValue.replace(/(px|%)$/i, '')) === 0) {
+    return `Error: Division by zero is not allowed`;
   }
 
   switch (prefix) {
@@ -125,6 +139,9 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
     case '*':
       return `Multiply ${command.name} from ${from} to ${to} across selection`;
     case '/':
+      if (rangeTouchesOrCrossesZero(start, end)) {
+        return `Error: Division range cannot touch or cross zero`;
+      }
       return `Divide ${command.name} from ${from} to ${to} across selection`;
     case '++':
     case '--':
@@ -236,7 +253,9 @@ function generateSuggestions(
           : range !== null ||
             (scalar !== null && (scalar.num >= 0 || command.allowsNegative === true));
 
-        if (isValidValue) {
+        if (hasMalformedRangeValue(value)) {
+          lastMessage = `Error: Invalid range format. Use start..end`;
+        } else if (isValidValue) {
           const defaultUnit = command.unit === undefined ? 'px' : command.unit;
           if (range) {
             lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
