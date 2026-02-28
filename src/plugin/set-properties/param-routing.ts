@@ -10,7 +10,7 @@ export interface parameterRoutingProps {
 }
 
 export default async function parameterRouting(
-  { param, value, nodes: node }: parameterRoutingProps,
+  { param, value, nodes: node, origin }: parameterRoutingProps,
   propItems = propList
 ): Promise<boolean> {
   let match = false;
@@ -27,7 +27,7 @@ export default async function parameterRouting(
       regex.lastIndex = 0; // Reset regex lastIndex in case of global flag usage
 
       if (prop.action && param === prop.shortcut) {
-        await prop.action({ param, value, nodes: node });
+        await prop.action({ param, value, nodes: node, origin });
         match = true; // Action executed
         break; // Stop processing as action is executed
       }
