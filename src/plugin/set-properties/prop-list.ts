@@ -28,6 +28,7 @@ import setRotation from './utils/rotation/set-rotation';
 import setOpacity from './utils/opacity/set-opacity';
 import setGap from './utils/autolayout/set-gap';
 import setTextSpacing from './utils/text/set-text-spacing';
+import duplicateSelection from './utils/duplicate/duplicate';
 
 export interface PropItem {
   name: string;
@@ -1265,6 +1266,13 @@ export const propList: Record<string, PropItem> = {
         description: 'Wrap items in selection individually in frames',
         hasValue: false,
         action: ({ nodes }) => wrapInFrame({ nodes }),
+      },
+      dup: {
+        name: 'Duplicate Selected Nodes',
+        shortcut: 'dup',
+        hasValue: true,
+        message: 'Duplicate selected nodes',
+        action: ({ param, value, nodes }) => duplicateSelection({ param, value, nodes }),
       },
       rot: {
         name: 'Set Rotation',

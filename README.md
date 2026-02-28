@@ -79,7 +79,7 @@ Main families:
 - Auto layout spacing: `gap`, `gapx`, `gapy`
 - Text spacing: `ls`, `lh` (set), `lsp`/`lspx` and `lhp`/`lhpx` (unit conversion)
 - Transform/appearance: `rot`, `op`
-- Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`
+- Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`, `dup`
 
 ## Project Structure
 
