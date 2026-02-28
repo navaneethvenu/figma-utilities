@@ -10,6 +10,17 @@ export function parseOriginToken(token: string): TransformOrigin | null {
   return ORIGIN_TOKENS.includes(candidate) ? candidate : null;
 }
 
+export function splitOriginPrefixedToken(token: string): string[] {
+  const match = token.trim().match(/^([a-z]{1,2}:)(.+)$/i);
+  if (!match) return [token];
+
+  const originToken = match[1].toLowerCase();
+  const remainder = match[2];
+  if (!parseOriginToken(originToken)) return [token];
+
+  return [originToken, remainder];
+}
+
 export function getOriginLabel(origin: TransformOrigin) {
   switch (origin) {
     case 'tl':

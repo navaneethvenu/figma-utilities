@@ -1,6 +1,6 @@
 import { flattenCommands, propList } from './prop-list';
 import parseModifiedToken from './modifiers/parse-modified-token';
-import { parseOriginToken } from './origin';
+import { parseOriginToken, splitOriginPrefixedToken } from './origin';
 
 export interface ParsedParameter {
   param: string;
@@ -72,7 +72,10 @@ export default function parseParameters(parameters: { [key: string]: string }): 
   const parsedParams: ParsedParameter[] = [];
 
   for (const key in parameters) {
-    const values = parameters[key].split(' ');
+    const values = parameters[key]
+      .split(' ')
+      .flatMap((value) => splitOriginPrefixedToken(value))
+      .filter((value) => value.trim() !== '');
 
     for (const value of values) {
       const parsedOrigin = parseOriginToken(value);

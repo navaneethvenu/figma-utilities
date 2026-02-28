@@ -1,6 +1,6 @@
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
-import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken, TransformOrigin } from './origin';
+import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken, splitOriginPrefixedToken, TransformOrigin } from './origin';
 
 interface getSuggestionsProps {
   query: string;
@@ -219,7 +219,11 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
   if (!query) return [];
 
-  const values = query.split(' ');
+  const values = query
+    .split(' ')
+    .flatMap((value) => splitOriginPrefixedToken(value))
+    .filter((value) => value.trim() !== '');
+  if (values.length === 0) return [];
   const lastToken = values[values.length - 1];
 
   if (isOriginQueryToken(lastToken)) {
