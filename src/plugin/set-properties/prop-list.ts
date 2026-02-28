@@ -23,6 +23,9 @@ import { fitToParent } from './utils/fit/fit';
 import setFill from './utils/color/replace-fill';
 import setAutolayoutBehavior from './utils/autolayout/set-autolayout-behavior';
 import wrapInFrame from './utils/wrap/wrap-in-frame';
+import setRotation from './utils/rotation/set-rotation';
+import setOpacity from './utils/opacity/set-opacity';
+import setGap from './utils/autolayout/set-gap';
 
 export interface PropItem {
   name: string;
@@ -1047,6 +1050,24 @@ export const propList: Record<string, PropItem> = {
         hasValue: false,
         action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
       },
+      gap: {
+        name: 'Set Auto-layout Gap',
+        shortcut: 'gap',
+        hasValue: true,
+        action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
+      },
+      gapx: {
+        name: 'Set Horizontal Gap',
+        shortcut: 'gapx',
+        hasValue: true,
+        action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
+      },
+      gapy: {
+        name: 'Set Vertical Gap',
+        shortcut: 'gapy',
+        hasValue: true,
+        action: ({ param, value, nodes }) => setGap({ param, value, nodes }),
+      },
     },
   },
 
@@ -1126,6 +1147,20 @@ export const propList: Record<string, PropItem> = {
         description: 'Wrap items in selection individually in frames',
         hasValue: false,
         action: ({ nodes }) => wrapInFrame({ nodes }),
+      },
+      rot: {
+        name: 'Set Rotation',
+        shortcut: 'rot',
+        hasValue: true,
+        unit: 'deg',
+        action: ({ param, value, nodes }) => setRotation({ param, value, nodes }),
+      },
+      op: {
+        name: 'Set Opacity',
+        shortcut: 'op',
+        hasValue: true,
+        unit: '%',
+        action: ({ param, value, nodes }) => setOpacity({ param, value, nodes }),
       },
     },
   },

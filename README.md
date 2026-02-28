@@ -75,6 +75,8 @@ Main families:
 - Color: fill replace (`f<hex>`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
 - Auto layout behavior: `ah`, `af`, `afi`, toggles (`ax`, `ay`), smart (`aa`)
+- Auto layout spacing: `gap`, `gapx`, `gapy`
+- Transform/appearance: `rot`, `op`
 - Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`
 
 ## Project Structure
