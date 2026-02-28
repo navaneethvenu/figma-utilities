@@ -46,7 +46,7 @@ function buildOriginSuggestions(values: string[], lastToken: string): Suggestion
 
     const token = `${origin}:`;
     const label = getOriginLabel(origin);
-    const name = base ? `${base}, ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
+    const name = base ? `${base} ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
     const data = base ? `${base} ${token}` : token;
     suggestions.push({ name, data });
   }
@@ -56,7 +56,7 @@ function buildOriginSuggestions(values: string[], lastToken: string): Suggestion
     if (exact) {
       const token = `${exact}:`;
       const label = getOriginLabel(exact);
-      const name = base ? `${base}, ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
+      const name = base ? `${base} ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
       const data = base ? `${base} ${token}` : token;
       suggestions.push({ name, data });
     }
@@ -214,6 +214,20 @@ function splitToken(token: string) {
   return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
 }
 
+function composeTokenWithContext(contextTokens: string[], nextToken: string) {
+  if (contextTokens.length === 0) return nextToken;
+
+  const tokens = [...contextTokens];
+  const last = tokens[tokens.length - 1];
+  if (parseOriginToken(last)) {
+    tokens[tokens.length - 1] = `${last}${nextToken}`;
+    return tokens.join(' ');
+  }
+
+  tokens.push(nextToken);
+  return tokens.join(' ');
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
@@ -304,7 +318,6 @@ function generateSuggestions(
 
   for (const suggestionCommandList of suggestionCommands) {
     let suggestionData: { name: string; data: string } = { name: '', data: '' };
-    suggestionData.name = contextTokens.join(', ');
 
     const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
 
@@ -342,10 +355,11 @@ function generateSuggestions(
     }
     lastMessage = withOriginHint(lastMessage, command, activeOrigin);
 
-    const newName = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''} - ${lastMessage}`;
-    suggestionData.name = suggestionData.name ? `${suggestionData.name}, ${newName}` : newName;
+    const suggestionToken = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''}`;
+    const composed = composeTokenWithContext(contextTokens, suggestionToken);
+    suggestionData.name = `${composed} - ${lastMessage}`;
 
-    suggestionData.data = [...contextTokens, ...suggestionCommandList.map((command) => command.prefix + command.command.shortcut + command.value)].join(' ');
+    suggestionData.data = composed;
     if (command.action) {
       suggestions.push(suggestionData);
     }

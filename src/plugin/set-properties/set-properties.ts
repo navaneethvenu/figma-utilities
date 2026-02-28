@@ -10,6 +10,7 @@ export default async function setProperties(parameters: { [key: string]: string 
     if (figma.currentPage.selection && figma.currentPage.selection.length > 0) {
       const parsedParams = parseParameters(parameters);
       let currentOrigin: TransformOrigin | undefined;
+      let executableCount = 0;
 
       for (const { param, value, raw, modified, originModifier } of parsedParams) {
         const currentSelection = figma.currentPage.selection;
@@ -29,6 +30,7 @@ export default async function setProperties(parameters: { [key: string]: string 
 
         if (modified) {
           await applyModifiedCommand(raw ?? param, currentSelection, currentOrigin);
+          executableCount++;
           continue;
         }
 
@@ -36,6 +38,11 @@ export default async function setProperties(parameters: { [key: string]: string 
         if (!matched) {
           throw new Error(`${ErrorType.INVALID_CMD}: ${param}${value}`);
         }
+        executableCount++;
+      }
+
+      if (executableCount === 0) {
+        throw new Error(`${ErrorType.INVALID_CMD}: origin modifier requires a following command`);
       }
 
       await addHistory(parsedParams);
