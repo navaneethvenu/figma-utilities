@@ -2,12 +2,59 @@ import parameterRouting from '../param-routing';
 import parseModifiedToken, { ModifiedToken } from './parse-modified-token';
 import { ErrorType } from '../../utils/errorType';
 
+function asFiniteNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function isAutoLayoutContainer(node: SceneNode): node is SceneNode & AutoLayoutMixin {
+  return 'layoutMode' in node && 'itemSpacing' in node;
+}
+
+function getGapValue(node: SceneNode, command: string): number | null {
+  if (!isAutoLayoutContainer(node) || node.layoutMode === 'NONE') return null;
+
+  if (command === 'gap') return asFiniteNumber(node.itemSpacing);
+
+  if (command === 'gapx') {
+    if (node.layoutMode === 'HORIZONTAL') return asFiniteNumber(node.itemSpacing);
+    if (node.layoutWrap === 'WRAP' && node.counterAxisSpacing !== null) return asFiniteNumber(node.counterAxisSpacing);
+    return null;
+  }
+
+  if (command === 'gapy') {
+    if (node.layoutMode === 'VERTICAL') return asFiniteNumber(node.itemSpacing);
+    if (node.layoutWrap === 'WRAP' && node.counterAxisSpacing !== null) return asFiniteNumber(node.counterAxisSpacing);
+    return null;
+  }
+
+  return null;
+}
+
 function getCurrentValue(node: SceneNode, command: string): number | null {
   if (command === 'h') return 'height' in node ? node.height : null;
   if (command === 'w') return 'width' in node ? node.width : null;
   if (command === 'x') return 'x' in node ? node.x : null;
   if (command === 'y') return 'y' in node ? node.y : null;
   if (command === 'op') return 'opacity' in node ? node.opacity * 100 : null;
+  if (command === 'rot') return 'rotation' in node ? asFiniteNumber(node.rotation) : null;
+
+  if (command === 'r') return 'cornerRadius' in node ? asFiniteNumber(node.cornerRadius) : null;
+  if (command === 'rtl') return 'topLeftRadius' in node ? asFiniteNumber(node.topLeftRadius) : null;
+  if (command === 'rtr') return 'topRightRadius' in node ? asFiniteNumber(node.topRightRadius) : null;
+  if (command === 'rbl') return 'bottomLeftRadius' in node ? asFiniteNumber(node.bottomLeftRadius) : null;
+  if (command === 'rbr') return 'bottomRightRadius' in node ? asFiniteNumber(node.bottomRightRadius) : null;
+  if (command === 'rt') return 'topLeftRadius' in node ? asFiniteNumber(node.topLeftRadius) : null;
+  if (command === 'rb') return 'bottomLeftRadius' in node ? asFiniteNumber(node.bottomLeftRadius) : null;
+  if (command === 'rl') return 'topLeftRadius' in node ? asFiniteNumber(node.topLeftRadius) : null;
+  if (command === 'rr') return 'topRightRadius' in node ? asFiniteNumber(node.topRightRadius) : null;
+
+  if (command === 'st') return 'strokeWeight' in node ? asFiniteNumber(node.strokeWeight) : null;
+  if (command === 'stl') return 'strokeLeftWeight' in node ? asFiniteNumber(node.strokeLeftWeight) : null;
+  if (command === 'str') return 'strokeRightWeight' in node ? asFiniteNumber(node.strokeRightWeight) : null;
+  if (command === 'stt') return 'strokeTopWeight' in node ? asFiniteNumber(node.strokeTopWeight) : null;
+  if (command === 'stb') return 'strokeBottomWeight' in node ? asFiniteNumber(node.strokeBottomWeight) : null;
+
+  if (command === 'gap' || command === 'gapx' || command === 'gapy') return getGapValue(node, command);
 
   return null;
 }

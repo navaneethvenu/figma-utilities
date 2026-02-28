@@ -53,8 +53,8 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Multiple commands: space-separated
 - Value is optional for action-only shortcuts (for example `clip`, `fit`, `swapx`)
 - Numeric commands may allow `+`/`-` variants depending on shortcut
-- Global numeric operators (supported for `h`, `w`, `x`, `y`, `op`): `+`, `-`, `*`, `/`
-- Sequential operator variants (supported for `h`, `w`, `x`, `y`, `op`): `++`, `--`, `**`, `//`
+- Global numeric operators (supported for `h`, `w`, `x`, `y`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `gap`, `gapx`, `gapy`, `rot`, `op`): `+`, `-`, `*`, `/`
+- Sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Range operands are supported with `start..end` (for example `+h1..24`, `w10..100`)
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
