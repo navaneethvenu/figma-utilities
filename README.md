@@ -72,7 +72,7 @@ Main families:
 - Radius: `r`, `rt`, `rb`, `rtl`, `rbr`, ...
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
 - Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)
-- Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), filter (`fs*`), exclude (`es*`)
+- Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), traversal (`root`/`leaf`/`selp`/`selc`/`selns`/`selps`/`seli`), filter (`fs*`), exclude (`es*`)
 - Color: fill replace (`f<hex>`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
 - Auto layout behavior: `ah`, `af`, `afi`, toggles (`ax`, `ay`), smart (`aa`)

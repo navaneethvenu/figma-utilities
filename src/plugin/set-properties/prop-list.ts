@@ -17,6 +17,7 @@ import dockOutWithConstraints from './utils/dock-out-with-constraints/dock-out-w
 import setStrokeAlign from './utils/stroke/set-stroke-align';
 import filterSelection from './utils/selection/filter-selection';
 import excludeSelection from './utils/selection/exclude-selection';
+import traverseSelection from './utils/selection/traverse-selection';
 import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
@@ -660,6 +661,69 @@ export const propList: Record<string, PropItem> = {
                 allowsNegative: false,
                 action: ({ param, nodes }) => {
                   setQuickSelect({ param, nodes });
+                },
+              },
+              root: {
+                name: 'Select Root Ancestor (Strict)',
+                shortcut: 'root',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
+                },
+              },
+              leaf: {
+                name: 'Select Leaf Descendants (Strict)',
+                shortcut: 'leaf',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
+                },
+              },
+              selp: {
+                name: 'Select Parent',
+                shortcut: 'selp',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
+                },
+              },
+              selc: {
+                name: 'Select Children',
+                shortcut: 'selc',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
+                },
+              },
+              selns: {
+                name: 'Select Next Sibling',
+                shortcut: 'selns',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
+                },
+              },
+              selps: {
+                name: 'Select Previous Sibling',
+                shortcut: 'selps',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
+                },
+              },
+              seli: {
+                name: 'Select Inverse Within Parent',
+                shortcut: 'seli',
+                hasValue: false,
+                allowsNegative: false,
+                action: ({ param, nodes }) => {
+                  traverseSelection({ param, nodes });
                 },
               },
             },
