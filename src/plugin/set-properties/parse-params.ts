@@ -1,8 +1,11 @@
 import { flattenCommands, propList } from './prop-list';
+import parseModifiedToken from './modifiers/parse-modified-token';
 
 export interface ParsedParameter {
   param: string;
   value: string;
+  raw?: string;
+  modified?: boolean;
 }
 
 function isValidValue(value: string) {
@@ -39,6 +42,23 @@ export default function parseParameters(parameters: { [key: string]: string }): 
     const values = parameters[key].split(' ');
 
     for (const value of values) {
+      const mayBeModified =
+        value.includes('..') ||
+        value.startsWith('++') ||
+        value.startsWith('--') ||
+        value.startsWith('**') ||
+        value.startsWith('//') ||
+        value.startsWith('*') ||
+        value.startsWith('/');
+
+      if (mayBeModified) {
+        const parsedModified = parseModifiedToken(value);
+        if (parsedModified) {
+          parsedParams.push({ param: value, value: '', raw: value, modified: true });
+          continue;
+        }
+      }
+
       const parsed = parseToken(value);
       if (!parsed) {
         throw new Error(`Invalid Command: ${value}`);
