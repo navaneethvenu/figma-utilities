@@ -1,4 +1,3 @@
-import { baseRegex } from './base-regex';
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
 
@@ -20,6 +19,12 @@ function valueHasExplicitUnit(value: string) {
   return /(px|%)$/i.test(value);
 }
 
+function splitToken(token: string) {
+  const match = token.match(/^([+\-]?[A-Za-z]+)(.*)$/);
+  if (!match) return null;
+  return { param: match[1], value: match[2] ?? '' };
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
@@ -32,29 +37,26 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
   for (const value of values) {
     const isLast = value === values[values.length - 1];
-    const match = value.match(baseRegex);
-    if (match !== null) {
-      baseRegex.lastIndex = 0;
-      const parsedValue = baseRegex.exec(value);
-      if (!parsedValue) continue;
+    const parsed = splitToken(value);
+    if (!parsed) continue;
 
-      const [, param, paramVal] = parsedValue;
-      if (isLast) {
-        const closestCommand = getClosestSuggestion(param, flattenedCommands);
-        if (!closestCommand) continue;
+    const { param, value: paramVal } = parsed;
 
+    if (isLast) {
+      const closestCommand = getClosestSuggestion(param, flattenedCommands);
+      if (!closestCommand) continue;
+
+      suggestionRow.push({
+        command: closestCommand,
+        value: paramVal,
+      });
+    } else {
+      if (param in flattenedCommands) {
+        const propItem = flattenedCommands[param];
         suggestionRow.push({
-          command: closestCommand,
+          command: propItem,
           value: paramVal,
         });
-      } else {
-        if (param in flattenedCommands) {
-          const propItem = flattenedCommands[param];
-          suggestionRow.push({
-            command: propItem,
-            value: paramVal,
-          });
-        }
       }
     }
   }
