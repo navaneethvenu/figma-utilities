@@ -1,6 +1,6 @@
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
-import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken } from './origin';
+import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken, TransformOrigin } from './origin';
 
 interface getSuggestionsProps {
   query: string;
@@ -131,6 +131,12 @@ function formatOperatorMessage(prefix: string, command: PropItem, renderedValue:
   }
 }
 
+function withOriginHint(baseMessage: string, command: PropItem, origin: TransformOrigin | null) {
+  if (!origin) return baseMessage;
+  if (command.supportsOrigin) return `${baseMessage} (origin: ${getOriginLabel(origin)})`;
+  return `${baseMessage} (origin ignored)`;
+}
+
 function formatOperatorPlaceholder(prefix: string, command: PropItem) {
   if (prefix && !command.supportsModifiers) {
     return `Error: ${command.name} does not support modifier operators`;
@@ -218,9 +224,19 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
   let suggestions: Suggestion[] = [];
   let suggestionRow: BindedCommand[] = [];
+  let activeOrigin: TransformOrigin | null = null;
+  const contextTokens = values.slice(0, values.length - 1).filter((token) => token.trim() !== '');
 
   for (const value of values) {
     const isLast = value === values[values.length - 1];
+    if (!isLast) {
+      const parsedOrigin = parseOriginToken(value);
+      if (parsedOrigin) {
+        activeOrigin = parsedOrigin;
+        continue;
+      }
+    }
+
     const parsed = splitToken(value);
     if (!parsed) continue;
 
@@ -247,7 +263,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
     }
   }
 
-  suggestions = generateSuggestions(suggestionRow, flattenedCommands);
+  suggestions = generateSuggestions(suggestionRow, flattenedCommands, activeOrigin, contextTokens);
 
   return suggestions;
 }
@@ -262,7 +278,9 @@ function getClosestSuggestion(param: string, flattenedCommands: Record<string, P
 
 function generateSuggestions(
   suggestionRow: BindedCommand[],
-  flattenedCommands: Record<string, PropItem>
+  flattenedCommands: Record<string, PropItem>,
+  activeOrigin: TransformOrigin | null,
+  contextTokens: string[]
 ): Suggestion[] {
   let suggestions: Suggestion[] = [];
   const suggestionCommands: BindedCommand[][] = [];
@@ -278,14 +296,7 @@ function generateSuggestions(
 
   for (const suggestionCommandList of suggestionCommands) {
     let suggestionData: { name: string; data: string } = { name: '', data: '' };
-    suggestionData.name = suggestionCommandList
-      .map((command) =>
-        command.command.hasValue
-          ? command.prefix + command.command.shortcut + command.value
-          : command.prefix + command.command.shortcut
-      )
-      .slice(0, suggestionCommandList.length - 1)
-      .join(', ');
+    suggestionData.name = contextTokens.join(', ');
 
     const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
 
@@ -321,13 +332,12 @@ function generateSuggestions(
       if (command.message) lastMessage = command.message;
       else lastMessage = command.name;
     }
+    lastMessage = withOriginHint(lastMessage, command, activeOrigin);
 
     const newName = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''} - ${lastMessage}`;
     suggestionData.name = suggestionData.name ? `${suggestionData.name}, ${newName}` : newName;
 
-    suggestionData.data = suggestionCommandList
-      .map((command) => command.prefix + command.command.shortcut + command.value)
-      .join(' ');
+    suggestionData.data = [...contextTokens, ...suggestionCommandList.map((command) => command.prefix + command.command.shortcut + command.value)].join(' ');
     if (command.action) {
       suggestions.push(suggestionData);
     }

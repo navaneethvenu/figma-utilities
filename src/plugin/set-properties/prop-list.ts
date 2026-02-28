@@ -37,6 +37,7 @@ export interface PropItem {
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
   supportsModifiers?: boolean;
+  supportsOrigin?: boolean;
   getModifierValue?: (node: SceneNode) => number | null;
   unit?: string;
   message?: string;
@@ -326,6 +327,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: false,
         supportsModifiers: true,
+        supportsOrigin: true,
         getModifierValue: readNumberProp('width'),
         action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, mode: 'set', origin }),
         subcommands: {
@@ -334,6 +336,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: '+w',
             hasValue: true,
             allowsNegative: true,
+            supportsOrigin: true,
             action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, mode: 'increase', origin }),
           },
           '-w': {
@@ -341,6 +344,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: '-w',
             hasValue: true,
             allowsNegative: true,
+            supportsOrigin: true,
             action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, mode: 'decrease', origin }),
           },
         },
@@ -353,6 +357,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: false,
         supportsModifiers: true,
+        supportsOrigin: true,
         getModifierValue: readNumberProp('height'),
         action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, mode: 'set', origin }),
         subcommands: {
@@ -361,6 +366,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: '+h',
             hasValue: true,
             allowsNegative: true,
+            supportsOrigin: true,
             action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, mode: 'increase', origin }),
           },
           '-h': {
@@ -368,6 +374,7 @@ export const propList: Record<string, PropItem> = {
             shortcut: '-h',
             hasValue: true,
             allowsNegative: true,
+            supportsOrigin: true,
             action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, mode: 'decrease', origin }),
           },
         },
@@ -379,6 +386,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'sc',
         hasValue: true,
         allowsNegative: true,
+        supportsOrigin: true,
         unit: 'x',
         action: ({ param, value, nodes, origin }) => setScale({ param, value, nodes, origin }),
         subcommands: {
@@ -387,17 +395,20 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'scw',
             hasValue: true,
             allowsNegative: false,
+            supportsOrigin: true,
             action: ({ param, value, nodes, origin }) => setScaleWidth({ param, value, nodes, mode: 'set', origin }),
             subcommands: {
               '+scw': {
                 name: 'Increase Scale Width',
                 shortcut: '+scw',
+                supportsOrigin: true,
                 action: ({ param, value, nodes, origin }) =>
                   setScaleWidth({ param, value, nodes, mode: 'increase', origin }),
               },
               '-scw': {
                 name: 'Decrease Scale Width',
                 shortcut: '-scw',
+                supportsOrigin: true,
                 action: ({ param, value, nodes, origin }) =>
                   setScaleWidth({ param, value, nodes, mode: 'decrease', origin }),
               },
@@ -408,18 +419,21 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'sch',
             hasValue: true,
             allowsNegative: false,
+            supportsOrigin: true,
             action: ({ param, value, nodes, origin }) =>
               setScaleHeight({ param, value, nodes, mode: 'set', origin }),
             subcommands: {
               '+sch': {
                 name: 'Increase Scale Height',
                 shortcut: '+sch',
+                supportsOrigin: true,
                 action: ({ param, value, nodes, origin }) =>
                   setScaleHeight({ param, value, nodes, mode: 'increase', origin }),
               },
               '-sch': {
                 name: 'Decrease Scale Height',
                 shortcut: '-sch',
+                supportsOrigin: true,
                 action: ({ param, value, nodes, origin }) =>
                   setScaleHeight({ param, value, nodes, mode: 'decrease', origin }),
               },
@@ -434,6 +448,7 @@ export const propList: Record<string, PropItem> = {
         shortcut: 's',
         hasValue: true,
         allowsNegative: false,
+        supportsOrigin: true,
         action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, origin }),
       },
 
