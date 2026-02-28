@@ -24,7 +24,11 @@ function hasOperatorPrefix(token: string) {
 function isOriginQueryToken(token: string) {
   if (!token) return false;
   if (hasOperatorPrefix(token)) return false;
-  return /^[a-z]{1,2}:?$/i.test(token);
+  if (!/^[a-z]{1,2}:?$/i.test(token)) return false;
+
+  const trimmed = token.trim().toLowerCase();
+  const candidate = trimmed.endsWith(':') ? trimmed.slice(0, -1) : trimmed;
+  return ORIGIN_TOKENS.some((origin) => origin.startsWith(candidate));
 }
 
 function buildOriginSuggestions(values: string[], lastToken: string): Suggestion[] {
