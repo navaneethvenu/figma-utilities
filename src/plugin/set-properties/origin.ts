@@ -17,6 +17,10 @@ export function splitOriginPrefixedToken(token: string): string[] {
   const originToken = match[1].toLowerCase();
   const remainder = match[2];
   if (!parseOriginToken(originToken)) return [token];
+  // Only split compact origin syntax when the remainder looks like a command token.
+  // Example split: c:+++h40/2, tl:w120
+  // Example no-split: r:400..800 (likely malformed value, not origin+command)
+  if (!/^[A-Za-z+\-*/]/.test(remainder)) return [token];
 
   return [originToken, remainder];
 }

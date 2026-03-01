@@ -17,6 +17,10 @@ interface Suggestion {
   data: string;
 }
 
+function isSequentialPrefix(prefix: string) {
+  return ['+++', '++', '--', '**', '//'].includes(prefix);
+}
+
 function hasOperatorPrefix(token: string) {
   return /^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
 }
@@ -102,6 +106,10 @@ function parseRangeValue(value: string) {
 function hasMalformedRangeValue(value: string) {
   if (!value.includes('..')) return false;
   return parseRangeValue(value) === null;
+}
+
+function hasProgressionSuffix(value: string) {
+  return /^-?\d*\.?\d+(?:[+\-*/]-?\d*\.?\d+)(?:px|%)?$/i.test(value);
 }
 
 function rangeTouchesOrCrossesZero(start: number, end: number) {
@@ -215,6 +223,7 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
         return `Error: Division range cannot touch or cross zero`;
       }
       return `Divide ${command.name} from ${from} to ${to} across selection`;
+    case '+++':
     case '++':
     case '--':
     case '**':
@@ -277,7 +286,13 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
     }
 
     const parsed = splitToken(value);
-    if (!parsed) continue;
+    if (!parsed) {
+      if (isLast) {
+        suggestionRow = [];
+        break;
+      }
+      continue;
+    }
 
     const { prefix, param, value: paramVal } = parsed;
     const directPrefixedShortcut = `${prefix}${param}`;
@@ -359,6 +374,8 @@ function generateSuggestions(
 
         if (hasMalformedRangeValue(value)) {
           lastMessage = `Error: Invalid range format. Use start..end`;
+        } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
+          lastMessage = `Error: Progression suffix requires sequential operators (++, +++, --, **, //)`;
         } else if (isValidValue) {
           const defaultUnit = command.unit === undefined ? 'px' : command.unit;
           if (range) {
