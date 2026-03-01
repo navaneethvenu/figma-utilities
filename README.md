@@ -58,6 +58,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives `+24, +26, +28, ...`)
   - `*n` or `/n` for geometric progression (for example `++h24/2` gives `+24, +12, +6, ...`)
+- Cumulative sequential add is available via `+++` (for example `+++h40/2` gives `+40, +60, +70, ...`).
 - Range operands are supported with `start..end` (for example `+h1..24`, `w10..100`)
 - Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)

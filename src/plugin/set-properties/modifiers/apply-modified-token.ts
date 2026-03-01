@@ -54,11 +54,20 @@ function progressionValueAtIndex(base: number, i: number, token: ModifiedToken) 
   }
 }
 
+function cumulativeProgressionValue(base: number, i: number, token: ModifiedToken) {
+  let sum = 0;
+  for (let j = 0; j <= i; j++) {
+    sum += progressionValueAtIndex(base, j, token);
+  }
+  return sum;
+}
+
 function computeTarget(current: number, i: number, n: number, token: ModifiedToken): number {
   const operand =
     token.operandMode === 'range' ? interpolate(token.start, token.end as number, i, n) : token.start;
   const base = roundOperand(operand);
   const seqOperand = roundOperand(progressionValueAtIndex(base, i, token));
+  const cumOperand = roundOperand(cumulativeProgressionValue(base, i, token));
 
   switch (token.mode) {
     case 'set':
@@ -79,6 +88,8 @@ function computeTarget(current: number, i: number, n: number, token: ModifiedTok
       return current * seqOperand;
     case 'seq_div':
       return current / seqOperand;
+    case 'cum_add':
+      return current + cumOperand;
   }
 }
 

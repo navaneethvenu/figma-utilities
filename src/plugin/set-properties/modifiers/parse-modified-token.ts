@@ -1,4 +1,14 @@
-export type ModifierMode = 'set' | 'add' | 'sub' | 'mul' | 'div' | 'seq_add' | 'seq_sub' | 'seq_mul' | 'seq_div';
+export type ModifierMode =
+  | 'set'
+  | 'add'
+  | 'sub'
+  | 'mul'
+  | 'div'
+  | 'seq_add'
+  | 'seq_sub'
+  | 'seq_mul'
+  | 'seq_div'
+  | 'cum_add';
 export type OperandMode = 'scalar' | 'range';
 
 export interface ModifiedToken {
@@ -12,6 +22,11 @@ export interface ModifiedToken {
 }
 
 function parseOperator(token: string): { operator: string; rest: string } {
+  const tripleOps = ['+++'];
+  for (const op of tripleOps) {
+    if (token.startsWith(op)) return { operator: op, rest: token.slice(op.length) };
+  }
+
   const doubleOps = ['++', '--', '**', '//'];
   for (const op of doubleOps) {
     if (token.startsWith(op)) return { operator: op, rest: token.slice(op.length) };
@@ -45,6 +60,8 @@ function getMode(operator: string): ModifierMode | null {
       return 'seq_mul';
     case '//':
       return 'seq_div';
+    case '+++':
+      return 'cum_add';
     default:
       return null;
   }
@@ -65,7 +82,7 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
     const rangeMatch = valueExpr.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
     if (!rangeMatch) return null;
 
-    if (mode.startsWith('seq_')) return null;
+    if (mode.startsWith('seq_') || mode === 'cum_add') return null;
 
     const start = Number(rangeMatch[1]);
     const end = Number(rangeMatch[2]);
@@ -88,7 +105,7 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
   const progressionOp = scalarMatch[2] as '+' | '-' | '*' | '/' | undefined;
   const progressionValue = scalarMatch[3] !== undefined ? Number(scalarMatch[3]) : undefined;
   if (progressionOp !== undefined) {
-    if (!mode.startsWith('seq_')) return null;
+    if (!(mode.startsWith('seq_') || mode === 'cum_add')) return null;
     if (progressionValue === undefined || !Number.isFinite(progressionValue)) return null;
     if (progressionOp === '/' && progressionValue === 0) return null;
   }

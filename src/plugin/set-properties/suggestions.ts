@@ -18,7 +18,7 @@ interface Suggestion {
 }
 
 function hasOperatorPrefix(token: string) {
-  return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
+  return /^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
 }
 
 function isOriginQueryToken(token: string) {
@@ -129,6 +129,8 @@ function formatOperatorMessage(prefix: string, command: PropItem, renderedValue:
       return `Divide ${command.name} by ${renderedValue}`;
     case '++':
       return `Sequentially increase ${command.name} by ${renderedValue}`;
+    case '+++':
+      return `Cumulatively increase ${command.name} by ${renderedValue}`;
     case '--':
       return `Sequentially decrease ${command.name} by ${renderedValue}`;
     case '**':
@@ -163,6 +165,8 @@ function formatOperatorPlaceholder(prefix: string, command: PropItem) {
       return `Divide ${command.name} by (Enter Value)`;
     case '++':
       return `Sequentially increase ${command.name} by (Enter Value)`;
+    case '+++':
+      return `Cumulatively increase ${command.name} by (Enter Value)`;
     case '--':
       return `Sequentially decrease ${command.name} by (Enter Value)`;
     case '**':
@@ -222,7 +226,7 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
 }
 
 function splitToken(token: string) {
-  const match = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+)(.*)$/);
+  const match = token.match(/^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+)(.*)$/);
   if (!match) return null;
   return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
 }
@@ -351,7 +355,7 @@ function generateSuggestions(
           : range !== null ||
             (scalar !== null &&
               (scalar.num >= 0 || command.allowsNegative === true) &&
-              (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)));
+              (scalar.progressionOp === null || ['+++', '++', '--', '**', '//'].includes(lastCommand.prefix)));
 
         if (hasMalformedRangeValue(value)) {
           lastMessage = `Error: Invalid range format. Use start..end`;
