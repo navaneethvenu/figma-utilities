@@ -42,27 +42,29 @@ function roundOperand(value: number) {
 function computeTarget(current: number, i: number, n: number, token: ModifiedToken): number {
   const operand =
     token.operandMode === 'range' ? interpolate(token.start, token.end as number, i, n) : token.start;
-  const op = roundOperand(operand);
+  const base = roundOperand(operand);
+  const decay = token.decay ?? 1;
+  const seqOperand = roundOperand(base / Math.pow(decay, i));
 
   switch (token.mode) {
     case 'set':
-      return op;
+      return base;
     case 'add':
-      return current + op;
+      return current + base;
     case 'sub':
-      return current - op;
+      return current - base;
     case 'mul':
-      return current * op;
+      return current * base;
     case 'div':
-      return current / op;
+      return current / base;
     case 'seq_add':
-      return current + op * (i + 1);
+      return current + seqOperand;
     case 'seq_sub':
-      return current - op * (i + 1);
+      return current - seqOperand;
     case 'seq_mul':
-      return current * Math.pow(op, i + 1);
+      return current * seqOperand;
     case 'seq_div':
-      return current / Math.pow(op, i + 1);
+      return current / seqOperand;
   }
 }
 
@@ -86,6 +88,9 @@ export async function applyModifiedCommand(
   }
 
   if ((token.mode === 'div' || token.mode === 'seq_div') && token.start === 0) {
+    throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
+  }
+  if (token.decay !== undefined && token.decay <= 0) {
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
   if (

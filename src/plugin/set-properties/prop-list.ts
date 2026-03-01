@@ -449,7 +449,25 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: false,
         supportsOrigin: true,
-        action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, origin }),
+        subcommands: {
+          '+s': {
+            name: 'Increase Size By',
+            shortcut: '+s',
+            hasValue: true,
+            allowsNegative: true,
+            supportsOrigin: true,
+            action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, mode: 'increase', origin }),
+          },
+          '-s': {
+            name: 'Decrease Size By',
+            shortcut: '-s',
+            hasValue: true,
+            allowsNegative: true,
+            supportsOrigin: true,
+            action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, mode: 'decrease', origin }),
+          },
+        },
+        action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, mode: 'set', origin }),
       },
 
       // Fit

@@ -7,10 +7,11 @@ interface setSizeProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
+  mode: 'set' | 'increase' | 'decrease';
   origin?: TransformOrigin;
 }
 
-export default function setSize({ param, value, nodes, origin }: setSizeProps) {
+export default function setSize({ param, value, nodes, mode, origin }: setSizeProps) {
   const size = parseFloat(value);
 
   for (const node of nodes) {
@@ -19,7 +20,9 @@ export default function setSize({ param, value, nodes, origin }: setSizeProps) {
 
     if (nodeCheck !== undefined) {
       if (!isNaN(size)) {
-        runWithOrigin(assertedNode, origin, () => assertedNode.resize(size, size));
+        const newWidth = mode === 'increase' ? node.width + size : mode === 'decrease' ? node.width - size : size;
+        const newHeight = mode === 'increase' ? node.height + size : mode === 'decrease' ? node.height - size : size;
+        runWithOrigin(assertedNode, origin, () => assertedNode.resize(newWidth, newHeight));
       }
 
       //Invalid Value

@@ -70,15 +70,18 @@ function valueHasExplicitUnit(value: string) {
 }
 
 function parseScalarValue(value: string) {
-  const match = value.match(/^(-?\d*\.?\d+)(px|%)?$/i);
+  const match = value.match(/^(-?\d*\.?\d+)(?:\/(-?\d*\.?\d+))?(px|%)?$/i);
   if (!match) return null;
 
   const num = Number(match[1]);
   if (!Number.isFinite(num)) return null;
+  const decay = match[2] !== undefined ? Number(match[2]) : null;
+  if (decay !== null && !Number.isFinite(decay)) return null;
 
   return {
     num,
-    unit: (match[2] ?? '').toLowerCase(),
+    decay,
+    unit: (match[3] ?? '').toLowerCase(),
   };
 }
 
@@ -173,9 +176,11 @@ function renderScalarValue(raw: string, defaultUnit: string) {
   if (!parsed) return raw;
 
   const normalized = String(parsed.num);
-  if (parsed.unit) return `${normalized}${parsed.unit}`;
+  const withUnit = parsed.unit ? `${normalized}${parsed.unit}` : `${normalized}${defaultUnit}`;
+  if (parsed.decay !== null) return `${withUnit}/${parsed.decay}`;
+  if (parsed.unit) return withUnit;
   if (valueHasExplicitUnit(raw)) return raw;
-  return `${normalized}${defaultUnit}`;
+  return withUnit;
 }
 
 function formatRangeMessage(prefix: string, command: PropItem, start: number, end: number, unit: string) {
@@ -263,23 +268,26 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
     if (!parsed) continue;
 
     const { prefix, param, value: paramVal } = parsed;
+    const directPrefixedShortcut = `${prefix}${param}`;
+    const directPrefixedCommand = prefix ? flattenedCommands[directPrefixedShortcut] : undefined;
 
     if (isLast) {
-      const closestCommand = getClosestSuggestion(param, flattenedCommands);
+      const closestCommand = directPrefixedCommand ?? getClosestSuggestion(param, flattenedCommands);
       if (!closestCommand) continue;
 
       suggestionRow.push({
         command: closestCommand,
         value: paramVal,
-        prefix,
+        prefix: directPrefixedCommand ? '' : prefix,
       });
     } else {
-      if (param in flattenedCommands) {
-        const propItem = flattenedCommands[param];
+      const key = directPrefixedCommand ? directPrefixedShortcut : param;
+      if (key in flattenedCommands) {
+        const propItem = flattenedCommands[key];
         suggestionRow.push({
           command: propItem,
           value: paramVal,
-          prefix,
+          prefix: directPrefixedCommand ? '' : prefix,
         });
       }
     }
@@ -333,7 +341,10 @@ function generateSuggestions(
         const isValidValue = isFillCommand
           ? /^#?[0-9a-fA-F]+$/.test(value) // hex color validation, accepts optional leading #
           : range !== null ||
-            (scalar !== null && (scalar.num >= 0 || command.allowsNegative === true));
+            (scalar !== null &&
+              (scalar.num >= 0 || command.allowsNegative === true) &&
+              (scalar.decay === null || scalar.decay > 0) &&
+              (scalar.decay === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)));
 
         if (hasMalformedRangeValue(value)) {
           lastMessage = `Error: Invalid range format. Use start..end`;

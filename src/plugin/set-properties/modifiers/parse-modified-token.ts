@@ -7,6 +7,7 @@ export interface ModifiedToken {
   operandMode: OperandMode;
   start: number;
   end?: number;
+  decay?: number;
 }
 
 function parseOperator(token: string): { operator: string; rest: string } {
@@ -78,13 +79,22 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
     };
   }
 
-  const scalar = Number(valueExpr);
+  const scalarMatch = valueExpr.match(/^(-?\d*\.?\d+)(?:\/(-?\d*\.?\d+))?$/);
+  if (!scalarMatch) return null;
+
+  const scalar = Number(scalarMatch[1]);
   if (!Number.isFinite(scalar)) return null;
+  const decay = scalarMatch[2] !== undefined ? Number(scalarMatch[2]) : undefined;
+  if (decay !== undefined) {
+    if (!mode.startsWith('seq_')) return null;
+    if (!Number.isFinite(decay) || decay <= 0) return null;
+  }
 
   return {
     mode,
     command,
     operandMode: 'scalar',
     start: scalar,
+    decay,
   };
 }
