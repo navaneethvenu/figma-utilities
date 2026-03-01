@@ -39,12 +39,26 @@ function roundOperand(value: number) {
   return Number(value.toFixed(6));
 }
 
+function progressionValueAtIndex(base: number, i: number, token: ModifiedToken) {
+  if (!token.progressionOp || token.progressionValue === undefined) return base;
+
+  switch (token.progressionOp) {
+    case '+':
+      return base + token.progressionValue * i;
+    case '-':
+      return base - token.progressionValue * i;
+    case '*':
+      return base * Math.pow(token.progressionValue, i);
+    case '/':
+      return base / Math.pow(token.progressionValue, i);
+  }
+}
+
 function computeTarget(current: number, i: number, n: number, token: ModifiedToken): number {
   const operand =
     token.operandMode === 'range' ? interpolate(token.start, token.end as number, i, n) : token.start;
   const base = roundOperand(operand);
-  const decay = token.decay ?? 1;
-  const seqOperand = roundOperand(base / Math.pow(decay, i));
+  const seqOperand = roundOperand(progressionValueAtIndex(base, i, token));
 
   switch (token.mode) {
     case 'set':
@@ -90,7 +104,7 @@ export async function applyModifiedCommand(
   if ((token.mode === 'div' || token.mode === 'seq_div') && token.start === 0) {
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
-  if (token.decay !== undefined && token.decay <= 0) {
+  if (token.progressionOp === '/' && token.progressionValue === 0) {
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
   if (

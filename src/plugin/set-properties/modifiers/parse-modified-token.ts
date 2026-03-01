@@ -7,7 +7,8 @@ export interface ModifiedToken {
   operandMode: OperandMode;
   start: number;
   end?: number;
-  decay?: number;
+  progressionOp?: '+' | '-' | '*' | '/';
+  progressionValue?: number;
 }
 
 function parseOperator(token: string): { operator: string; rest: string } {
@@ -79,15 +80,17 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
     };
   }
 
-  const scalarMatch = valueExpr.match(/^(-?\d*\.?\d+)(?:\/(-?\d*\.?\d+))?$/);
+  const scalarMatch = valueExpr.match(/^(-?\d*\.?\d+)(?:([+\-*/])(-?\d*\.?\d+))?$/);
   if (!scalarMatch) return null;
 
   const scalar = Number(scalarMatch[1]);
   if (!Number.isFinite(scalar)) return null;
-  const decay = scalarMatch[2] !== undefined ? Number(scalarMatch[2]) : undefined;
-  if (decay !== undefined) {
+  const progressionOp = scalarMatch[2] as '+' | '-' | '*' | '/' | undefined;
+  const progressionValue = scalarMatch[3] !== undefined ? Number(scalarMatch[3]) : undefined;
+  if (progressionOp !== undefined) {
     if (!mode.startsWith('seq_')) return null;
-    if (!Number.isFinite(decay) || decay <= 0) return null;
+    if (progressionValue === undefined || !Number.isFinite(progressionValue)) return null;
+    if (progressionOp === '/' && progressionValue === 0) return null;
   }
 
   return {
@@ -95,6 +98,7 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
     command,
     operandMode: 'scalar',
     start: scalar,
-    decay,
+    progressionOp,
+    progressionValue,
   };
 }

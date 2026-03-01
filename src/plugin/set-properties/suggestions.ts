@@ -70,18 +70,21 @@ function valueHasExplicitUnit(value: string) {
 }
 
 function parseScalarValue(value: string) {
-  const match = value.match(/^(-?\d*\.?\d+)(?:\/(-?\d*\.?\d+))?(px|%)?$/i);
+  const match = value.match(/^(-?\d*\.?\d+)(?:([+\-*/])(-?\d*\.?\d+))?(px|%)?$/i);
   if (!match) return null;
 
   const num = Number(match[1]);
   if (!Number.isFinite(num)) return null;
-  const decay = match[2] !== undefined ? Number(match[2]) : null;
-  if (decay !== null && !Number.isFinite(decay)) return null;
+  const progressionOp = (match[2] as '+' | '-' | '*' | '/' | undefined) ?? null;
+  const progressionValue = match[3] !== undefined ? Number(match[3]) : null;
+  if (progressionValue !== null && !Number.isFinite(progressionValue)) return null;
+  if (progressionOp === '/' && progressionValue === 0) return null;
 
   return {
     num,
-    decay,
-    unit: (match[3] ?? '').toLowerCase(),
+    progressionOp,
+    progressionValue,
+    unit: (match[4] ?? '').toLowerCase(),
   };
 }
 
@@ -177,7 +180,12 @@ function renderScalarValue(raw: string, defaultUnit: string) {
 
   const normalized = String(parsed.num);
   const withUnit = parsed.unit ? `${normalized}${parsed.unit}` : `${normalized}${defaultUnit}`;
-  if (parsed.decay !== null) return `${withUnit}/${parsed.decay}`;
+  if (parsed.progressionOp && parsed.progressionValue !== null) {
+    const op = parsed.progressionOp;
+    const val = parsed.progressionValue;
+    const renderedVal = op === '+' || op === '-' ? Math.abs(val) : val;
+    return `${withUnit}${op}${renderedVal}`;
+  }
   if (parsed.unit) return withUnit;
   if (valueHasExplicitUnit(raw)) return raw;
   return withUnit;
@@ -343,8 +351,7 @@ function generateSuggestions(
           : range !== null ||
             (scalar !== null &&
               (scalar.num >= 0 || command.allowsNegative === true) &&
-              (scalar.decay === null || scalar.decay > 0) &&
-              (scalar.decay === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)));
+              (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)));
 
         if (hasMalformedRangeValue(value)) {
           lastMessage = `Error: Invalid range format. Use start..end`;

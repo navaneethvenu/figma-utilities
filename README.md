@@ -55,7 +55,9 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Numeric commands may allow `+`/`-` variants depending on shortcut
 - Global numeric operators (supported for `h`, `w`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`): `+`, `-`, `*`, `/`
 - Sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
-- Sequential operators support decay syntax with `/n` (for example `++h24/2` gives `+24, +12, +6, ...`).
+- Sequential operators support progression modifiers:
+  - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives `+24, +26, +28, ...`)
+  - `*n` or `/n` for geometric progression (for example `++h24/2` gives `+24, +12, +6, ...`)
 - Range operands are supported with `start..end` (for example `+h1..24`, `w10..100`)
 - Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
