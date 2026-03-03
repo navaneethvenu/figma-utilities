@@ -72,7 +72,7 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
   const mode = getMode(operator);
   if (!mode) return null;
 
-  const match = rest.match(/^([A-Za-z]+)(.+)$/);
+  const match = rest.match(/^([A-Za-z]+(?::[A-Za-z]+)?)(.+)$/);
   if (!match) return null;
 
   const command = match[1];

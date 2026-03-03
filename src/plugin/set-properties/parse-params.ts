@@ -11,9 +11,20 @@ export interface ParsedParameter {
 }
 
 const OP_PREFIX_RE = /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?/;
+const SCOPED_SCALE_RE = /^sc:((?:\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.*)$/i;
 
 function isValidValue(value: string) {
   return /^#?-?(?:[0-9]*\.?[0-9]+(?:px|%)?|[0-9a-fA-F]+)*$/.test(value);
+}
+
+function normalizeScopedScaleToken(token: string): string {
+  const match = token.match(SCOPED_SCALE_RE);
+  if (!match) return token;
+
+  const [, operator, axisRaw, remainder] = match;
+  const axis = axisRaw.toLowerCase();
+  if (operator === '') return `sc:${axis}${remainder}`;
+  return `${operator}sc:${axis}${remainder}`;
 }
 
 function parseToken(token: string): ParsedParameter | null {
@@ -75,6 +86,7 @@ export default function parseParameters(parameters: { [key: string]: string }): 
     const values = parameters[key]
       .split(' ')
       .flatMap((value) => splitOriginPrefixedToken(value))
+      .map((value) => normalizeScopedScaleToken(value))
       .filter((value) => value.trim() !== '');
 
     for (const value of values) {
