@@ -7,11 +7,10 @@ interface setHeightProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
-  mode: 'set' | 'increase' | 'decrease';
   origin?: TransformOrigin;
 }
 
-export default function setHeight({ param, value, nodes, mode, origin }: setHeightProps) {
+export default function setHeight({ param, value, nodes, origin }: setHeightProps) {
   const parsedValue = parseFloat(value);
 
   for (const node of nodes) {
@@ -19,8 +18,7 @@ export default function setHeight({ param, value, nodes, mode, origin }: setHeig
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      const newHeight =
-        mode === 'increase' ? node.height + parsedValue : mode === 'decrease' ? node.height - parsedValue : parsedValue;
+      const newHeight = parsedValue;
 
       if (!isNaN(newHeight)) {
         runWithOrigin(assertedNode, origin, () => assertedNode.resize(node.width, newHeight));

@@ -8,11 +8,10 @@ interface setScaleHeightProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
-  mode: 'set' | 'increase' | 'decrease';
   origin?: TransformOrigin;
 }
 
-export default function setScaleHeight({ param, value, nodes, mode, origin }: setScaleHeightProps) {
+export default function setScaleHeight({ param, value, nodes, origin }: setScaleHeightProps) {
   const height = parseFiniteNumber(value);
   if (height === null) {
     notifyError({
@@ -27,10 +26,7 @@ export default function setScaleHeight({ param, value, nodes, mode, origin }: se
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      let newHeight;
-      if (mode === 'increase') newHeight = node.height + height;
-      else if (mode === 'decrease') newHeight = node.height - height;
-      else newHeight = height;
+      const newHeight = height;
 
       if (!Number.isFinite(newHeight) || newHeight <= 0 || node.height <= 0) {
         notifyError({

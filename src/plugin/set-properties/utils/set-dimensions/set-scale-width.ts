@@ -8,11 +8,10 @@ interface setScaleWidthProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
-  mode: 'set' | 'increase' | 'decrease';
   origin?: TransformOrigin;
 }
 
-export default function setScaleWidth({ param, value, nodes, mode, origin }: setScaleWidthProps) {
+export default function setScaleWidth({ param, value, nodes, origin }: setScaleWidthProps) {
   const width = parseFiniteNumber(value);
   if (width === null) {
     notifyError({
@@ -27,10 +26,7 @@ export default function setScaleWidth({ param, value, nodes, mode, origin }: set
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      let newWidth;
-      if (mode === 'increase') newWidth = node.width + width;
-      else if (mode === 'decrease') newWidth = node.width - width;
-      else newWidth = width;
+      const newWidth = width;
 
       if (!Number.isFinite(newWidth) || newWidth <= 0 || node.width <= 0) {
         notifyError({
