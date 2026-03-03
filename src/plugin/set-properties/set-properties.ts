@@ -3,6 +3,7 @@ import parameterRouting from './param-routing';
 import parseParameters from './parse-params';
 import { ErrorType } from '../utils/errorType';
 import { applyModifiedCommand } from './modifiers/apply-modified-token';
+import { applyScopedScaleCommand } from './modifiers/apply-scoped-scale-token';
 import { parseOriginToken, TransformOrigin } from './origin';
 
 export default async function setProperties(parameters: { [key: string]: string }) {
@@ -12,7 +13,7 @@ export default async function setProperties(parameters: { [key: string]: string 
       let currentOrigin: TransformOrigin | undefined;
       let executableCount = 0;
 
-      for (const { param, value, raw, modified, originModifier } of parsedParams) {
+      for (const { param, value, raw, modified, scopedScaleModifier, originModifier } of parsedParams) {
         const currentSelection = figma.currentPage.selection;
         if (!currentSelection || currentSelection.length === 0) {
           figma.notify('Selection became empty while applying commands.');
@@ -30,6 +31,12 @@ export default async function setProperties(parameters: { [key: string]: string 
 
         if (modified) {
           await applyModifiedCommand(raw ?? param, currentSelection, currentOrigin);
+          executableCount++;
+          continue;
+        }
+
+        if (scopedScaleModifier) {
+          await applyScopedScaleCommand(raw ?? param, currentSelection, currentOrigin);
           executableCount++;
           continue;
         }
