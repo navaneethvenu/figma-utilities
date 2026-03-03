@@ -17,6 +17,13 @@ interface Suggestion {
   data: string;
 }
 
+type CandidateBucket = 'exact' | 'example' | 'next' | 'error';
+
+interface SuggestionCandidate extends Suggestion {
+  score: number;
+  bucket: CandidateBucket;
+}
+
 function isSequentialPrefix(prefix: string) {
   return ['++', '--', '**', '//'].includes(prefix);
 }
@@ -323,6 +330,169 @@ function composeTokenWithContext(contextTokens: string[], nextToken: string) {
   return tokens.join(' ');
 }
 
+function getCommandExamples(shortcut: string) {
+  const examples: Record<string, Array<{ token: string; help: string }>> = {
+    w: [
+      { token: 'w100', help: 'Set width to 100' },
+      { token: '+w8', help: 'Increase width by 8' },
+      { token: '++w8+2', help: 'Progressive width increase' },
+    ],
+    h: [
+      { token: 'h100', help: 'Set height to 100' },
+      { token: '+h8', help: 'Increase height by 8' },
+      { token: '++h8+2', help: 'Progressive height increase' },
+    ],
+    wh: [
+      { token: 'wh120,80', help: 'Set width and height' },
+      { token: '+wh8', help: 'Increase size by 8' },
+    ],
+    op: [
+      { token: 'op80', help: 'Set opacity to 80%' },
+      { token: 'op80%', help: 'Explicit opacity unit' },
+    ],
+    rot: [
+      { token: 'rot45', help: 'Set rotation to 45 degrees' },
+      { token: 'rot45deg', help: 'Explicit rotation unit' },
+    ],
+    ls: [
+      { token: 'ls2', help: 'Set letter spacing to 2' },
+      { token: 'ls2px', help: 'Letter spacing in px' },
+      { token: 'ls4%', help: 'Letter spacing in %' },
+    ],
+    lh: [
+      { token: 'lh120', help: 'Set line height to 120' },
+      { token: 'lh120%', help: 'Line height in %' },
+      { token: 'lh16px', help: 'Line height in px' },
+    ],
+    dup: [
+      { token: 'dup3', help: 'Duplicate selection 3 times' },
+      { token: 'dup1', help: 'Duplicate once' },
+    ],
+    f: [
+      { token: 'fFF6600', help: 'Replace fill with hex color' },
+      { token: 'f#1A73E8', help: 'Replace fill with #hex color' },
+    ],
+    x: [
+      { token: 'x100', help: 'Set x position' },
+      { token: '+x16', help: 'Move right by 16' },
+    ],
+    y: [
+      { token: 'y100', help: 'Set y position' },
+      { token: '+y16', help: 'Move down by 16' },
+    ],
+    r: [
+      { token: 'r8', help: 'Set corner radius to 8' },
+      { token: '+r2', help: 'Increase corner radius by 2' },
+    ],
+    p: [
+      { token: 'p16', help: 'Set all padding to 16' },
+      { token: 'px24', help: 'Set horizontal padding to 24' },
+    ],
+    st: [
+      { token: 'st2', help: 'Set stroke width to 2' },
+      { token: 'stx1', help: 'Set horizontal stroke to 1' },
+    ],
+    gap: [
+      { token: 'gap16', help: 'Set auto-layout gap to 16' },
+      { token: 'gapx24', help: 'Set horizontal gap to 24' },
+    ],
+  };
+
+  return examples[shortcut] ?? [];
+}
+
+function invalidValueHint(command: PropItem) {
+  switch (command.shortcut) {
+    case 'f':
+      return `Use a hex color (e.g. fFF6600 or f#1A73E8)`;
+    case 'dup':
+      return `Use a whole number (e.g. dup3)`;
+    case 'op':
+      return `Use 0-100 with optional % (e.g. op80 or op80%)`;
+    case 'rot':
+      return `Use a number with optional deg (e.g. rot45 or rot45deg)`;
+    case 'wh':
+      return `Use one value or width,height (e.g. wh120 or wh120,80)`;
+    case 'ls':
+    case 'lh':
+      return `Use number with optional px/% (e.g. ${command.shortcut}16px)`;
+    default:
+      return `Enter a valid value (e.g. ${command.shortcut}100)`;
+  }
+}
+
+function getLikelyNextShortcuts(previousCommand?: string) {
+  const fallback = ['w', 'h', 'x', 'y', 'r', 'f', 'op', 'rot', 'p', 'st', 'gap'];
+  if (!previousCommand) return fallback;
+
+  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand)) return ['x', 'y', 'r', 'f', 'op', 'rot'];
+  if (['x', 'y'].includes(previousCommand)) return ['w', 'h', 'r', 'f', 'op'];
+  if (previousCommand === 'f') return ['op', 'st', 'r', 'w', 'h'];
+  if (['r', 'st', 'p', 'gap'].includes(previousCommand)) return ['f', 'op', 'w', 'h'];
+  if (['op', 'rot'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'f'];
+
+  return fallback;
+}
+
+function selectDiverseCandidates(candidates: SuggestionCandidate[], limit = 12): Suggestion[] {
+  const byData = new Map<string, SuggestionCandidate>();
+  for (const candidate of candidates) {
+    const existing = byData.get(candidate.data);
+    if (!existing || candidate.score > existing.score) {
+      byData.set(candidate.data, candidate);
+    }
+  }
+
+  const deduped = Array.from(byData.values()).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+  const quotas: Record<CandidateBucket, number> = { exact: 5, example: 3, next: 3, error: 1 };
+  const picked: SuggestionCandidate[] = [];
+
+  for (const bucket of ['exact', 'example', 'next', 'error'] as CandidateBucket[]) {
+    for (const candidate of deduped) {
+      if (picked.length >= limit) break;
+      if (candidate.bucket !== bucket) continue;
+      if (picked.filter((entry) => entry.bucket === bucket).length >= quotas[bucket]) continue;
+      if (picked.some((entry) => entry.data === candidate.data)) continue;
+      picked.push(candidate);
+    }
+  }
+
+  for (const candidate of deduped) {
+    if (picked.length >= limit) break;
+    if (picked.some((entry) => entry.data === candidate.data)) continue;
+    picked.push(candidate);
+  }
+
+  return picked.map((candidate) => ({ name: candidate.name, data: candidate.data }));
+}
+
+function buildNextCommandSuggestions(
+  flattenedCommands: Record<string, PropItem>,
+  contextTokens: string[],
+  previousCommand?: string
+) {
+  const suggestions: SuggestionCandidate[] = [];
+  const nextShortcuts = getLikelyNextShortcuts(previousCommand);
+
+  for (let i = 0; i < nextShortcuts.length; i++) {
+    const shortcut = nextShortcuts[i];
+    const command = flattenedCommands[shortcut];
+    if (!command || !command.action) continue;
+
+    const example = getCommandExamples(shortcut)[0];
+    const token = command.hasValue ? (example?.token ?? `${shortcut}100`) : shortcut;
+    const composed = composeTokenWithContext(contextTokens, token);
+    suggestions.push({
+      name: `${composed} - Next: ${example?.help ?? command.name}`,
+      data: composed,
+      score: 80 - i,
+      bucket: 'next',
+    });
+  }
+
+  return selectDiverseCandidates(suggestions, 10);
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
@@ -373,12 +543,8 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   }
 
   if (lastToken === '') {
-    const wildcardCommand: PropItem = { name: '', shortcut: '', hasValue: true };
-    suggestionRow.push({
-      command: wildcardCommand,
-      value: '',
-      prefix: '',
-    });
+    const previousCommand = suggestionRow.length > 0 ? suggestionRow[suggestionRow.length - 1].command.shortcut : undefined;
+    return buildNextCommandSuggestions(flattenedCommands, contextTokens.filter(Boolean), previousCommand);
   } else {
     const parsedLast = splitToken(lastToken);
     if (!parsedLast) return [];
@@ -411,7 +577,7 @@ function generateSuggestions(
   activeOrigin: TransformOrigin | null,
   contextTokens: string[]
 ): Suggestion[] {
-  let suggestions: Suggestion[] = [];
+  const candidates: SuggestionCandidate[] = [];
   const suggestionCommands: BindedCommand[][] = [];
 
   if (suggestionRow.length === 0) return [];
@@ -424,12 +590,11 @@ function generateSuggestions(
   }
 
   for (const suggestionCommandList of suggestionCommands) {
-    let suggestionData: { name: string; data: string } = { name: '', data: '' };
-
     const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
 
     let lastMessage = '';
     const { value, command } = lastCommand;
+    let hasError = false;
 
     if (command.hasValue) {
       if (lastCommand.value !== '') {
@@ -451,9 +616,11 @@ function generateSuggestions(
           isValidScalarValue;
 
         if (hasMalformedRangeValue(value)) {
-          lastMessage = `Error: Invalid range format. Use start..end`;
+          lastMessage = `Invalid range format. Use start..end (e.g. ${command.shortcut}100..300)`;
+          hasError = true;
         } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
-          lastMessage = `Error: Progression suffix requires sequential operators (++, --, **, //)`;
+          lastMessage = `Progression needs sequential operators (++, --, **, //)`;
+          hasError = true;
         } else if (isValidValue) {
           const defaultUnit = command.unit === undefined || command.unit === 'hex' ? '' : command.unit;
           if (range) {
@@ -467,9 +634,12 @@ function generateSuggestions(
             lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
           }
         } else {
-          lastMessage = `Error: ${command.name} cannot have invalid or negative values`;
+          lastMessage = invalidValueHint(command);
+          hasError = true;
         }
-      } else lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
+      } else {
+        lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
+      }
     } else {
       if (command.message) lastMessage = command.message;
       else lastMessage = command.name;
@@ -478,15 +648,34 @@ function generateSuggestions(
 
     const suggestionToken = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''}`;
     const composed = composeTokenWithContext(contextTokens, suggestionToken);
-    suggestionData.name = `${composed} - ${lastMessage}`;
-
-    suggestionData.data = composed;
+    const isExactShortcut = command.shortcut === lastItem.command.shortcut;
+    const scoreBase =
+      (isExactShortcut ? 95 : 72 - Math.max(0, command.shortcut.length - lastItem.command.shortcut.length)) +
+      (hasError ? -50 : 0);
+    candidates.push({
+      name: `${composed} - ${lastMessage}`,
+      data: composed,
+      score: scoreBase,
+      bucket: hasError ? 'error' : 'exact',
+    });
     if (command.action) {
-      suggestions.push(suggestionData);
+      const examples = getCommandExamples(command.shortcut);
+      if (command.hasValue && (lastCommand.value === '' || hasError) && examples.length > 0) {
+        for (let i = 0; i < Math.min(examples.length, 2); i++) {
+          const example = examples[i];
+          const composedExample = composeTokenWithContext(contextTokens, example.token);
+          candidates.push({
+            name: `${composedExample} - ${example.help}`,
+            data: composedExample,
+            score: scoreBase - 10 - i,
+            bucket: 'example',
+          });
+        }
+      }
     }
   }
 
-  return suggestions;
+  return selectDiverseCandidates(candidates);
 }
 
 function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<string, PropItem>) {
@@ -496,7 +685,15 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
       commands.push({ command: flattenedCommands[command], value: item.value, prefix: item.prefix });
     }
   }
-  return commands;
+
+  commands.sort((a, b) => {
+    const aExact = a.command.shortcut === item.command.shortcut ? 1 : 0;
+    const bExact = b.command.shortcut === item.command.shortcut ? 1 : 0;
+    if (aExact !== bExact) return bExact - aExact;
+    return a.command.shortcut.length - b.command.shortcut.length;
+  });
+
+  return commands.slice(0, 24);
 }
 
 export async function getDefaultSuggestions() {
