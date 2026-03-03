@@ -18,14 +18,14 @@ interface Suggestion {
 }
 
 function isSequentialPrefix(prefix: string) {
-  return ['+++', '++', '--', '**', '//'].includes(prefix);
+  return ['++', '--', '**', '//'].includes(prefix);
 }
 
 function hasOperatorPrefix(token: string) {
-  return /^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
+  return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
 }
 
-const SCOPED_SCALE_RE = /^sc:((?:\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.*)$/i;
+const SCOPED_SCALE_RE = /^sc:((?:\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.*)$/i;
 
 function normalizeScopedScaleToken(token: string) {
   const match = token.match(SCOPED_SCALE_RE);
@@ -148,15 +148,13 @@ function formatOperatorMessage(prefix: string, command: PropItem, renderedValue:
     case '/':
       return `Divide ${command.name} by ${renderedValue}`;
     case '++':
-      return `Sequentially increase ${command.name} by ${renderedValue}`;
-    case '+++':
       return `Cumulatively increase ${command.name} by ${renderedValue}`;
     case '--':
-      return `Sequentially decrease ${command.name} by ${renderedValue}`;
+      return `Cumulatively decrease ${command.name} by ${renderedValue}`;
     case '**':
-      return `Sequentially multiply ${command.name} by ${renderedValue}`;
+      return `Cumulatively multiply ${command.name} by ${renderedValue}`;
     case '//':
-      return `Sequentially divide ${command.name} by ${renderedValue}`;
+      return `Cumulatively divide ${command.name} by ${renderedValue}`;
     default:
       if (command.message) return `${command.message} ${renderedValue}`;
       return `Set ${command.name} to ${renderedValue}`;
@@ -184,15 +182,13 @@ function formatOperatorPlaceholder(prefix: string, command: PropItem) {
     case '/':
       return `Divide ${command.name} by (Enter Value)`;
     case '++':
-      return `Sequentially increase ${command.name} by (Enter Value)`;
-    case '+++':
       return `Cumulatively increase ${command.name} by (Enter Value)`;
     case '--':
-      return `Sequentially decrease ${command.name} by (Enter Value)`;
+      return `Cumulatively decrease ${command.name} by (Enter Value)`;
     case '**':
-      return `Sequentially multiply ${command.name} by (Enter Value)`;
+      return `Cumulatively multiply ${command.name} by (Enter Value)`;
     case '//':
-      return `Sequentially divide ${command.name} by (Enter Value)`;
+      return `Cumulatively divide ${command.name} by (Enter Value)`;
     default:
       return `Set ${command.name} to (Enter Value)`;
   }
@@ -235,7 +231,6 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
         return `Error: Division range cannot touch or cross zero`;
       }
       return `Divide ${command.name} from ${from} to ${to} across selection`;
-    case '+++':
     case '++':
     case '--':
     case '**':
@@ -247,7 +242,7 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
 }
 
 function splitToken(token: string) {
-  const match = token.match(/^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
+  const match = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
   if (!match) return null;
   return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
 }
@@ -383,12 +378,12 @@ function generateSuggestions(
           : range !== null ||
             (scalar !== null &&
               (scalar.num >= 0 || command.allowsNegative === true) &&
-              (scalar.progressionOp === null || ['+++', '++', '--', '**', '//'].includes(lastCommand.prefix)));
+              (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)));
 
         if (hasMalformedRangeValue(value)) {
           lastMessage = `Error: Invalid range format. Use start..end`;
         } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
-          lastMessage = `Error: Progression suffix requires sequential operators (++, +++, --, **, //)`;
+          lastMessage = `Error: Progression suffix requires sequential operators (++, --, **, //)`;
         } else if (isValidValue) {
           const defaultUnit = command.unit === undefined ? 'px' : command.unit;
           if (range) {

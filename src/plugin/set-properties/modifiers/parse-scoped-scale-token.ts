@@ -5,7 +5,6 @@ export type ScopedScaleMode =
   | 'sub'
   | 'mul'
   | 'div'
-  | 'seq_add'
   | 'seq_sub'
   | 'seq_mul'
   | 'seq_div'
@@ -35,22 +34,20 @@ function getMode(operator: string): ScopedScaleMode | null {
     case '/':
       return 'div';
     case '++':
-      return 'seq_add';
+      return 'cum_add';
     case '--':
       return 'seq_sub';
     case '**':
       return 'seq_mul';
     case '//':
       return 'seq_div';
-    case '+++':
-      return 'cum_add';
     default:
       return null;
   }
 }
 
 export default function parseScopedScaleToken(token: string): ScopedScaleToken | null {
-  const match = token.match(/^sc:((?:\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.+)$/i);
+  const match = token.match(/^sc:((?:\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.+)$/i);
   if (!match) return null;
 
   const mode = getMode(match[1]);
