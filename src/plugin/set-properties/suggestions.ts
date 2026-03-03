@@ -25,6 +25,18 @@ function hasOperatorPrefix(token: string) {
   return /^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
 }
 
+const SCOPED_SCALE_RE = /^sc:((?:\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.*)$/i;
+
+function normalizeScopedScaleToken(token: string) {
+  const match = token.match(SCOPED_SCALE_RE);
+  if (!match) return token;
+
+  const [, operator, axisRaw, remainder] = match;
+  const axis = axisRaw.toLowerCase();
+  if (operator === '') return `sc:${axis}${remainder}`;
+  return `${operator}sc:${axis}${remainder}`;
+}
+
 function isOriginQueryToken(token: string) {
   if (!token) return false;
   if (hasOperatorPrefix(token)) return false;
@@ -235,7 +247,7 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
 }
 
 function splitToken(token: string) {
-  const match = token.match(/^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+)(.*)$/);
+  const match = token.match(/^(\+\+\+|\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
   if (!match) return null;
   return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
 }
@@ -262,6 +274,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   const values = query
     .split(' ')
     .flatMap((value) => splitOriginPrefixedToken(value))
+    .map((value) => normalizeScopedScaleToken(value))
     .filter((value) => value.trim() !== '');
   if (values.length === 0) return [];
   const lastToken = values[values.length - 1];

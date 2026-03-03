@@ -7,7 +7,6 @@ import setStrokeWidth from './utils/stroke/set-stroke-width';
 import setWidth from './utils/set-dimensions/set-width';
 import toggleClip from './utils/toggle-clip';
 import setSize from './utils/set-dimensions/set-size';
-import setScale from './utils/set-dimensions/set-scale';
 import setScaleHeight from './utils/set-dimensions/set-scale-height';
 import setScaleWidth from './utils/set-dimensions/set-scale-width';
 import setQuickSelect from './utils/set-quick-select';
@@ -333,15 +332,11 @@ export const propList: Record<string, PropItem> = {
       sc: {
         name: 'Scale',
         shortcut: 'sc',
-        hasValue: true,
-        allowsNegative: true,
-        supportsOrigin: true,
-        unit: 'x',
-        action: ({ param, value, nodes, origin }) => setScale({ param, value, nodes, origin }),
+        type: 'GROUP',
         subcommands: {
-          scw: {
-            name: 'Scale Width',
-            shortcut: 'scw',
+          'sc:w': {
+            name: 'Scale to Width',
+            shortcut: 'sc:w',
             hasValue: true,
             allowsNegative: false,
             supportsModifiers: true,
@@ -349,9 +344,9 @@ export const propList: Record<string, PropItem> = {
             getModifierValue: readNumberProp('width'),
             action: ({ param, value, nodes, origin }) => setScaleWidth({ param, value, nodes, origin }),
           },
-          sch: {
-            name: 'Scale Height',
-            shortcut: 'sch',
+          'sc:h': {
+            name: 'Scale to Height',
+            shortcut: 'sc:h',
             hasValue: true,
             allowsNegative: false,
             supportsModifiers: true,
@@ -362,13 +357,15 @@ export const propList: Record<string, PropItem> = {
         },
       },
 
-      //Size
-      s: {
-        name: 'Size',
-        shortcut: 's',
+      //Width + Height
+      wh: {
+        name: 'Width and Height',
+        shortcut: 'wh',
         hasValue: true,
         allowsNegative: false,
+        supportsModifiers: true,
         supportsOrigin: true,
+        getModifierValue: readNumberProp('width'),
         action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, origin }),
       },
 

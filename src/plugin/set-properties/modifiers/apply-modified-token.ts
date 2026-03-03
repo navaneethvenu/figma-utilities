@@ -108,6 +108,60 @@ export async function applyModifiedCommand(
     throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
   }
   const command = flattenedCommands[token.command];
+  if (token.command === 'wh') {
+    if (!command?.supportsModifiers) {
+      throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
+    }
+
+    const orderedNodes = sortSelectionByLayerIndex(nodes);
+    const n = orderedNodes.length;
+    let appliedCount = 0;
+    let skippedCount = 0;
+
+    for (let i = 0; i < n; i++) {
+      const node = orderedNodes[i];
+      if (!('width' in node) || !('height' in node)) {
+        skippedCount++;
+        continue;
+      }
+
+      const currentW = node.width;
+      const currentH = node.height;
+      if (!Number.isFinite(currentW) || !Number.isFinite(currentH)) {
+        skippedCount++;
+        continue;
+      }
+
+      const nextW = computeTarget(currentW, i, n, token);
+      const nextH = computeTarget(currentH, i, n, token);
+      if (!Number.isFinite(nextW) || !Number.isFinite(nextH)) {
+        throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
+      }
+
+      const matched = await parameterRouting({
+        param: token.command,
+        value: `${roundOperand(nextW)},${roundOperand(nextH)}`,
+        nodes: [node],
+        origin,
+      });
+
+      if (!matched) {
+        throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
+      }
+
+      appliedCount++;
+    }
+
+    if (appliedCount === 0) {
+      throw new Error(`${ErrorType.UNSUPPORTED_PROP}: ${token.command} is not applicable to current selection`);
+    }
+
+    if (skippedCount > 0) {
+      figma.notify(`${token.command}: skipped ${skippedCount} unsupported node(s)`);
+    }
+    return;
+  }
+
   if (!command?.supportsModifiers || !command.getModifierValue) {
     throw new Error(`${ErrorType.INVALID_CMD}: ${tokenText}`);
   }

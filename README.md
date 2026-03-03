@@ -53,7 +53,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Multiple commands: space-separated
 - Value is optional for action-only shortcuts (for example `clip`, `fit`, `swapx`)
 - Numeric adjustments use modifier operators only.
-- Global numeric operators (supported for `h`, `w`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`, `scw`, `sch`, `ls`, `lh`): `+`, `-`, `*`, `/`
+- Global numeric operators (supported for `h`, `w`, `wh`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`, `sc:w`, `sc:h`, `ls`, `lh`): `+`, `-`, `*`, `/`
 - Sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives `+24, +26, +28, ...`)
@@ -66,7 +66,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 
 Notes:
 
-- `sc` uses scale factors, not percentages (`sc2` = 2x, `sc0.5` = 0.5x).
+- `sc` commands are axis-targeted (`sc:w200`, `sc:h120`), including modifier forms (`sc:*w2`, `sc:+h24`).
 - Sequential operators with ranges are invalid (for example `++h1..24`).
 - Division operators cannot use `0` (including ranges that touch/cross `0`, for example `/h10..0`).
 - Invalid commands fail with `Invalid Command: ...`.
@@ -78,7 +78,7 @@ Commands are defined in [`src/plugin/set-properties/prop-list.ts`](/Users/navane
 Main families:
 
 - Position: `x`, `y`, dock in/out (`dl`, `dtr`, `DBL`, ...)
-- Size: `w`, `h`, `s`, `sc`, `scw`, `sch`, `fit`, `fitw`, `fith`
+- Size: `w`, `h`, `wh`, `sc:w`, `sc:h`, `fit`, `fitw`, `fith`
 - Radius: `r`, `rt`, `rb`, `rtl`, `rbr`, ...
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
 - Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)

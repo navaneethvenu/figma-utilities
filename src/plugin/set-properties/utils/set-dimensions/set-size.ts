@@ -11,16 +11,18 @@ interface setSizeProps {
 }
 
 export default function setSize({ param, value, nodes, origin }: setSizeProps) {
-  const size = parseFloat(value);
+  const [rawWidth, rawHeight] = value.split(',');
+  const width = parseFloat(rawWidth);
+  const height = rawHeight !== undefined ? parseFloat(rawHeight) : width;
 
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      if (!isNaN(size)) {
-        const newWidth = size;
-        const newHeight = size;
+      if (!isNaN(width) && !isNaN(height)) {
+        const newWidth = width;
+        const newHeight = height;
         runWithOrigin(assertedNode, origin, () => assertedNode.resize(newWidth, newHeight));
       }
 
