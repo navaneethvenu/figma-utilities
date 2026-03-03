@@ -74,8 +74,6 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
     const rangeMatch = valueExpr.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
     if (!rangeMatch) return null;
 
-    if (mode.startsWith('seq_') || mode === 'cum_add') return null;
-
     const start = Number(rangeMatch[1]);
     const end = Number(rangeMatch[2]);
     if (!Number.isFinite(start) || !Number.isFinite(end)) return null;

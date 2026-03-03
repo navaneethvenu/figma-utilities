@@ -54,28 +54,33 @@ function progressionValueAtIndex(base: number, i: number, token: ModifiedToken) 
   }
 }
 
-function cumulativeProgressionValue(base: number, i: number, token: ModifiedToken) {
-  let sum = 0;
-  for (let j = 0; j <= i; j++) {
-    sum += progressionValueAtIndex(base, j, token);
-  }
-  return sum;
+function operandAtIndex(i: number, n: number, token: ModifiedToken) {
+  const raw =
+    token.operandMode === 'range' ? interpolate(token.start, token.end as number, i, n) : token.start;
+  const base = roundOperand(raw);
+  return roundOperand(progressionValueAtIndex(base, i, token));
 }
 
-function cumulativeProgressionProduct(base: number, i: number, token: ModifiedToken) {
+function cumulativeProgressionValue(i: number, n: number, token: ModifiedToken) {
+  let sum = 0;
+  for (let j = 0; j <= i; j++) {
+    sum += operandAtIndex(j, n, token);
+  }
+  return roundOperand(sum);
+}
+
+function cumulativeProgressionProduct(i: number, n: number, token: ModifiedToken) {
   let product = 1;
   for (let j = 0; j <= i; j++) {
-    product *= progressionValueAtIndex(base, j, token);
+    product *= operandAtIndex(j, n, token);
   }
-  return product;
+  return roundOperand(product);
 }
 
 function computeTarget(current: number, i: number, n: number, token: ModifiedToken): number {
-  const operand =
-    token.operandMode === 'range' ? interpolate(token.start, token.end as number, i, n) : token.start;
-  const base = roundOperand(operand);
-  const cumOperand = roundOperand(cumulativeProgressionValue(base, i, token));
-  const cumProductOperand = roundOperand(cumulativeProgressionProduct(base, i, token));
+  const base = operandAtIndex(i, n, token);
+  const cumOperand = cumulativeProgressionValue(i, n, token);
+  const cumProductOperand = cumulativeProgressionProduct(i, n, token);
 
   switch (token.mode) {
     case 'set':
@@ -179,7 +184,7 @@ export async function applyModifiedCommand(
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
   if (
-    token.mode === 'div' &&
+    (token.mode === 'div' || token.mode === 'seq_div') &&
     token.operandMode === 'range' &&
     token.end !== undefined &&
     rangeTouchesOrCrossesZero(token.start, token.end)
