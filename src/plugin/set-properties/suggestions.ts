@@ -232,10 +232,16 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
       }
       return `Divide ${command.name} from ${from} to ${to} across selection`;
     case '++':
+      return `Cumulatively increase ${command.name} from ${from} to ${to} across selection`;
     case '--':
+      return `Cumulatively decrease ${command.name} from ${from} to ${to} across selection`;
     case '**':
+      return `Cumulatively multiply ${command.name} from ${from} to ${to} across selection`;
     case '//':
-      return `Error: Sequential operators do not support range values`;
+      if (rangeTouchesOrCrossesZero(start, end)) {
+        return `Error: Division range cannot touch or cross zero`;
+      }
+      return `Cumulatively divide ${command.name} from ${from} to ${to} across selection`;
     default:
       return `Set ${command.name} from ${from} to ${to} across selection`;
   }

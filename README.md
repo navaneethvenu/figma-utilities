@@ -60,7 +60,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
   - `*n` or `/n` for geometric progression (for example `++h24/2` gives `+24, +12, +6, ...`)
 - `++` is cumulative for additive flow (for example `++h40/2` gives `+40, +60, +70, ...`).
 - Double operators use cumulative flow with their own operator semantics: `++` cumulative add, `--` cumulative subtract, `**` cumulative multiply, `//` cumulative divide.
-- Range operands are supported with `start..end` (for example `+h1..24`, `w10..100`)
+- Range operands are supported with `start..end` (for example `h1..20`, `+h1..24`, `++h20..40`, `w10..100`)
 - Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
@@ -68,7 +68,6 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 Notes:
 
 - `sc` commands are axis-targeted (`sc:w200`, `sc:h120`), including modifier forms (`sc:*w2`, `sc:+h24`).
-- Sequential operators with ranges are invalid (for example `++h1..24`).
 - Division operators cannot use `0` (including ranges that touch/cross `0`, for example `/h10..0`).
 - Invalid commands fail with `Invalid Command: ...`.
 
