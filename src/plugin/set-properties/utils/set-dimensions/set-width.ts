@@ -7,11 +7,10 @@ interface setWidthProps {
   param: string;
   value: string;
   nodes: readonly SceneNode[];
-  mode: 'set' | 'increase' | 'decrease';
   origin?: TransformOrigin;
 }
 
-export default function setWidth({ param, value, nodes, mode, origin }: setWidthProps) {
+export default function setWidth({ param, value, nodes, origin }: setWidthProps) {
   const parsedValue = parseFloat(value);
 
   for (const node of nodes) {
@@ -19,8 +18,7 @@ export default function setWidth({ param, value, nodes, mode, origin }: setWidth
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      const newWidth =
-        mode === 'increase' ? node.width + parsedValue : mode === 'decrease' ? node.width - parsedValue : parsedValue;
+      const newWidth = parsedValue;
 
       if (!isNaN(newWidth)) {
         runWithOrigin(assertedNode, origin, () => assertedNode.resize(newWidth, node.height));

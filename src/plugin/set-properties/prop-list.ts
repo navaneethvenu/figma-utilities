@@ -106,6 +106,19 @@ function readGapY(node: SceneNode): number | null {
   return null;
 }
 
+function readLetterSpacing(node: SceneNode): number | null {
+  if (node.type !== 'TEXT') return null;
+  if (node.letterSpacing === figma.mixed) return null;
+  return asFiniteNumber(node.letterSpacing.value);
+}
+
+function readLineHeight(node: SceneNode): number | null {
+  if (node.type !== 'TEXT') return null;
+  if (node.lineHeight === figma.mixed) return null;
+  if (node.lineHeight.unit === 'AUTO') return null;
+  return asFiniteNumber(node.lineHeight.value);
+}
+
 export const propList: Record<string, PropItem> = {
   //Position
   pos: {
@@ -126,21 +139,7 @@ export const propList: Record<string, PropItem> = {
             allowsNegative: true,
             supportsModifiers: true,
             getModifierValue: readNumberProp('x'),
-            action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
-            subcommands: {
-              '-x': {
-                name: 'Move Left',
-                shortcut: '-x',
-                hasValue: true,
-                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'decrease' }),
-              },
-              '+x': {
-                name: 'Move Right',
-                shortcut: '+x',
-                hasValue: true,
-                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'increase' }),
-              },
-            },
+            action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
           },
           y: {
             name: 'Position Y',
@@ -149,26 +148,12 @@ export const propList: Record<string, PropItem> = {
             allowsNegative: true,
             supportsModifiers: true,
             getModifierValue: readNumberProp('y'),
-            action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
-            subcommands: {
-              '-y': {
-                name: 'Move Top',
-                shortcut: '-y',
-                hasValue: true,
-                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'decrease' }),
-              },
-              '+y': {
-                name: 'Move Bottom',
-                shortcut: '+y',
-                hasValue: true,
-                action: ({ param, nodes, value }) => setPosition({ param, nodes, value, mode: 'increase' }),
-              },
-            },
+            action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
           },
           //Move
         },
         allowsNegative: true,
-        action: ({ param, value, nodes }) => setPosition({ param, value, nodes, mode: 'set' }),
+        action: ({ param, value, nodes }) => setPosition({ param, value, nodes }),
       },
       //Dock In with Constraints
       d: {
@@ -329,25 +314,7 @@ export const propList: Record<string, PropItem> = {
         supportsModifiers: true,
         supportsOrigin: true,
         getModifierValue: readNumberProp('width'),
-        action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, mode: 'set', origin }),
-        subcommands: {
-          '+w': {
-            name: 'Increase Width By',
-            shortcut: '+w',
-            hasValue: true,
-            allowsNegative: true,
-            supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, mode: 'increase', origin }),
-          },
-          '-w': {
-            name: 'Decrease Width By',
-            shortcut: '-w',
-            hasValue: true,
-            allowsNegative: true,
-            supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, mode: 'decrease', origin }),
-          },
-        },
+        action: ({ param, value, nodes, origin }) => setWidth({ param, value, nodes, origin }),
       },
 
       //Height
@@ -359,25 +326,7 @@ export const propList: Record<string, PropItem> = {
         supportsModifiers: true,
         supportsOrigin: true,
         getModifierValue: readNumberProp('height'),
-        action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, mode: 'set', origin }),
-        subcommands: {
-          '+h': {
-            name: 'Increase Height By',
-            shortcut: '+h',
-            hasValue: true,
-            allowsNegative: true,
-            supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, mode: 'increase', origin }),
-          },
-          '-h': {
-            name: 'Decrease Height By',
-            shortcut: '-h',
-            hasValue: true,
-            allowsNegative: true,
-            supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, mode: 'decrease', origin }),
-          },
-        },
+        action: ({ param, value, nodes, origin }) => setHeight({ param, value, nodes, origin }),
       },
 
       //Scale
@@ -395,49 +344,20 @@ export const propList: Record<string, PropItem> = {
             shortcut: 'scw',
             hasValue: true,
             allowsNegative: false,
+            supportsModifiers: true,
             supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setScaleWidth({ param, value, nodes, mode: 'set', origin }),
-            subcommands: {
-              '+scw': {
-                name: 'Increase Scale Width',
-                shortcut: '+scw',
-                supportsOrigin: true,
-                action: ({ param, value, nodes, origin }) =>
-                  setScaleWidth({ param, value, nodes, mode: 'increase', origin }),
-              },
-              '-scw': {
-                name: 'Decrease Scale Width',
-                shortcut: '-scw',
-                supportsOrigin: true,
-                action: ({ param, value, nodes, origin }) =>
-                  setScaleWidth({ param, value, nodes, mode: 'decrease', origin }),
-              },
-            },
+            getModifierValue: readNumberProp('width'),
+            action: ({ param, value, nodes, origin }) => setScaleWidth({ param, value, nodes, origin }),
           },
           sch: {
             name: 'Scale Height',
             shortcut: 'sch',
             hasValue: true,
             allowsNegative: false,
+            supportsModifiers: true,
             supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) =>
-              setScaleHeight({ param, value, nodes, mode: 'set', origin }),
-            subcommands: {
-              '+sch': {
-                name: 'Increase Scale Height',
-                shortcut: '+sch',
-                supportsOrigin: true,
-                action: ({ param, value, nodes, origin }) =>
-                  setScaleHeight({ param, value, nodes, mode: 'increase', origin }),
-              },
-              '-sch': {
-                name: 'Decrease Scale Height',
-                shortcut: '-sch',
-                supportsOrigin: true,
-                action: ({ param, value, nodes, origin }) =>
-                  setScaleHeight({ param, value, nodes, mode: 'decrease', origin }),
-              },
-            },
+            getModifierValue: readNumberProp('height'),
+            action: ({ param, value, nodes, origin }) => setScaleHeight({ param, value, nodes, origin }),
           },
         },
       },
@@ -449,25 +369,7 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         allowsNegative: false,
         supportsOrigin: true,
-        subcommands: {
-          '+s': {
-            name: 'Increase Size By',
-            shortcut: '+s',
-            hasValue: true,
-            allowsNegative: true,
-            supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, mode: 'increase', origin }),
-          },
-          '-s': {
-            name: 'Decrease Size By',
-            shortcut: '-s',
-            hasValue: true,
-            allowsNegative: true,
-            supportsOrigin: true,
-            action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, mode: 'decrease', origin }),
-          },
-        },
-        action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, mode: 'set', origin }),
+        action: ({ param, value, nodes, origin }) => setSize({ param, value, nodes, origin }),
       },
 
       // Fit
@@ -1308,6 +1210,8 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'ls',
         hasValue: true,
         allowsNegative: true,
+        supportsModifiers: true,
+        getModifierValue: readLetterSpacing,
         message: 'Set letter spacing (supports px or %)',
         action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
       },
@@ -1315,6 +1219,8 @@ export const propList: Record<string, PropItem> = {
         name: 'Line Height',
         shortcut: 'lh',
         hasValue: true,
+        supportsModifiers: true,
+        getModifierValue: readLineHeight,
         message: 'Set line height (supports px or %)',
         action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
       },

@@ -7,10 +7,9 @@ interface SetPositionProps {
   param: string;
   value: string; // Can be single value or "x,y"
   nodes: readonly SceneNode[];
-  mode: 'set' | 'increase' | 'decrease';
 }
 
-export default function setPosition({ param, value, nodes, mode }: SetPositionProps) {
+export default function setPosition({ param, value, nodes }: SetPositionProps) {
   const values = value.split(',').map((v) => parseFiniteNumber(v.trim()));
 
   if (values.some((v) => v === null)) {
@@ -35,17 +34,13 @@ export default function setPosition({ param, value, nodes, mode }: SetPositionPr
     // Ensure absolute positioning for nodes inside frames with layout
     ensureAbsolutePositioning(node);
 
-    // Helper to calculate new value based on mode
-    const calculate = (current: number, delta: number) =>
-      mode === 'increase' ? current + delta : mode === 'decrease' ? current - delta : delta;
-
     if (/xy\b/.test(param)) {
-      node.x = calculate(node.x, values[0]!);
-      node.y = calculate(node.y, values[1] ?? values[0]!);
+      node.x = values[0]!;
+      node.y = values[1] ?? values[0]!;
     } else if (/x\b/.test(param)) {
-      node.x = calculate(node.x, values[0]!);
+      node.x = values[0]!;
     } else if (/y\b/.test(param)) {
-      node.y = calculate(node.y, values[0]!);
+      node.y = values[0]!;
     } else {
       notifyError({
         type: ErrorType.INVALID_CMD,

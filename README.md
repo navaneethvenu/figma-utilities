@@ -52,8 +52,8 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Pattern: `<shortcut><value>`
 - Multiple commands: space-separated
 - Value is optional for action-only shortcuts (for example `clip`, `fit`, `swapx`)
-- Numeric commands may allow `+`/`-` variants depending on shortcut
-- Global numeric operators (supported for `h`, `w`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`): `+`, `-`, `*`, `/`
+- Numeric adjustments use modifier operators only.
+- Global numeric operators (supported for `h`, `w`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`, `scw`, `sch`, `ls`, `lh`): `+`, `-`, `*`, `/`
 - Sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives `+24, +26, +28, ...`)
@@ -77,8 +77,8 @@ Commands are defined in [`src/plugin/set-properties/prop-list.ts`](/Users/navane
 
 Main families:
 
-- Position: `x`, `y`, `+x`, `-y`, dock in/out (`dl`, `dtr`, `DBL`, ...)
-- Size: `w`, `h`, `+w`, `-h`, `s`, `+s`, `-s`, `sc`, `scw`, `sch`, `fit`, `fitw`, `fith`
+- Position: `x`, `y`, dock in/out (`dl`, `dtr`, `DBL`, ...)
+- Size: `w`, `h`, `s`, `sc`, `scw`, `sch`, `fit`, `fitw`, `fith`
 - Radius: `r`, `rt`, `rb`, `rtl`, `rbr`, ...
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
 - Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)
