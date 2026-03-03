@@ -4,7 +4,6 @@ export type ModifierMode =
   | 'sub'
   | 'mul'
   | 'div'
-  | 'seq_add'
   | 'seq_sub'
   | 'seq_mul'
   | 'seq_div'
@@ -22,11 +21,6 @@ export interface ModifiedToken {
 }
 
 function parseOperator(token: string): { operator: string; rest: string } {
-  const tripleOps = ['+++'];
-  for (const op of tripleOps) {
-    if (token.startsWith(op)) return { operator: op, rest: token.slice(op.length) };
-  }
-
   const doubleOps = ['++', '--', '**', '//'];
   for (const op of doubleOps) {
     if (token.startsWith(op)) return { operator: op, rest: token.slice(op.length) };
@@ -53,15 +47,13 @@ function getMode(operator: string): ModifierMode | null {
     case '/':
       return 'div';
     case '++':
-      return 'seq_add';
+      return 'cum_add';
     case '--':
       return 'seq_sub';
     case '**':
       return 'seq_mul';
     case '//':
       return 'seq_div';
-    case '+++':
-      return 'cum_add';
     default:
       return null;
   }
