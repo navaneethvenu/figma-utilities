@@ -28,6 +28,10 @@ function isSequentialPrefix(prefix: string) {
   return ['++', '--', '**', '//'].includes(prefix);
 }
 
+function isFactorPrefix(prefix: string) {
+  return ['*', '/', '**', '//'].includes(prefix);
+}
+
 function hasOperatorPrefix(token: string) {
   return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/.test(token);
 }
@@ -107,17 +111,27 @@ function isPairNumericValue(value: string, allowedUnits: readonly string[] = [])
   return isNumericValue(left, allowedUnits) && isNumericValue(right, allowedUnits);
 }
 
+function isAxisModeCommand(command: PropItem) {
+  return ['fit', 'fill', 'hug'].includes(command.shortcut);
+}
+
+function isAxisValue(value: string) {
+  const normalized = value.trim().toLowerCase();
+  return normalized === '' || normalized === 'w' || normalized === 'h';
+}
+
 function allowedUnitsForCommand(shortcut: string) {
   if (shortcut === 'op') return ['%'];
   if (shortcut === 'rot') return ['deg'];
   if (shortcut === 'ls' || shortcut === 'lh') return ['px', '%'];
+  if (shortcut === 'w' || shortcut === 'h' || shortcut === 'wh') return ['px', '%'];
   return ['px'];
 }
 
 function isScalarAllowedForCommand(command: PropItem, value: string, scalarUnit: string) {
   if (command.shortcut === 'f') return /^#?[0-9a-fA-F]+$/.test(value);
   if (command.shortcut === 'dup') return /^\d+$/.test(value.trim());
-  if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px']);
+  if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px', '%']);
 
   const unit = scalarUnit.toLowerCase();
   if (!unit) return true;
@@ -224,6 +238,31 @@ function formatOperatorMessage(prefix: string, command: PropItem, renderedValue:
   }
 }
 
+function formatAxisMessage(prefix: string, command: PropItem, value: string) {
+  if (prefix && !command.supportsModifiers) {
+    return `Error: ${command.name} does not support modifier operators`;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (command.shortcut === 'fit') {
+    if (normalized === 'w') return 'Fit element to parent width';
+    if (normalized === 'h') return 'Fit element to parent height';
+    return 'Fit element to parent width and height';
+  }
+  if (command.shortcut === 'fill') {
+    if (normalized === 'w') return 'Set auto-layout sizing to fill width';
+    if (normalized === 'h') return 'Set auto-layout sizing to fill height';
+    return 'Set auto-layout sizing to fill width and height';
+  }
+  if (command.shortcut === 'hug') {
+    if (normalized === 'w') return 'Set auto-layout sizing to hug width';
+    if (normalized === 'h') return 'Set auto-layout sizing to hug height';
+    return 'Set auto-layout sizing to hug width and height';
+  }
+
+  return `Set ${command.name} to ${value}`;
+}
+
 function withOriginHint(baseMessage: string, command: PropItem, origin: TransformOrigin | null) {
   if (!origin) return baseMessage;
   if (command.supportsOrigin) return `${baseMessage} (origin: ${getOriginLabel(origin)})`;
@@ -265,12 +304,17 @@ function defaultSetLabel(commandName: string) {
   return `Set ${trimmed} to`;
 }
 
-function renderScalarValue(raw: string, defaultUnit: string) {
+function renderScalarValue(raw: string, defaultUnit: string, prefix: string) {
   const parsed = parseScalarValue(raw);
   if (!parsed) return raw;
 
   const normalized = String(parsed.num);
-  const withUnit = parsed.unit ? `${normalized}${parsed.unit}` : `${normalized}${defaultUnit}`.trim();
+  const shouldAppendDefaultUnit = !isFactorPrefix(prefix);
+  const withUnit = parsed.unit
+    ? `${normalized}${parsed.unit}`
+    : shouldAppendDefaultUnit
+      ? `${normalized}${defaultUnit}`.trim()
+      : normalized;
   if (parsed.progressionOp && parsed.progressionValue !== null) {
     const op = parsed.progressionOp;
     const val = parsed.progressionValue;
@@ -318,10 +362,34 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
   }
 }
 
-function splitToken(token: string) {
-  const match = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
-  if (!match) return null;
-  return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
+function splitToken(token: string, flattenedCommands?: Record<string, PropItem>) {
+  const operatorMatch = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?(.*)$/);
+  if (!operatorMatch) return null;
+
+  const prefix = operatorMatch[1] ?? '';
+  const rest = operatorMatch[2] ?? '';
+  if (!rest) return null;
+
+  if (flattenedCommands) {
+    const commands = Object.values(flattenedCommands).sort((a, b) => b.shortcut.length - a.shortcut.length);
+
+    for (const command of commands) {
+      if (!rest.startsWith(command.shortcut)) continue;
+
+      const value = rest.slice(command.shortcut.length);
+      if (command.hasValue === false) {
+        if (value === '') return { prefix, param: command.shortcut, value: '' };
+        continue;
+      }
+
+      return { prefix, param: command.shortcut, value };
+    }
+  }
+
+  const fallbackMatch = rest.match(/^([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
+  if (!fallbackMatch) return null;
+
+  return { prefix, param: fallbackMatch[1], value: fallbackMatch[2] ?? '' };
 }
 
 function composeTokenWithContext(contextTokens: string[], nextToken: string) {
@@ -342,17 +410,35 @@ function getCommandExamples(shortcut: string) {
   const examples: Record<string, Array<{ token: string; help: string }>> = {
     w: [
       { token: 'w100', help: 'Set width to 100' },
+      { token: 'w50%', help: 'Set width to 50% of parent' },
       { token: '+w8', help: 'Increase width by 8' },
       { token: '++w8+2', help: 'Progressive width increase' },
     ],
     h: [
       { token: 'h100', help: 'Set height to 100' },
+      { token: 'h200%', help: 'Set height to 200% of parent' },
       { token: '+h8', help: 'Increase height by 8' },
       { token: '++h8+2', help: 'Progressive height increase' },
     ],
     wh: [
       { token: 'wh120,80', help: 'Set width and height' },
+      { token: 'wh80%,50%', help: 'Set width and height by parent percentages' },
       { token: '+wh8', help: 'Increase size by 8' },
+    ],
+    fit: [
+      { token: 'fit', help: 'Fit to parent width and height' },
+      { token: 'fitw', help: 'Fit to parent width only' },
+      { token: 'fith', help: 'Fit to parent height only' },
+    ],
+    fill: [
+      { token: 'fill', help: 'Set auto-layout fill on both axes' },
+      { token: 'fillw', help: 'Set auto-layout fill width' },
+      { token: 'fillh', help: 'Set auto-layout fill height' },
+    ],
+    hug: [
+      { token: 'hug', help: 'Set auto-layout hug on both axes' },
+      { token: 'hugw', help: 'Set auto-layout hug width' },
+      { token: 'hugh', help: 'Set auto-layout hug height' },
     ],
     op: [
       { token: 'op80', help: 'Set opacity to 80%' },
@@ -418,8 +504,15 @@ function invalidValueHint(command: PropItem) {
       return `Use 0-100 with optional % (e.g. op80 or op80%)`;
     case 'rot':
       return `Use a number with optional deg (e.g. rot45 or rot45deg)`;
+    case 'w':
+    case 'h':
+      return `Use number or % (e.g. ${command.shortcut}100, ${command.shortcut}50%)`;
     case 'wh':
-      return `Use one value or width,height (e.g. wh120 or wh120,80)`;
+      return `Use number, %, or width,height (e.g. wh120, wh80,50%)`;
+    case 'fit':
+    case 'fill':
+    case 'hug':
+      return `Use optional axis value: empty, w, or h (e.g. ${command.shortcut}, ${command.shortcut}w, ${command.shortcut}h)`;
     case 'ls':
     case 'lh':
       return `Use number with optional px/% (e.g. ${command.shortcut}16px)`;
@@ -435,8 +528,9 @@ function displayUnitForCommand(command: PropItem) {
   return '';
 }
 
-function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string) {
+function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string, prefix: string) {
   if (explicitUnit) return [];
+  if (prefix !== '') return [];
 
   const defaultUnit = displayUnitForCommand(command);
   if (!defaultUnit) return [];
@@ -448,10 +542,11 @@ function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string) {
 }
 
 function getLikelyNextShortcuts(previousCommand?: string) {
-  const fallback = ['w', 'h', 'x', 'y', 'r', 'f', 'op', 'rot', 'p', 'st', 'gap'];
+  const fallback = ['w', 'h', 'fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 'op', 'rot', 'p', 'st', 'gap'];
   if (!previousCommand) return fallback;
 
-  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand)) return ['x', 'y', 'r', 'f', 'op', 'rot'];
+  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand)) return ['fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 'op', 'rot'];
+  if (['fit', 'fill', 'hug'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'r', 'f'];
   if (['x', 'y'].includes(previousCommand)) return ['w', 'h', 'r', 'f', 'op'];
   if (previousCommand === 'f') return ['op', 'st', 'r', 'w', 'h'];
   if (['r', 'st', 'p', 'gap'].includes(previousCommand)) return ['f', 'op', 'w', 'h'];
@@ -584,7 +679,7 @@ function buildPendingValueRecoverySuggestions(
 }
 
 function isKnownCommandToken(token: string, flattenedCommands: Record<string, PropItem>) {
-  const parsed = splitToken(token);
+  const parsed = splitToken(token, flattenedCommands);
   if (!parsed) return false;
 
   const { prefix, param } = parsed;
@@ -636,7 +731,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
       continue;
     }
 
-    const parsed = splitToken(token);
+    const parsed = splitToken(token, flattenedCommands);
     if (!parsed) {
       return buildErrorSuggestion(query, `Invalid command token "${token}"`);
     }
@@ -681,7 +776,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
     const previousCommand = previous?.command.shortcut;
     return buildNextCommandSuggestions(flattenedCommands, contextTokens.filter(Boolean), previousCommand);
   } else {
-    const parsedLast = splitToken(lastToken);
+    const parsedLast = splitToken(lastToken, flattenedCommands);
     if (!parsedLast) {
       if (isOperatorOnlyToken(lastToken)) {
         return buildErrorSuggestion(query, `Use operator with a command (e.g. ++h8 or ++w8+2)`);
@@ -742,18 +837,23 @@ function generateSuggestions(
         const range = parseRangeValue(value);
         const rangeExpression = parseRangeExpression(value);
         const scalar = parseScalarValue(value);
-        const pairValue = command.shortcut === 'wh' && isPairNumericValue(value, ['px']);
+        const pairValue = command.shortcut === 'wh' && isPairNumericValue(value, ['px', '%']);
+        const axisValue = isAxisModeCommand(command) && isAxisValue(value);
 
         const supportsRange = Boolean(command.supportsModifiers);
+        const requiresUnitlessScalar = lastCommand.prefix !== '';
         const isValidScalarValue =
           scalar !== null &&
           (scalar.num >= 0 || command.allowsNegative === true) &&
           (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)) &&
+          (!requiresUnitlessScalar || scalar.unit === '') &&
           isScalarAllowedForCommand(command, value, scalar.unit);
+        const isValidAxisValue = axisValue && lastCommand.prefix === '';
         const isValidValue =
           (supportsRange && range !== null) ||
           (supportsRange && rangeExpression !== null && isSequentialPrefix(lastCommand.prefix)) ||
           pairValue ||
+          isValidAxisValue ||
           isValidScalarValue;
 
         if (hasMalformedRangeValue(value)) {
@@ -770,14 +870,16 @@ function generateSuggestions(
             lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
           } else if (rangeExpression) {
             lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
+          } else if (isValidAxisValue) {
+            lastMessage = formatAxisMessage(lastCommand.prefix, command, value);
           } else {
-            const renderedValue = renderScalarValue(value, defaultUnit);
+            const renderedValue = renderScalarValue(value, defaultUnit, lastCommand.prefix);
             lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
 
-            const alternateUnits = getAlternateUnitsForCommand(command, scalar?.unit ?? '');
+            const alternateUnits = getAlternateUnitsForCommand(command, scalar?.unit ?? '', lastCommand.prefix);
             for (let i = 0; i < alternateUnits.length; i++) {
               const altUnit = alternateUnits[i];
-              const altRenderedValue = renderScalarValue(value, altUnit);
+              const altRenderedValue = renderScalarValue(value, altUnit, lastCommand.prefix);
               alternateUnitCandidates.push({ renderedValue: altRenderedValue, unitIndex: i });
             }
           }
@@ -786,7 +888,11 @@ function generateSuggestions(
           hasError = true;
         }
       } else {
-        lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
+        if (isAxisModeCommand(command) && lastCommand.prefix === '') {
+          lastMessage = formatAxisMessage(lastCommand.prefix, command, '');
+        } else {
+          lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
+        }
       }
     } else {
       if (command.message) lastMessage = command.message;

@@ -2,7 +2,7 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
 import { runWithOrigin, TransformOrigin } from '../../origin';
-import { parseNumberWithOptionalUnit } from '../node-safety';
+import { resolveDimensionValue } from './resolve-dimension-value';
 
 interface setSizeProps {
   param: string;
@@ -13,14 +13,15 @@ interface setSizeProps {
 
 export default function setSize({ param, value, nodes, origin }: setSizeProps) {
   const [rawWidth, rawHeight] = value.split(',');
-  const width = parseNumberWithOptionalUnit(rawWidth, ['px']);
-  const height = rawHeight !== undefined ? parseNumberWithOptionalUnit(rawHeight, ['px']) : width;
 
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
+      const width = resolveDimensionValue(rawWidth, assertedNode, 'width');
+      const height = rawHeight !== undefined ? resolveDimensionValue(rawHeight, assertedNode, 'height') : width;
+
       if (width !== null && Number.isFinite(width) && height !== null && Number.isFinite(height)) {
         const newWidth = width;
         const newHeight = height;

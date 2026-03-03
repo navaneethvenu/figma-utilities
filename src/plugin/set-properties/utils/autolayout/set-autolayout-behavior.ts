@@ -5,6 +5,7 @@ import { isAutoLayoutParent } from '../node-safety';
 
 interface SetAutolayoutBehaviorProps {
   command: string;
+  value: string;
   nodes: readonly SceneNode[];
 }
 
@@ -12,7 +13,33 @@ function hasSizingProps(node: SceneNode): boolean {
   return 'layoutSizingHorizontal' in node && 'layoutSizingVertical' in node;
 }
 
-export default function setAutolayoutBehavior({ command, nodes }: SetAutolayoutBehaviorProps) {
+function parseAxisValue(value: string): 'both' | 'width' | 'height' | null {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === '') return 'both';
+  if (normalized === 'w') return 'width';
+  if (normalized === 'h') return 'height';
+  return null;
+}
+
+function applyAxisMode(
+  axis: 'both' | 'width' | 'height',
+  setMode: (dim: 'width' | 'height', mode: 'HUG' | 'FILL' | 'FIXED') => void,
+  mode: 'HUG' | 'FILL' | 'FIXED'
+) {
+  if (axis === 'both' || axis === 'width') setMode('width', mode);
+  if (axis === 'both' || axis === 'height') setMode('height', mode);
+}
+
+export default function setAutolayoutBehavior({ command, value, nodes }: SetAutolayoutBehaviorProps) {
+  const axis = parseAxisValue(value);
+  if (!axis) {
+    notifyError({
+      type: ErrorType.INVALID_VAL,
+      message: `${command}${value}`,
+    });
+    return;
+  }
+
   for (const node of nodes) {
     if (!supportedNodes.includes(node.type as any)) {
       notifyError({
@@ -65,37 +92,12 @@ export default function setAutolayoutBehavior({ command, nodes }: SetAutolayoutB
 
     // Apply command
     switch (command) {
-      case 'ah':
-        setMode('width', 'HUG');
-        setMode('height', 'HUG');
-        break;
-      case 'awh':
-        setMode('width', 'HUG');
-        break;
-      case 'ahh':
-        setMode('height', 'HUG');
+      case 'hug':
+        applyAxisMode(axis, setMode, 'HUG');
         break;
 
-      case 'af':
-        setMode('width', 'FILL');
-        setMode('height', 'FILL');
-        break;
-      case 'awf':
-        setMode('width', 'FILL');
-        break;
-      case 'ahf':
-        setMode('height', 'FILL');
-        break;
-
-      case 'afi':
-        setMode('width', 'FIXED');
-        setMode('height', 'FIXED');
-        break;
-      case 'awfi':
-        setMode('width', 'FIXED');
-        break;
-      case 'ahfi':
-        setMode('height', 'FIXED');
+      case 'fill':
+        applyAxisMode(axis, setMode, 'FILL');
         break;
 
       case 'ax':

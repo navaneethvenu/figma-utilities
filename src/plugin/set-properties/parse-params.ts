@@ -29,6 +29,11 @@ function isPairNumericValue(value: string, allowedUnits: readonly string[] = [])
   return isNumericValue(left, allowedUnits) && isNumericValue(right, allowedUnits);
 }
 
+function isAxisValue(value: string) {
+  const normalized = value.trim().toLowerCase();
+  return normalized === '' || normalized === 'w' || normalized === 'h';
+}
+
 function isHexColorValue(value: string) {
   return /^#?[0-9a-fA-F]+$/.test(value);
 }
@@ -39,7 +44,9 @@ function isValueValidForCommand(shortcut: string, value: string) {
   if (shortcut === 'op') return isNumericValue(value, ['%']);
   if (shortcut === 'rot') return isNumericValue(value, ['deg']);
   if (shortcut === 'ls' || shortcut === 'lh') return isNumericValue(value, ['px', '%']);
-  if (shortcut === 'wh') return isNumericValue(value, ['px']) || isPairNumericValue(value, ['px']);
+  if (shortcut === 'w' || shortcut === 'h') return isNumericValue(value, ['px', '%']);
+  if (shortcut === 'wh') return isNumericValue(value, ['px', '%']) || isPairNumericValue(value, ['px', '%']);
+  if (shortcut === 'fit' || shortcut === 'fill' || shortcut === 'hug') return isAxisValue(value);
   if (shortcut.startsWith('sc:')) return isNumericValue(value, ['px']);
 
   return isNumericValue(value, ['px']);

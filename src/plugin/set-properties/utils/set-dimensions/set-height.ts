@@ -2,7 +2,7 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
 import { runWithOrigin, TransformOrigin } from '../../origin';
-import { parseNumberWithOptionalUnit } from '../node-safety';
+import { resolveDimensionValue } from './resolve-dimension-value';
 
 interface setHeightProps {
   param: string;
@@ -12,14 +12,12 @@ interface setHeightProps {
 }
 
 export default function setHeight({ param, value, nodes, origin }: setHeightProps) {
-  const parsedValue = parseNumberWithOptionalUnit(value, ['px']);
-
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      const newHeight = parsedValue;
+      const newHeight = resolveDimensionValue(value, assertedNode, 'height');
 
       if (newHeight !== null && Number.isFinite(newHeight)) {
         runWithOrigin(assertedNode, origin, () => assertedNode.resize(node.width, newHeight));

@@ -373,25 +373,23 @@ export const propList: Record<string, PropItem> = {
       fit: {
         name: 'Fit to Parent',
         shortcut: 'fit',
-        hasValue: false,
-        message: 'Fit element to parent width and height',
-        action: ({ param, nodes }) => fitToParent({ param, nodes }),
-        subcommands: {
-          fitw: {
-            name: 'Fit to Parent Width',
-            shortcut: 'fitw',
-            hasValue: false,
-            message: 'Fit element to parent width only',
-            action: ({ param, nodes }) => fitToParent({ param, nodes }),
-          },
-          fith: {
-            name: 'Fit to Parent Height',
-            shortcut: 'fith',
-            hasValue: false,
-            message: 'Fit element to parent height only',
-            action: ({ param, nodes }) => fitToParent({ param, nodes }),
-          },
-        },
+        hasValue: true,
+        message: 'Fit element to parent (value: "", w, h)',
+        action: ({ param, value, nodes }) => fitToParent({ param, value, nodes }),
+      },
+      fill: {
+        name: 'Fill Auto-layout Space',
+        shortcut: 'fill',
+        hasValue: true,
+        message: 'Set auto-layout sizing to fill (value: "", w, h)',
+        action: ({ param, value, nodes }) => setAutolayoutBehavior({ command: param, value, nodes }),
+      },
+      hug: {
+        name: 'Hug Auto-layout Content',
+        shortcut: 'hug',
+        hasValue: true,
+        message: 'Set auto-layout sizing to hug (value: "", w, h)',
+        action: ({ param, value, nodes }) => setAutolayoutBehavior({ command: param, value, nodes }),
       },
     },
   },
@@ -1077,88 +1075,22 @@ export const propList: Record<string, PropItem> = {
   // Autolayout Behavior
   a: {
     name: 'Autolayout Behavior',
-    description: 'Shortcuts for setting autolayout children behavior — hug, fill, fixed, toggle, or smart auto mode.',
+    description: 'Shortcuts for toggling autolayout children behavior and spacing.',
     shortcut: 'a',
     type: 'GROUP',
     subcommands: {
-      // HUG
-      ah: {
-        name: 'Hug Both',
-        shortcut: 'ah',
-        hasValue: false,
-        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-        subcommands: {
-          awh: {
-            name: 'Hug Width',
-            shortcut: 'awh',
-            hasValue: false,
-            action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-          },
-          ahh: {
-            name: 'Hug Height',
-            shortcut: 'ahh',
-            hasValue: false,
-            action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-          },
-        },
-      },
-
-      // FILL
-      af: {
-        name: 'Fill Both',
-        shortcut: 'af',
-        hasValue: false,
-        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-        subcommands: {
-          awf: {
-            name: 'Fill Width',
-            shortcut: 'awf',
-            hasValue: false,
-            action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-          },
-          ahf: {
-            name: 'Fill Height',
-            shortcut: 'ahf',
-            hasValue: false,
-            action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-          },
-        },
-      },
-
-      // FIXED
-      afi: {
-        name: 'Fixed Both',
-        shortcut: 'afi',
-        hasValue: false,
-        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-        subcommands: {
-          awfi: {
-            name: 'Fixed Width',
-            shortcut: 'awfi',
-            hasValue: false,
-            action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-          },
-          ahfi: {
-            name: 'Fixed Height',
-            shortcut: 'ahfi',
-            hasValue: false,
-            action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
-          },
-        },
-      },
-
       // TOGGLES
       ax: {
         name: 'Toggle Hug ↔ Fill Horizontally',
         shortcut: 'ax',
         hasValue: false,
-        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
+        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, value: '', nodes }),
       },
       ay: {
         name: 'Toggle Hug ↔ Fill Vertically',
         shortcut: 'ay',
         hasValue: false,
-        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
+        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, value: '', nodes }),
       },
 
       // SMART AUTO
@@ -1166,7 +1098,7 @@ export const propList: Record<string, PropItem> = {
         name: 'Auto Behavior (Smart Fill/Hug)',
         shortcut: 'aa',
         hasValue: false,
-        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, nodes }),
+        action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, value: '', nodes }),
       },
       gap: {
         name: 'Set Auto-layout Gap',
