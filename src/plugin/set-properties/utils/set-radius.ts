@@ -1,5 +1,6 @@
 import notifyError from '../../utils/error';
 import { ErrorType } from '../../utils/errorType';
+import { parseNumberWithOptionalUnit } from './node-safety';
 
 interface setRadiusProps {
   param: string;
@@ -8,7 +9,7 @@ interface setRadiusProps {
 }
 
 export default function setRadius({ param, value, nodes }: setRadiusProps) {
-  const radius = parseFloat(value);
+  const radius = parseNumberWithOptionalUnit(value, ['px']);
 
   for (const node of nodes) {
     const nodeTypeCheck =
@@ -22,7 +23,7 @@ export default function setRadius({ param, value, nodes }: setRadiusProps) {
     const individualRadiiErrorMessage = 'Individual Radii are not applicable on node type';
 
     if (nodeTypeCheck) {
-      if (!isNaN(radius)) {
+      if (radius !== null && Number.isFinite(radius)) {
         //Top Corner Radii
         if (/rt.*/.test(param)) {
           //Top Left Corner Radius

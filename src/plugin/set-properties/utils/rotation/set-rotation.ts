@@ -1,5 +1,6 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 
 interface SetRotationProps {
   param: string;
@@ -8,7 +9,7 @@ interface SetRotationProps {
 }
 
 export default function setRotation({ param, value, nodes }: SetRotationProps) {
-  const rotation = Number(value);
+  const rotation = parseNumberWithOptionalUnit(value, ['deg']);
   if (!Number.isFinite(rotation)) {
     notifyError({
       type: ErrorType.INVALID_VAL,

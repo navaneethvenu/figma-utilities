@@ -2,6 +2,7 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
 import { runWithOrigin, TransformOrigin } from '../../origin';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 
 interface setHeightProps {
   param: string;
@@ -11,7 +12,7 @@ interface setHeightProps {
 }
 
 export default function setHeight({ param, value, nodes, origin }: setHeightProps) {
-  const parsedValue = parseFloat(value);
+  const parsedValue = parseNumberWithOptionalUnit(value, ['px']);
 
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
@@ -20,7 +21,7 @@ export default function setHeight({ param, value, nodes, origin }: setHeightProp
     if (nodeCheck !== undefined) {
       const newHeight = parsedValue;
 
-      if (!isNaN(newHeight)) {
+      if (newHeight !== null && Number.isFinite(newHeight)) {
         runWithOrigin(assertedNode, origin, () => assertedNode.resize(node.width, newHeight));
       }
 

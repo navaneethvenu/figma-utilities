@@ -16,12 +16,13 @@ function isCloneable(node: SceneNode): node is CloneableSceneNode {
 function parseCount(param: string, value: string): number {
   if (value === '') return 1;
 
-  const count = Number(value);
+  const count = /^\d+$/.test(value.trim()) ? Number(value) : Number.NaN;
   if (!Number.isInteger(count) || count <= 0) {
     notifyError({
       type: ErrorType.INVALID_VAL,
       message: param,
     });
+    return 0;
   }
 
   return count;
@@ -40,6 +41,8 @@ function ensureParentPlacement(source: SceneNode, clone: SceneNode, cloneOffset:
 
 export default function duplicateSelection({ param, value, nodes }: DuplicateSelectionProps) {
   const count = parseCount(param, value);
+  if (count <= 0) return;
+
   const createdNodes: SceneNode[] = [];
 
   for (const node of nodes) {
