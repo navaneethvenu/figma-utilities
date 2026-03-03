@@ -220,7 +220,7 @@ function formatOperatorMessage(prefix: string, command: PropItem, renderedValue:
       return `Cumulatively divide ${command.name} by ${renderedValue}`;
     default:
       if (command.message) return `${command.message} ${renderedValue}`;
-      return `Set ${command.name} to ${renderedValue}`;
+      return `${defaultSetLabel(command.name)} ${renderedValue}`;
   }
 }
 
@@ -253,8 +253,16 @@ function formatOperatorPlaceholder(prefix: string, command: PropItem) {
     case '//':
       return `Cumulatively divide ${command.name} by (Enter Value)`;
     default:
-      return `Set ${command.name} to (Enter Value)`;
+      return `${defaultSetLabel(command.name)} (Enter Value)`;
   }
+}
+
+function defaultSetLabel(commandName: string) {
+  const trimmed = commandName.trim();
+  if (/^set\s+/i.test(trimmed)) {
+    return `${trimmed} to`;
+  }
+  return `Set ${trimmed} to`;
 }
 
 function renderScalarValue(raw: string, defaultUnit: string) {
@@ -348,7 +356,6 @@ function getCommandExamples(shortcut: string) {
     ],
     op: [
       { token: 'op80', help: 'Set opacity to 80%' },
-      { token: 'op80%', help: 'Explicit opacity unit' },
     ],
     rot: [
       { token: 'rot45', help: 'Set rotation to 45 degrees' },
@@ -423,9 +430,21 @@ function invalidValueHint(command: PropItem) {
 
 function displayUnitForCommand(command: PropItem) {
   if (command.unit && command.unit !== 'hex') return command.unit;
-  if (['f', 'dup', 'ls', 'lh'].includes(command.shortcut)) return '';
+  if (['f', 'dup'].includes(command.shortcut)) return '';
   if (command.hasValue) return 'px';
   return '';
+}
+
+function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string) {
+  if (explicitUnit) return [];
+
+  const defaultUnit = displayUnitForCommand(command);
+  if (!defaultUnit) return [];
+
+  const validUnits = allowedUnitsForCommand(command.shortcut);
+  if (validUnits.length <= 1) return [];
+
+  return validUnits.filter((unit) => unit !== defaultUnit);
 }
 
 function getLikelyNextShortcuts(previousCommand?: string) {
@@ -500,6 +519,91 @@ function buildNextCommandSuggestions(
   return selectDiverseCandidates(suggestions, 10);
 }
 
+function buildPendingValueSuggestions(command: PropItem, contextTokens: string[]) {
+  const examples = getCommandExamples(command.shortcut);
+  if (examples.length === 0) return [];
+
+  const suggestions: SuggestionCandidate[] = [];
+  for (let i = 0; i < Math.min(examples.length, 3); i++) {
+    const example = examples[i];
+    const composed = composeTokenWithContext(contextTokens, example.token);
+    suggestions.push({
+      name: `${composed} - ${example.help}`,
+      data: composed,
+      score: 96 - i,
+      bucket: 'example',
+    });
+  }
+
+  return selectDiverseCandidates(suggestions, 8);
+}
+
+function buildErrorSuggestion(query: string, message: string): Suggestion[] {
+  return [
+    {
+      name: `${query} - Error: ${message}`,
+      data: query,
+    },
+  ];
+}
+
+function buildPendingValueRecoverySuggestions(
+  command: PropItem,
+  contextTokens: string[],
+  nextToken: string
+): Suggestion[] {
+  const examples = getCommandExamples(command.shortcut);
+  if (examples.length === 0) {
+    return buildErrorSuggestion(
+      composeTokenWithContext(contextTokens, `${command.shortcut} ${nextToken}`),
+      `${command.shortcut} needs a value before ${nextToken}`
+    );
+  }
+
+  const recovery: SuggestionCandidate[] = [];
+  for (let i = 0; i < Math.min(examples.length, 3); i++) {
+    const example = examples[i];
+    const composed = composeTokenWithContext(contextTokens, `${example.token} ${nextToken}`);
+    recovery.push({
+      name: `${composed} - ${example.help}, then continue with ${nextToken}`,
+      data: composed,
+      score: 96 - i,
+      bucket: 'example',
+    });
+  }
+
+  const query = composeTokenWithContext(contextTokens, `${command.shortcut} ${nextToken}`);
+  recovery.push({
+    name: `${query} - Error: ${command.shortcut} needs a value before ${nextToken}`,
+    data: query,
+    score: 70,
+    bucket: 'error',
+  });
+
+  return selectDiverseCandidates(recovery, 8);
+}
+
+function isKnownCommandToken(token: string, flattenedCommands: Record<string, PropItem>) {
+  const parsed = splitToken(token);
+  if (!parsed) return false;
+
+  const { prefix, param } = parsed;
+  const directPrefixedShortcut = `${prefix}${param}`;
+  const directPrefixedCommand = prefix ? flattenedCommands[directPrefixedShortcut] : undefined;
+  const key = directPrefixedCommand ? directPrefixedShortcut : param;
+  if (key in flattenedCommands) return true;
+
+  for (const command in flattenedCommands) {
+    if (command.startsWith(param)) return true;
+  }
+
+  return false;
+}
+
+function isOperatorOnlyToken(token: string) {
+  return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)$/.test(token.trim());
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
@@ -522,7 +626,8 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   let activeOrigin: TransformOrigin | null = null;
   const contextTokens = values.slice(0, values.length - 1);
 
-  for (const token of contextTokens) {
+  for (let i = 0; i < contextTokens.length; i++) {
+    const token = contextTokens[i];
     if (token.trim() === '') continue;
 
     const parsedOrigin = parseOriginToken(token);
@@ -533,28 +638,56 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
     const parsed = splitToken(token);
     if (!parsed) {
-      return [];
+      return buildErrorSuggestion(query, `Invalid command token "${token}"`);
     }
 
     const { prefix, param, value: paramVal } = parsed;
     const directPrefixedShortcut = `${prefix}${param}`;
     const directPrefixedCommand = prefix ? flattenedCommands[directPrefixedShortcut] : undefined;
     const key = directPrefixedCommand ? directPrefixedShortcut : param;
-    if (!(key in flattenedCommands)) return [];
+    if (!(key in flattenedCommands)) {
+      return buildErrorSuggestion(query, `Invalid command "${param}"`);
+    }
+
+    const contextCommand = flattenedCommands[key];
+    if (contextCommand.hasValue && paramVal === '') {
+      const priorContext = contextTokens.slice(0, i).filter(Boolean);
+      const nextToken = values[i + 1] ?? '';
+      if (nextToken) {
+        if (!isKnownCommandToken(nextToken, flattenedCommands)) {
+          const pending = buildPendingValueSuggestions(contextCommand, priorContext);
+          const error = buildErrorSuggestion(query, `Invalid command "${nextToken}"`);
+          return [...error, ...pending];
+        }
+        return buildPendingValueRecoverySuggestions(contextCommand, priorContext, nextToken);
+      }
+      return buildPendingValueSuggestions(contextCommand, priorContext);
+    }
 
     suggestionRow.push({
-      command: flattenedCommands[key],
+      command: contextCommand,
       value: paramVal,
       prefix: directPrefixedCommand ? '' : prefix,
     });
   }
 
   if (lastToken === '') {
-    const previousCommand = suggestionRow.length > 0 ? suggestionRow[suggestionRow.length - 1].command.shortcut : undefined;
+    const previous = suggestionRow.length > 0 ? suggestionRow[suggestionRow.length - 1] : undefined;
+    if (previous && previous.command.hasValue && previous.value === '') {
+      const baseContext = contextTokens.filter(Boolean).slice(0, -1);
+      return buildPendingValueSuggestions(previous.command, baseContext);
+    }
+
+    const previousCommand = previous?.command.shortcut;
     return buildNextCommandSuggestions(flattenedCommands, contextTokens.filter(Boolean), previousCommand);
   } else {
     const parsedLast = splitToken(lastToken);
-    if (!parsedLast) return [];
+    if (!parsedLast) {
+      if (isOperatorOnlyToken(lastToken)) {
+        return buildErrorSuggestion(query, `Use operator with a command (e.g. ++h8 or ++w8+2)`);
+      }
+      return buildErrorSuggestion(query, `Invalid token "${lastToken}"`);
+    }
 
     const { prefix, param, value: paramVal } = parsedLast;
     const directPrefixedShortcut = `${prefix}${param}`;
@@ -600,6 +733,7 @@ function generateSuggestions(
     const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
 
     let lastMessage = '';
+    const alternateUnitCandidates: Array<{ renderedValue: string; unitIndex: number }> = [];
     const { value, command } = lastCommand;
     let hasError = false;
 
@@ -639,6 +773,13 @@ function generateSuggestions(
           } else {
             const renderedValue = renderScalarValue(value, defaultUnit);
             lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
+
+            const alternateUnits = getAlternateUnitsForCommand(command, scalar?.unit ?? '');
+            for (let i = 0; i < alternateUnits.length; i++) {
+              const altUnit = alternateUnits[i];
+              const altRenderedValue = renderScalarValue(value, altUnit);
+              alternateUnitCandidates.push({ renderedValue: altRenderedValue, unitIndex: i });
+            }
           }
         } else {
           lastMessage = invalidValueHint(command);
@@ -665,6 +806,24 @@ function generateSuggestions(
       score: scoreBase,
       bucket: hasError ? 'error' : 'exact',
     });
+
+    for (const alt of alternateUnitCandidates) {
+      const altSuggestionToken = `${lastCommand.prefix}${command.shortcut}${alt.renderedValue}`;
+      const altComposed = composeTokenWithContext(contextTokens, altSuggestionToken);
+      const altMessage = withOriginHint(
+        formatOperatorMessage(lastCommand.prefix, command, alt.renderedValue),
+        command,
+        activeOrigin
+      );
+
+      candidates.push({
+        name: `${altComposed} - ${altMessage}`,
+        data: altComposed,
+        score: scoreBase - 5 - alt.unitIndex,
+        bucket: 'example',
+      });
+    }
+
     if (command.action) {
       const examples = getCommandExamples(command.shortcut);
       if (command.hasValue && (lastCommand.value === '' || hasError) && examples.length > 0) {

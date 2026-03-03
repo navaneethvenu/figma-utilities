@@ -8,16 +8,11 @@ figma.parameters.on('input', async ({ key, query, result }) => {
     case 'property':
       suggestions = [];
 
-      suggestions.push(...(await getDefaultSuggestions()));
-
-      //filter duplicates
-      suggestions = suggestions.filter(
-        (item1, index, array) => array.findIndex((item2) => item1.data === item2.data) === index
-      );
-
       if (query !== '' && query !== undefined) {
         const querySuggestions = getSuggestions({ query }) ?? [];
         suggestions.unshift(...querySuggestions);
+      } else {
+        suggestions.push(...(await getDefaultSuggestions()));
       }
 
       suggestions = suggestions.filter(
