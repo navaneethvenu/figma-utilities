@@ -1,6 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { supportedNodes, SupportedNodes } from './supported-nodes';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 
 interface setPaddingProps {
   param: string;
@@ -9,14 +10,14 @@ interface setPaddingProps {
 }
 
 export default function setPadding({ param, value, nodes }: setPaddingProps) {
-  const padding = parseFloat(value);
+  const padding = parseNumberWithOptionalUnit(value, ['px']);
 
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined && assertedNode.layoutMode !== 'NONE') {
-      if (!isNaN(padding)) {
+      if (padding !== null && Number.isFinite(padding)) {
         //Left Padding
         if (/pl\b/.test(param)) {
           assertedNode.paddingLeft = padding;

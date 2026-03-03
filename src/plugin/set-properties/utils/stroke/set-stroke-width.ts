@@ -1,5 +1,6 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 
 interface setStrokeProps {
   param: string;
@@ -8,7 +9,7 @@ interface setStrokeProps {
 }
 
 export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) {
-  const strokeWidth = parseFloat(value);
+  const strokeWidth = parseNumberWithOptionalUnit(value, ['px']);
   for (const node of nodes) {
     const nodeTypeCheck =
       node.type === 'FRAME' ||
@@ -27,7 +28,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
     };
 
     if (nodeTypeCheck) {
-      if (!isNaN(strokeWidth)) {
+      if (strokeWidth !== null && Number.isFinite(strokeWidth)) {
         //Left Stroke
         if (/stl\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {

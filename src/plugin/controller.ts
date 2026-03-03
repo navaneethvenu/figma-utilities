@@ -20,6 +20,10 @@ figma.parameters.on('input', async ({ key, query, result }) => {
         suggestions.unshift(...querySuggestions);
       }
 
+      suggestions = suggestions.filter(
+        (item1, index, array) => array.findIndex((item2) => item1.data === item2.data) === index
+      );
+
       if (suggestions === null || suggestions === undefined) suggestions = [];
       result.setSuggestions(suggestions);
       break;

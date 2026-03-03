@@ -1,5 +1,6 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 
 interface SetOpacityProps {
   param: string;
@@ -8,7 +9,7 @@ interface SetOpacityProps {
 }
 
 export default function setOpacity({ param, value, nodes }: SetOpacityProps) {
-  const opacityPercent = Number(value);
+  const opacityPercent = parseNumberWithOptionalUnit(value, ['%']);
   if (!Number.isFinite(opacityPercent) || opacityPercent < 0 || opacityPercent > 100) {
     notifyError({
       type: ErrorType.INVALID_VAL,

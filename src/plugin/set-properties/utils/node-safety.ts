@@ -66,3 +66,17 @@ export function parseFiniteNumber(value: string) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
+
+export function parseNumberWithOptionalUnit(value: string, allowedUnits: readonly string[] = []) {
+  const trimmed = value.trim();
+  const match = trimmed.match(/^(-?\d*\.?\d+)([a-z%]+)?$/i);
+  if (!match) return null;
+
+  const parsed = Number(match[1]);
+  if (!Number.isFinite(parsed)) return null;
+
+  const unit = (match[2] ?? '').toLowerCase();
+  if (unit && !allowedUnits.map((entry) => entry.toLowerCase()).includes(unit)) return null;
+
+  return parsed;
+}

@@ -1,7 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
-import { parseFiniteNumber } from '../node-safety';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setScaleHeightProps {
@@ -12,7 +12,7 @@ interface setScaleHeightProps {
 }
 
 export default function setScaleHeight({ param, value, nodes, origin }: setScaleHeightProps) {
-  const height = parseFiniteNumber(value);
+  const height = parseNumberWithOptionalUnit(value, ['px']);
   if (height === null) {
     notifyError({
       type: ErrorType.INVALID_VAL,

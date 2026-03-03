@@ -1,7 +1,7 @@
 import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
-import { parseFiniteNumber } from '../node-safety';
+import { parseNumberWithOptionalUnit } from '../node-safety';
 import { runWithOrigin, TransformOrigin } from '../../origin';
 
 interface setScaleWidthProps {
@@ -12,7 +12,7 @@ interface setScaleWidthProps {
 }
 
 export default function setScaleWidth({ param, value, nodes, origin }: setScaleWidthProps) {
-  const width = parseFiniteNumber(value);
+  const width = parseNumberWithOptionalUnit(value, ['px']);
   if (width === null) {
     notifyError({
       type: ErrorType.INVALID_VAL,
