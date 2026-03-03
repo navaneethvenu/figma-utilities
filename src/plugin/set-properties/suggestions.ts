@@ -115,9 +115,32 @@ function parseRangeValue(value: string) {
   return { start, end };
 }
 
+function parseRangeExpression(value: string) {
+  const match = value.match(
+    /^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/
+  );
+  if (!match) return null;
+
+  const left = parseRangeValue(match[1]) ?? parseScalarValue(match[1]);
+  const right = parseRangeValue(match[3]) ?? parseScalarValue(match[3]);
+  if (!left || !right) return null;
+
+  const leftIsRange = 'end' in left;
+  const rightIsRange = 'end' in right;
+  if (!leftIsRange && !rightIsRange) return null;
+
+  return {
+    op: match[2] as '+' | '-' | '*' | '/',
+    left: match[1],
+    right: match[3],
+  };
+}
+
 function hasMalformedRangeValue(value: string) {
   if (!value.includes('..')) return false;
-  return parseRangeValue(value) === null;
+  if (parseRangeValue(value) !== null) return false;
+  if (parseRangeExpression(value) !== null) return false;
+  return true;
 }
 
 function hasProgressionSuffix(value: string) {
@@ -377,11 +400,13 @@ function generateSuggestions(
       if (lastCommand.value !== '') {
         const isFillCommand = command.shortcut.toLowerCase() === 'f';
         const range = parseRangeValue(value);
+        const rangeExpression = parseRangeExpression(value);
         const scalar = parseScalarValue(value);
 
         const isValidValue = isFillCommand
           ? /^#?[0-9a-fA-F]+$/.test(value) // hex color validation, accepts optional leading #
           : range !== null ||
+            (rangeExpression !== null && isSequentialPrefix(lastCommand.prefix)) ||
             (scalar !== null &&
               (scalar.num >= 0 || command.allowsNegative === true) &&
               (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)));
@@ -394,6 +419,8 @@ function generateSuggestions(
           const defaultUnit = command.unit === undefined ? 'px' : command.unit;
           if (range) {
             lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
+          } else if (rangeExpression) {
+            lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
           } else {
             const renderedValue = renderScalarValue(value, defaultUnit);
             lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);

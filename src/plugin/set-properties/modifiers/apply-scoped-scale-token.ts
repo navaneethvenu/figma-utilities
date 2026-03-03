@@ -53,9 +53,36 @@ function progressionValueAtIndex(base: number, i: number, token: ScopedScaleToke
   }
 }
 
+function applyBinaryOp(left: number, right: number, op: '+' | '-' | '*' | '/') {
+  switch (op) {
+    case '+':
+      return left + right;
+    case '-':
+      return left - right;
+    case '*':
+      return left * right;
+    case '/':
+      return left / right;
+  }
+}
+
 function operandAtIndex(i: number, n: number, token: ScopedScaleToken) {
-  const raw =
+  const leftRaw =
     token.operandMode === 'range' ? interpolate(token.start, token.end as number, i, n) : token.start;
+  let raw = leftRaw;
+
+  if (
+    token.expressionOp &&
+    token.expressionOperandMode &&
+    token.expressionStart !== undefined
+  ) {
+    const rightRaw =
+      token.expressionOperandMode === 'range'
+        ? interpolate(token.expressionStart, token.expressionEnd as number, i, n)
+        : token.expressionStart;
+    raw = applyBinaryOp(leftRaw, rightRaw, token.expressionOp);
+  }
+
   const base = roundOperand(raw);
   return roundOperand(progressionValueAtIndex(base, i, token));
 }
@@ -128,6 +155,18 @@ export async function applyScopedScaleCommand(
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
   if (token.progressionOp === '/' && token.progressionValue === 0) {
+    throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
+  }
+  if (token.expressionOp === '/' && token.expressionOperandMode === 'scalar' && token.expressionStart === 0) {
+    throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
+  }
+  if (
+    token.expressionOp === '/' &&
+    token.expressionOperandMode === 'range' &&
+    token.expressionStart !== undefined &&
+    token.expressionEnd !== undefined &&
+    rangeTouchesOrCrossesZero(token.expressionStart, token.expressionEnd)
+  ) {
     throw new Error(`${ErrorType.INVALID_VAL}: ${tokenText}`);
   }
   if (
