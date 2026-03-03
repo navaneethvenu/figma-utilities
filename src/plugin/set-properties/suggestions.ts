@@ -421,6 +421,13 @@ function invalidValueHint(command: PropItem) {
   }
 }
 
+function displayUnitForCommand(command: PropItem) {
+  if (command.unit && command.unit !== 'hex') return command.unit;
+  if (['f', 'dup', 'ls', 'lh'].includes(command.shortcut)) return '';
+  if (command.hasValue) return 'px';
+  return '';
+}
+
 function getLikelyNextShortcuts(previousCommand?: string) {
   const fallback = ['w', 'h', 'x', 'y', 'r', 'f', 'op', 'rot', 'p', 'st', 'gap'];
   if (!previousCommand) return fallback;
@@ -622,7 +629,7 @@ function generateSuggestions(
           lastMessage = `Progression needs sequential operators (++, --, **, //)`;
           hasError = true;
         } else if (isValidValue) {
-          const defaultUnit = command.unit === undefined || command.unit === 'hex' ? '' : command.unit;
+          const defaultUnit = displayUnitForCommand(command);
           if (range) {
             lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
           } else if (pairValue) {
