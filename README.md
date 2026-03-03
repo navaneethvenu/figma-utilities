@@ -61,6 +61,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - `++` is cumulative for additive flow (for example `++h40/2` gives `+40, +60, +70, ...`).
 - Double operators use cumulative flow with their own operator semantics: `++` cumulative add, `--` cumulative subtract, `**` cumulative multiply, `//` cumulative divide.
 - Range operands are supported with `start..end` (for example `h1..20`, `+h1..24`, `++h20..40`, `w10..100`)
+- Double operators also support mixed range expressions (for example `++h20-20..40`, `++h10..20-5..15`, `**w1..2*1.2..1.8`).
 - Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
 - Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`

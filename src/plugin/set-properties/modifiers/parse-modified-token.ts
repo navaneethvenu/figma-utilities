@@ -16,6 +16,10 @@ export interface ModifiedToken {
   operandMode: OperandMode;
   start: number;
   end?: number;
+  expressionOp?: '+' | '-' | '*' | '/';
+  expressionOperandMode?: OperandMode;
+  expressionStart?: number;
+  expressionEnd?: number;
   progressionOp?: '+' | '-' | '*' | '/';
   progressionValue?: number;
 }
@@ -59,6 +63,29 @@ function getMode(operator: string): ModifierMode | null {
   }
 }
 
+function isSequentialMode(mode: ModifierMode) {
+  return mode.startsWith('seq_') || mode === 'cum_add';
+}
+
+function parseOperandExpr(value: string): { mode: OperandMode; start: number; end?: number } | null {
+  const rangeMatch = value.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
+  if (rangeMatch) {
+    const start = Number(rangeMatch[1]);
+    const end = Number(rangeMatch[2]);
+    if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
+    return { mode: 'range', start, end };
+  }
+
+  const scalarMatch = value.match(/^(-?\d*\.?\d+)$/);
+  if (scalarMatch) {
+    const start = Number(scalarMatch[1]);
+    if (!Number.isFinite(start)) return null;
+    return { mode: 'scalar', start };
+  }
+
+  return null;
+}
+
 export default function parseModifiedToken(token: string): ModifiedToken | null {
   const { operator, rest } = parseOperator(token);
   const mode = getMode(operator);
@@ -70,21 +97,27 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
   const command = match[1];
   const valueExpr = match[2];
 
-  if (valueExpr.includes('..')) {
-    const rangeMatch = valueExpr.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
-    if (!rangeMatch) return null;
+  const expressionMatch = valueExpr.match(/^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/);
+  if (expressionMatch && isSequentialMode(mode)) {
+    const lhs = parseOperandExpr(expressionMatch[1]);
+    const rhs = parseOperandExpr(expressionMatch[3]);
+    const expressionOp = expressionMatch[2] as '+' | '-' | '*' | '/';
+    if (!lhs || !rhs) return null;
 
-    const start = Number(rangeMatch[1]);
-    const end = Number(rangeMatch[2]);
-    if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
-
-    return {
-      mode,
-      command,
-      operandMode: 'range',
-      start,
-      end,
-    };
+    const hasRange = lhs.mode === 'range' || rhs.mode === 'range';
+    if (hasRange) {
+      return {
+        mode,
+        command,
+        operandMode: lhs.mode,
+        start: lhs.start,
+        end: lhs.end,
+        expressionOp,
+        expressionOperandMode: rhs.mode,
+        expressionStart: rhs.start,
+        expressionEnd: rhs.end,
+      };
+    }
   }
 
   const scalarMatch = valueExpr.match(/^(-?\d*\.?\d+)(?:([+\-*/])(-?\d*\.?\d+))?$/);
@@ -98,6 +131,18 @@ export default function parseModifiedToken(token: string): ModifiedToken | null 
     if (!(mode.startsWith('seq_') || mode === 'cum_add')) return null;
     if (progressionValue === undefined || !Number.isFinite(progressionValue)) return null;
     if (progressionOp === '/' && progressionValue === 0) return null;
+  }
+
+  if (valueExpr.includes('..')) {
+    const parsedOperand = parseOperandExpr(valueExpr);
+    if (!parsedOperand || parsedOperand.mode !== 'range') return null;
+    return {
+      mode,
+      command,
+      operandMode: 'range',
+      start: parsedOperand.start,
+      end: parsedOperand.end,
+    };
   }
 
   return {

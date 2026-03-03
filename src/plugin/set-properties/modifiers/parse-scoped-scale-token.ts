@@ -17,6 +17,10 @@ export interface ScopedScaleToken {
   operandMode: ScopedScaleOperandMode;
   start: number;
   end?: number;
+  expressionOp?: '+' | '-' | '*' | '/';
+  expressionOperandMode?: ScopedScaleOperandMode;
+  expressionStart?: number;
+  expressionEnd?: number;
   progressionOp?: '+' | '-' | '*' | '/';
   progressionValue?: number;
 }
@@ -46,6 +50,29 @@ function getMode(operator: string): ScopedScaleMode | null {
   }
 }
 
+function isSequentialMode(mode: ScopedScaleMode) {
+  return mode.startsWith('seq_') || mode === 'cum_add';
+}
+
+function parseOperandExpr(value: string): { mode: ScopedScaleOperandMode; start: number; end?: number } | null {
+  const rangeMatch = value.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
+  if (rangeMatch) {
+    const start = Number(rangeMatch[1]);
+    const end = Number(rangeMatch[2]);
+    if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
+    return { mode: 'range', start, end };
+  }
+
+  const scalarMatch = value.match(/^(-?\d*\.?\d+)$/);
+  if (scalarMatch) {
+    const start = Number(scalarMatch[1]);
+    if (!Number.isFinite(start)) return null;
+    return { mode: 'scalar', start };
+  }
+
+  return null;
+}
+
 export default function parseScopedScaleToken(token: string): ScopedScaleToken | null {
   const match = token.match(/^sc:((?:\+\+|--|\*\*|\/\/|\+|-|\*|\/)?)([wh])(.+)$/i);
   if (!match) return null;
@@ -56,15 +83,27 @@ export default function parseScopedScaleToken(token: string): ScopedScaleToken |
   const axis = match[2].toLowerCase() as ScopedScaleAxis;
   const valueExpr = match[3];
 
-  if (valueExpr.includes('..')) {
-    const rangeMatch = valueExpr.match(/^(-?\d*\.?\d+)\.\.(-?\d*\.?\d+)$/);
-    if (!rangeMatch) return null;
+  const expressionMatch = valueExpr.match(/^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/);
+  if (expressionMatch && isSequentialMode(mode)) {
+    const lhs = parseOperandExpr(expressionMatch[1]);
+    const rhs = parseOperandExpr(expressionMatch[3]);
+    const expressionOp = expressionMatch[2] as '+' | '-' | '*' | '/';
+    if (!lhs || !rhs) return null;
 
-    const start = Number(rangeMatch[1]);
-    const end = Number(rangeMatch[2]);
-    if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
-
-    return { mode, axis, operandMode: 'range', start, end };
+    const hasRange = lhs.mode === 'range' || rhs.mode === 'range';
+    if (hasRange) {
+      return {
+        mode,
+        axis,
+        operandMode: lhs.mode,
+        start: lhs.start,
+        end: lhs.end,
+        expressionOp,
+        expressionOperandMode: rhs.mode,
+        expressionStart: rhs.start,
+        expressionEnd: rhs.end,
+      };
+    }
   }
 
   const scalarMatch = valueExpr.match(/^(-?\d*\.?\d+)(?:([+\-*/])(-?\d*\.?\d+))?$/);
@@ -79,6 +118,12 @@ export default function parseScopedScaleToken(token: string): ScopedScaleToken |
     if (!(mode.startsWith('seq_') || mode === 'cum_add')) return null;
     if (progressionValue === undefined || !Number.isFinite(progressionValue)) return null;
     if (progressionOp === '/' && progressionValue === 0) return null;
+  }
+
+  if (valueExpr.includes('..')) {
+    const parsedOperand = parseOperandExpr(valueExpr);
+    if (!parsedOperand || parsedOperand.mode !== 'range') return null;
+    return { mode, axis, operandMode: 'range', start: parsedOperand.start, end: parsedOperand.end };
   }
 
   return {
