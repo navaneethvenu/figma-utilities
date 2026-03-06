@@ -22,6 +22,7 @@ import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
 import setFill from './utils/color/replace-fill';
 import setAutolayoutBehavior from './utils/autolayout/set-autolayout-behavior';
+import applyAutolayout from './utils/autolayout/apply-autolayout';
 import wrapInFrame from './utils/wrap/wrap-in-frame';
 import setRotation from './utils/rotation/set-rotation';
 import setOpacity from './utils/opacity/set-opacity';
@@ -1099,6 +1100,24 @@ export const propList: Record<string, PropItem> = {
         shortcut: 'aa',
         hasValue: false,
         action: ({ param, nodes }) => setAutolayoutBehavior({ command: param, value: '', nodes }),
+      },
+      al: {
+        name: 'Apply Auto Layout (Smart)',
+        shortcut: 'al',
+        hasValue: false,
+        action: ({ param, nodes }) => applyAutolayout({ param, nodes }),
+      },
+      alx: {
+        name: 'Apply Auto Layout Horizontal',
+        shortcut: 'alx',
+        hasValue: false,
+        action: ({ param, nodes }) => applyAutolayout({ param, nodes }),
+      },
+      aly: {
+        name: 'Apply Auto Layout Vertical',
+        shortcut: 'aly',
+        hasValue: false,
+        action: ({ param, nodes }) => applyAutolayout({ param, nodes }),
       },
       gap: {
         name: 'Set Auto-layout Gap',

@@ -87,7 +87,7 @@ Main families:
 - Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), traversal (`root`/`leaf`/`selp`/`selc`/`selns`/`selps`/`seli`), filter (`fs*`), exclude (`es*`)
 - Color: fill replace (`f<hex>`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
-- Auto layout behavior: toggles (`ax`, `ay`), smart (`aa`)
+- Auto layout behavior: toggles (`ax`, `ay`), smart sizing (`aa`), apply auto layout (`al`, `alx`, `aly`)
 - Auto layout spacing: `gap`, `gapx`, `gapy`
 - Text spacing: `ls`, `lh` (set), `lsp`/`lspx` and `lhp`/`lhpx` (unit conversion)
 - Transform/appearance: `rot`, `op`
