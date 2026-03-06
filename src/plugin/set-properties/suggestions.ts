@@ -1,6 +1,7 @@
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
 import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken, splitOriginPrefixedToken, TransformOrigin } from './origin';
+import { isFillAddValue, isFillDeleteValue, isFillInsertValue, isFillReplaceValue } from './utils/color/replace-fill';
 
 interface getSuggestionsProps {
   query: string;
@@ -115,6 +116,25 @@ function isAxisModeCommand(command: PropItem) {
   return ['fit', 'fill', 'hug'].includes(command.shortcut);
 }
 
+function isFillCommand(shortcut: string) {
+  return ['f', 'fa', 'fi', 'fd'].includes(shortcut);
+}
+
+function isValidFillCommandValue(command: PropItem, value: string) {
+  switch (command.shortcut) {
+    case 'f':
+      return isFillReplaceValue(value);
+    case 'fa':
+      return isFillAddValue(value);
+    case 'fi':
+      return isFillInsertValue(value);
+    case 'fd':
+      return isFillDeleteValue(value);
+    default:
+      return false;
+  }
+}
+
 function isAxisValue(value: string) {
   const normalized = value.trim().toLowerCase();
   return normalized === '' || normalized === 'w' || normalized === 'h';
@@ -129,7 +149,6 @@ function allowedUnitsForCommand(shortcut: string) {
 }
 
 function isScalarAllowedForCommand(command: PropItem, value: string, scalarUnit: string) {
-  if (command.shortcut === 'f') return /^#?[0-9a-fA-F]+$/.test(value);
   if (command.shortcut === 'dup') return /^\d+$/.test(value.trim());
   if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px', '%']);
 
@@ -462,8 +481,27 @@ function getCommandExamples(shortcut: string) {
       { token: 'dup1', help: 'Duplicate once' },
     ],
     f: [
-      { token: 'fFF6600', help: 'Replace fill with hex color' },
-      { token: 'f#1A73E8', help: 'Replace fill with #hex color' },
+      { token: 'f#1A73E8', help: 'Replace all fills with #hex color' },
+      { token: 'f2#1A73E8', help: 'Replace second fill only' },
+      { token: 'f1-3#1A73E8', help: 'Replace fills 1 through 3' },
+      { token: 'f3+#1A73E8', help: 'Replace fill 3 onward' },
+      { token: 'f#1A73E8@10', help: 'Set color with 10% opacity' },
+      { token: 'f#1A73E8:m:off', help: 'Set multiply blend and hide fill' },
+    ],
+    fa: [
+      { token: 'fa#1A73E8', help: 'Append a new fill' },
+      { token: 'fa#1A73E8@10', help: 'Append fill with 10% opacity' },
+      { token: 'fa#1A73E8:overlay:on', help: 'Append visible overlay fill' },
+    ],
+    fi: [
+      { token: 'fi1#1A73E8', help: 'Insert fill at position 1' },
+      { token: 'fi3#000@20', help: 'Insert fill 3 with 20% opacity' },
+      { token: 'fi2#1A73E8:screen:off', help: 'Insert hidden screen fill at 2' },
+    ],
+    fd: [
+      { token: 'fd2', help: 'Delete second fill' },
+      { token: 'fd1-3', help: 'Delete fills 1 through 3' },
+      { token: 'fd3+', help: 'Delete fills from 3 onward' },
     ],
     x: [
       { token: 'x100', help: 'Set x position' },
@@ -497,7 +535,13 @@ function getCommandExamples(shortcut: string) {
 function invalidValueHint(command: PropItem) {
   switch (command.shortcut) {
     case 'f':
-      return `Use a hex color (e.g. fFF6600 or f#1A73E8)`;
+      return `Use f<target><hex> with optional @alpha and :options (e.g. f2#1A73E8@10:m:off)`;
+    case 'fa':
+      return `Use fa<hex> with optional @alpha and :options (e.g. fa#1A73E8@10:overlay:on)`;
+    case 'fi':
+      return `Use fi<index><hex> with optional @alpha and :options (e.g. fi2#1A73E8:screen:off)`;
+    case 'fd':
+      return `Use fd<target> (e.g. fd2, fd1-3, fd3+, fd-2)`;
     case 'dup':
       return `Use a whole number (e.g. dup3)`;
     case 'op':
@@ -523,7 +567,7 @@ function invalidValueHint(command: PropItem) {
 
 function displayUnitForCommand(command: PropItem) {
   if (command.unit && command.unit !== 'hex') return command.unit;
-  if (['f', 'dup'].includes(command.shortcut)) return '';
+  if (['f', 'fa', 'fi', 'fd', 'dup'].includes(command.shortcut)) return '';
   if (command.hasValue) return 'px';
   return '';
 }
@@ -834,6 +878,17 @@ function generateSuggestions(
 
     if (command.hasValue) {
       if (lastCommand.value !== '') {
+        if (isFillCommand(command.shortcut)) {
+          if (lastCommand.prefix !== '') {
+            lastMessage = `Error: ${command.name} does not support modifier operators`;
+            hasError = true;
+          } else if (isValidFillCommandValue(command, value)) {
+            lastMessage = command.message ? `${command.message} ${value}` : `${defaultSetLabel(command.name)} ${value}`;
+          } else {
+            lastMessage = invalidValueHint(command);
+            hasError = true;
+          }
+        } else {
         const range = parseRangeValue(value);
         const rangeExpression = parseRangeExpression(value);
         const scalar = parseScalarValue(value);
@@ -886,6 +941,7 @@ function generateSuggestions(
         } else {
           lastMessage = invalidValueHint(command);
           hasError = true;
+        }
         }
       } else {
         if (isAxisModeCommand(command) && lastCommand.prefix === '') {

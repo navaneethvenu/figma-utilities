@@ -20,7 +20,7 @@ import traverseSelection from './utils/selection/traverse-selection';
 import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
-import setFill from './utils/color/replace-fill';
+import setFill, { addFill, deleteFill, insertFill } from './utils/color/replace-fill';
 import setAutolayoutBehavior from './utils/autolayout/set-autolayout-behavior';
 import applyAutolayout from './utils/autolayout/apply-autolayout';
 import wrapInFrame from './utils/wrap/wrap-in-frame';
@@ -973,9 +973,32 @@ export const propList: Record<string, PropItem> = {
         name: 'Replace Fill Color',
         shortcut: 'f',
         hasValue: true,
-        message: 'Replace fill color with',
+        message: 'Replace targeted fills with',
         unit: 'hex',
         action: ({ param, value, nodes }) => setFill({ param, value, nodes }),
+      },
+      fa: {
+        name: 'Add Fill',
+        shortcut: 'fa',
+        hasValue: true,
+        message: 'Append fill',
+        unit: 'hex',
+        action: ({ param, value, nodes }) => addFill({ param, value, nodes }),
+      },
+      fi: {
+        name: 'Insert Fill',
+        shortcut: 'fi',
+        hasValue: true,
+        message: 'Insert fill at target index with',
+        unit: 'hex',
+        action: ({ param, value, nodes }) => insertFill({ param, value, nodes }),
+      },
+      fd: {
+        name: 'Delete Fill',
+        shortcut: 'fd',
+        hasValue: true,
+        message: 'Delete targeted fills',
+        action: ({ param, value, nodes }) => deleteFill({ param, value, nodes }),
       },
     },
   },

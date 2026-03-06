@@ -63,7 +63,11 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Range operands are supported with `start..end` (for example `h1..20`, `+h1..24`, `++h20..40`, `w10..100`)
 - Double operators also support mixed range expressions (for example `++h20-20..40`, `++h10..20-5..15`, `**w1..2*1.2..1.8`).
 - Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
-- Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
+- Fill color supports `1/2/3/4/6/8` hex lengths with or without `#` (for example `f#F`, `f#FA`, `f#FFAA00`, `fFFAA0080`)
+- Fill targets are optional: `f<color>` (all fills), `f2<color>` (2nd), `f1-3<color>` (range), `f3+<color>` (3rd onward), `f-2<color>` (up to 2nd)
+- Optional alpha can be appended as percent or decimal: `@10`, `@10%`, `@0.1` (for example `f#1A73E8@10`)
+- Fill options can be appended using `:option` tokens: blend (`:m`, `:screen`, `:overlay`, etc.) and visibility (`:on`, `:off`)
+- Add/insert/delete fills: `fa<color>`, `fi<index><color>`, `fd<target>` (for example `fa#000@10:m`, `fi2#1A73E8:off`, `fd2+`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
 - Size commands support `%` values (`w50%`, `h200%`) and dedicated fit/fill/hug commands (`fit`, `fitw`, `fith`, `fill`, `fillw`, `fillh`, `hug`, `hugw`, `hugh`)
 
@@ -85,7 +89,7 @@ Main families:
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
 - Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)
 - Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), traversal (`root`/`leaf`/`selp`/`selc`/`selns`/`selps`/`seli`), filter (`fs*`), exclude (`es*`)
-- Color: fill replace (`f<hex>`)
+- Color: fill replace/add/insert/delete (`f`, `fa`, `fi`, `fd`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
 - Auto layout behavior: toggles (`ax`, `ay`), smart sizing (`aa`), apply auto layout (`al`, `alx`, `aly`)
 - Auto layout spacing: `gap`, `gapx`, `gapy`

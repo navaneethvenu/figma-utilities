@@ -2,6 +2,7 @@ import { flattenCommands, propList } from './prop-list';
 import parseModifiedToken from './modifiers/parse-modified-token';
 import parseScopedScaleToken from './modifiers/parse-scoped-scale-token';
 import { parseOriginToken, splitOriginPrefixedToken } from './origin';
+import { isFillAddValue, isFillDeleteValue, isFillInsertValue, isFillReplaceValue } from './utils/color/replace-fill';
 
 export interface ParsedParameter {
   param: string;
@@ -34,12 +35,11 @@ function isAxisValue(value: string) {
   return normalized === '' || normalized === 'w' || normalized === 'h';
 }
 
-function isHexColorValue(value: string) {
-  return /^#?[0-9a-fA-F]+$/.test(value);
-}
-
 function isValueValidForCommand(shortcut: string, value: string) {
-  if (shortcut === 'f') return isHexColorValue(value);
+  if (shortcut === 'f') return isFillReplaceValue(value);
+  if (shortcut === 'fa') return isFillAddValue(value);
+  if (shortcut === 'fi') return isFillInsertValue(value);
+  if (shortcut === 'fd') return isFillDeleteValue(value);
   if (shortcut === 'dup') return /^\d+$/.test(value.trim());
   if (shortcut === 'op') return isNumericValue(value, ['%']);
   if (shortcut === 'rot') return isNumericValue(value, ['deg']);
