@@ -1,0 +1,5747 @@
+{
+  "generatedFrom": "src/plugin/set-properties/prop-list.ts",
+  "generatedAt": "2026-03-07T10:43:15.229Z",
+  "counts": {
+    "groups": 36,
+    "commands": 136
+  },
+  "groups": [
+    {
+      "id": "pos",
+      "shortcut": "pos",
+      "name": "Position",
+      "description": "Shortcuts for setting and adjusting the position of elements.",
+      "depth": 0,
+      "order": 1
+    },
+    {
+      "id": "pos/xy",
+      "shortcut": "xy",
+      "name": "Position",
+      "description": "Command group for Position. Start with: x, y.",
+      "parent": "pos",
+      "depth": 1,
+      "order": 2
+    },
+    {
+      "id": "pos/d",
+      "shortcut": "d",
+      "name": "Dock In",
+      "description": "Dock elements inside a container according to directional constraints.",
+      "parent": "pos",
+      "depth": 1,
+      "order": 6
+    },
+    {
+      "id": "pos/d/dt",
+      "shortcut": "dt",
+      "name": "Dock to Top",
+      "description": "Command group for Dock to Top. Start with: dtl, dtr.",
+      "parent": "pos/d",
+      "depth": 2,
+      "order": 9
+    },
+    {
+      "id": "pos/d/db",
+      "shortcut": "db",
+      "name": "Dock to Bottom",
+      "description": "Command group for Dock to Bottom. Start with: dbl, dbr.",
+      "parent": "pos/d",
+      "depth": 2,
+      "order": 13
+    },
+    {
+      "id": "pos/D",
+      "shortcut": "D",
+      "name": "Dock Out",
+      "description": "Dock elements outside a container according to directional constraints.",
+      "parent": "pos",
+      "depth": 1,
+      "order": 17
+    },
+    {
+      "id": "pos/D/DT",
+      "shortcut": "DT",
+      "name": "Dock out Top",
+      "description": "Command group for Dock out Top. Start with: DTL, DTR.",
+      "parent": "pos/D",
+      "depth": 2,
+      "order": 20
+    },
+    {
+      "id": "pos/D/DB",
+      "shortcut": "DB",
+      "name": "Dock out Bottom",
+      "description": "Command group for Dock out Bottom. Start with: DBL, DBR.",
+      "parent": "pos/D",
+      "depth": 2,
+      "order": 24
+    },
+    {
+      "id": "size",
+      "shortcut": "size",
+      "name": "Size",
+      "description": "Shortcuts for resizing elements, adjusting width, height, scale, and fitting to parent.",
+      "depth": 0,
+      "order": 28
+    },
+    {
+      "id": "size/sc",
+      "shortcut": "sc",
+      "name": "Scale",
+      "description": "Command group for Scale. Start with: sc:w, sc:h.",
+      "parent": "size",
+      "depth": 1,
+      "order": 31
+    },
+    {
+      "id": "r",
+      "shortcut": "r",
+      "name": "Corner Radius",
+      "description": "Shortcuts for modifying the corner radius of elements, including individual corners.",
+      "depth": 0,
+      "order": 38
+    },
+    {
+      "id": "r/r",
+      "shortcut": "r",
+      "name": "Corner Radius",
+      "description": "Command group for Corner Radius. Start with: rt, rb, rl, rr.",
+      "parent": "r",
+      "depth": 1,
+      "order": 39
+    },
+    {
+      "id": "r/r/rt",
+      "shortcut": "rt",
+      "name": "Top Corner Radius",
+      "description": "Command group for Top Corner Radius. Start with: rtl, rtr.",
+      "parent": "r/r",
+      "depth": 2,
+      "order": 41
+    },
+    {
+      "id": "r/r/rb",
+      "shortcut": "rb",
+      "name": "Bottom Corner Radius",
+      "description": "Command group for Bottom Corner Radius. Start with: rbl, rbr.",
+      "parent": "r/r",
+      "depth": 2,
+      "order": 45
+    },
+    {
+      "id": "p",
+      "shortcut": "p",
+      "name": "Padding",
+      "description": "Shortcuts for adjusting padding on autolayout objects, including top, bottom, left, right, and combined axes.",
+      "depth": 0,
+      "order": 51
+    },
+    {
+      "id": "p/p",
+      "shortcut": "p",
+      "name": "Padding",
+      "description": "Command group for Padding. Start with: pl, pr, pt, pb.",
+      "parent": "p",
+      "depth": 1,
+      "order": 52
+    },
+    {
+      "id": "sw",
+      "shortcut": "sw",
+      "name": "Strokes",
+      "description": "Shortcuts for setting stroke width and alignment for elements, including individual edges.",
+      "depth": 0,
+      "order": 60
+    },
+    {
+      "id": "sw/sw",
+      "shortcut": "sw",
+      "name": "Stroke Width",
+      "description": "These are the shortcuts related to adjusting the stroke width of any object",
+      "parent": "sw",
+      "depth": 1,
+      "order": 61
+    },
+    {
+      "id": "sw/sw/sw",
+      "shortcut": "sw",
+      "name": "Strokes",
+      "description": "Command group for Strokes. Start with: swl, swr, swt, swb.",
+      "parent": "sw/sw",
+      "depth": 2,
+      "order": 62
+    },
+    {
+      "id": "sw/salign",
+      "shortcut": "salign",
+      "name": "Stroke Alignment",
+      "description": "These are the shortcuts related to adjusting the stroke alignment of any object",
+      "parent": "sw",
+      "depth": 1,
+      "order": 70
+    },
+    {
+      "id": "selection",
+      "shortcut": "selection",
+      "name": "Selection",
+      "description": "Shortcuts for working with selections, including quick selection, filtering, and exclusion by type.",
+      "depth": 0,
+      "order": 74
+    },
+    {
+      "id": "selection/sel",
+      "shortcut": "sel",
+      "name": "Quick Select",
+      "description": "These are the shortcuts related to quick selecting objects",
+      "parent": "selection",
+      "depth": 1,
+      "order": 75
+    },
+    {
+      "id": "selection/sel/sel",
+      "shortcut": "sel",
+      "name": "Quick Select",
+      "description": "Command group for Quick Select. Start with: selr, sell, selt, selb.",
+      "parent": "selection/sel",
+      "depth": 2,
+      "order": 76
+    },
+    {
+      "id": "selection/fs",
+      "shortcut": "fs",
+      "name": "Filter Selection",
+      "description": "These are the shortcuts related to filtering out elements within selections",
+      "parent": "selection",
+      "depth": 1,
+      "order": 88
+    },
+    {
+      "id": "selection/es",
+      "shortcut": "es",
+      "name": "Exclude Selection",
+      "description": "These are the shortcuts related to excluding out elements within selections",
+      "parent": "selection",
+      "depth": 1,
+      "order": 102
+    },
+    {
+      "id": "colour",
+      "shortcut": "colour",
+      "name": "Colour",
+      "description": "Shortcuts for setting or replacing element colors, including fills.",
+      "depth": 0,
+      "order": 116
+    },
+    {
+      "id": "c",
+      "shortcut": "c",
+      "name": "Constraints",
+      "description": "Shortcuts for applying, centering, scaling, and adjusting horizontal and vertical constraints on elements.",
+      "depth": 0,
+      "order": 125
+    },
+    {
+      "id": "c/cx",
+      "shortcut": "cx",
+      "name": "Stretch Horizontal Constraints",
+      "description": "Command group for Stretch Horizontal Constraints. Start with: cxc, cxs, cxl, cxr.",
+      "parent": "c",
+      "depth": 1,
+      "order": 129
+    },
+    {
+      "id": "c/cy",
+      "shortcut": "cy",
+      "name": "Stretch Vertical Constraints",
+      "description": "Command group for Stretch Vertical Constraints. Start with: cyc, cys, cyt, cyb.",
+      "parent": "c",
+      "depth": 1,
+      "order": 135
+    },
+    {
+      "id": "a",
+      "shortcut": "a",
+      "name": "Autolayout Behavior",
+      "description": "Shortcuts for toggling autolayout children behavior and spacing.",
+      "depth": 0,
+      "order": 141
+    },
+    {
+      "id": "text",
+      "shortcut": "text",
+      "name": "Text",
+      "description": "Shortcuts for text spacing controls.",
+      "depth": 0,
+      "order": 151
+    },
+    {
+      "id": "misc",
+      "shortcut": "misc",
+      "name": "Misc",
+      "description": "Miscellaneous shortcuts that do not fit into other categories.",
+      "depth": 0,
+      "order": 158
+    },
+    {
+      "id": "misc/count",
+      "shortcut": "count",
+      "name": "Count",
+      "description": "These are the shortcuts related to counting elements",
+      "parent": "misc",
+      "depth": 1,
+      "order": 160
+    },
+    {
+      "id": "misc/count/count",
+      "shortcut": "count",
+      "name": "Count Elements",
+      "description": "Command group for Count Elements. Start with: countn.",
+      "parent": "misc/count",
+      "depth": 2,
+      "order": 161
+    },
+    {
+      "id": "misc/swap",
+      "shortcut": "swap",
+      "name": "Swap Elements",
+      "description": "Shortcuts for swapping the positions of two selected elements horizontally or vertically.",
+      "parent": "misc",
+      "depth": 1,
+      "order": 164
+    },
+    {
+      "id": "misc/swap/swap",
+      "shortcut": "swap",
+      "name": "Swap Elements",
+      "description": "Command group for Swap Elements. Start with: swapx, swapy.",
+      "parent": "misc/swap",
+      "depth": 2,
+      "order": 165
+    }
+  ],
+  "commands": [
+    {
+      "id": "xy",
+      "token": "xy",
+      "name": "Position",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos"
+      ],
+      "parent": "pos",
+      "path": "Position",
+      "hasValue": true,
+      "value": "required",
+      "allowsNegative": true,
+      "flags": [
+        "value",
+        "negative"
+      ],
+      "syntax": "xy<value>",
+      "description": "Command group for Position. Start with: x, y.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "xy100",
+          "help": "Set Position to 100"
+        },
+        {
+          "token": "xy50%",
+          "help": "Set Position to 50%"
+        },
+        {
+          "token": "+xy8",
+          "help": "Increase Position by 8"
+        },
+        {
+          "token": "++xy8+2",
+          "help": "Progressively increase Position"
+        }
+      ],
+      "order": 3
+    },
+    {
+      "id": "x",
+      "token": "x",
+      "name": "Position X",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "xy"
+      ],
+      "parent": "xy",
+      "path": "Position / Position",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "allowsNegative": true,
+      "flags": [
+        "value",
+        "modifiers",
+        "negative"
+      ],
+      "syntax": "x<value>",
+      "description": "Use x<value> to set Position X.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "x100",
+          "help": "Set Position X to 100"
+        },
+        {
+          "token": "x50%",
+          "help": "Set Position X to 50%"
+        },
+        {
+          "token": "+x8",
+          "help": "Increase Position X by 8"
+        },
+        {
+          "token": "++x8+2",
+          "help": "Progressively increase Position X"
+        }
+      ],
+      "order": 4
+    },
+    {
+      "id": "y",
+      "token": "y",
+      "name": "Position Y",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "xy"
+      ],
+      "parent": "xy",
+      "path": "Position / Position",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "allowsNegative": true,
+      "flags": [
+        "value",
+        "modifiers",
+        "negative"
+      ],
+      "syntax": "y<value>",
+      "description": "Use y<value> to set Position Y.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "y100",
+          "help": "Set Position Y to 100"
+        },
+        {
+          "token": "y50%",
+          "help": "Set Position Y to 50%"
+        },
+        {
+          "token": "+y8",
+          "help": "Increase Position Y by 8"
+        },
+        {
+          "token": "++y8+2",
+          "help": "Progressively increase Position Y"
+        }
+      ],
+      "order": 5
+    },
+    {
+      "id": "dl",
+      "token": "dl",
+      "name": "Dock to Left",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d"
+      ],
+      "parent": "d",
+      "path": "Position / Dock In",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dl",
+      "description": "Run Dock to Left using dl.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dl",
+          "help": "Run Dock to Left"
+        },
+        {
+          "token": "dl w160",
+          "help": "Run Dock to Left, then set width to 160px"
+        },
+        {
+          "token": "dl h96",
+          "help": "Run Dock to Left, then set height to 96px"
+        },
+        {
+          "token": "dl op80",
+          "help": "Run Dock to Left, then set opacity to 80%"
+        }
+      ],
+      "order": 7
+    },
+    {
+      "id": "dr",
+      "token": "dr",
+      "name": "Dock to Right",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d"
+      ],
+      "parent": "d",
+      "path": "Position / Dock In",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dr",
+      "description": "Run Dock to Right using dr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dr",
+          "help": "Run Dock to Right"
+        },
+        {
+          "token": "dr w160",
+          "help": "Run Dock to Right, then set width to 160px"
+        },
+        {
+          "token": "dr h96",
+          "help": "Run Dock to Right, then set height to 96px"
+        },
+        {
+          "token": "dr op80",
+          "help": "Run Dock to Right, then set opacity to 80%"
+        }
+      ],
+      "order": 8
+    },
+    {
+      "id": "dt",
+      "token": "dt",
+      "name": "Dock to Top",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d"
+      ],
+      "parent": "d",
+      "path": "Position / Dock In",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dt",
+      "description": "Command group for Dock to Top. Start with: dtl, dtr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dt",
+          "help": "Run Dock to Top"
+        },
+        {
+          "token": "dt w160",
+          "help": "Run Dock to Top, then set width to 160px"
+        },
+        {
+          "token": "dt h96",
+          "help": "Run Dock to Top, then set height to 96px"
+        },
+        {
+          "token": "dt op80",
+          "help": "Run Dock to Top, then set opacity to 80%"
+        }
+      ],
+      "order": 10
+    },
+    {
+      "id": "dtl",
+      "token": "dtl",
+      "name": "Dock to Top Left",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d",
+        "dt"
+      ],
+      "parent": "dt",
+      "path": "Position / Dock In / Dock to Top",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dtl",
+      "description": "Run Dock to Top Left using dtl.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dtl",
+          "help": "Run Dock to Top Left"
+        },
+        {
+          "token": "dtl w160",
+          "help": "Run Dock to Top Left, then set width to 160px"
+        },
+        {
+          "token": "dtl h96",
+          "help": "Run Dock to Top Left, then set height to 96px"
+        },
+        {
+          "token": "dtl op80",
+          "help": "Run Dock to Top Left, then set opacity to 80%"
+        }
+      ],
+      "order": 11
+    },
+    {
+      "id": "dtr",
+      "token": "dtr",
+      "name": "Dock to Top Right",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d",
+        "dt"
+      ],
+      "parent": "dt",
+      "path": "Position / Dock In / Dock to Top",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dtr",
+      "description": "Run Dock to Top Right using dtr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dtr",
+          "help": "Run Dock to Top Right"
+        },
+        {
+          "token": "dtr w160",
+          "help": "Run Dock to Top Right, then set width to 160px"
+        },
+        {
+          "token": "dtr h96",
+          "help": "Run Dock to Top Right, then set height to 96px"
+        },
+        {
+          "token": "dtr op80",
+          "help": "Run Dock to Top Right, then set opacity to 80%"
+        }
+      ],
+      "order": 12
+    },
+    {
+      "id": "db",
+      "token": "db",
+      "name": "Dock to Bottom",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d"
+      ],
+      "parent": "d",
+      "path": "Position / Dock In",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "db",
+      "description": "Command group for Dock to Bottom. Start with: dbl, dbr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "db",
+          "help": "Run Dock to Bottom"
+        },
+        {
+          "token": "db w160",
+          "help": "Run Dock to Bottom, then set width to 160px"
+        },
+        {
+          "token": "db h96",
+          "help": "Run Dock to Bottom, then set height to 96px"
+        },
+        {
+          "token": "db op80",
+          "help": "Run Dock to Bottom, then set opacity to 80%"
+        }
+      ],
+      "order": 14
+    },
+    {
+      "id": "dbl",
+      "token": "dbl",
+      "name": "Dock to Bottom Left",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d",
+        "db"
+      ],
+      "parent": "db",
+      "path": "Position / Dock In / Dock to Bottom",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dbl",
+      "description": "Run Dock to Bottom Left using dbl.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dbl",
+          "help": "Run Dock to Bottom Left"
+        },
+        {
+          "token": "dbl w160",
+          "help": "Run Dock to Bottom Left, then set width to 160px"
+        },
+        {
+          "token": "dbl h96",
+          "help": "Run Dock to Bottom Left, then set height to 96px"
+        },
+        {
+          "token": "dbl op80",
+          "help": "Run Dock to Bottom Left, then set opacity to 80%"
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "dbr",
+      "token": "dbr",
+      "name": "Dock to Bottom Right",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "d",
+        "db"
+      ],
+      "parent": "db",
+      "path": "Position / Dock In / Dock to Bottom",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "dbr",
+      "description": "Run Dock to Bottom Right using dbr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dbr",
+          "help": "Run Dock to Bottom Right"
+        },
+        {
+          "token": "dbr w160",
+          "help": "Run Dock to Bottom Right, then set width to 160px"
+        },
+        {
+          "token": "dbr h96",
+          "help": "Run Dock to Bottom Right, then set height to 96px"
+        },
+        {
+          "token": "dbr op80",
+          "help": "Run Dock to Bottom Right, then set opacity to 80%"
+        }
+      ],
+      "order": 16
+    },
+    {
+      "id": "DL",
+      "token": "DL",
+      "name": "Dock out Left",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D"
+      ],
+      "parent": "D",
+      "path": "Position / Dock Out",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DL",
+      "description": "Run Dock out Left using DL.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DL",
+          "help": "Run Dock out Left"
+        },
+        {
+          "token": "DL w160",
+          "help": "Run Dock out Left, then set width to 160px"
+        },
+        {
+          "token": "DL h96",
+          "help": "Run Dock out Left, then set height to 96px"
+        },
+        {
+          "token": "DL op80",
+          "help": "Run Dock out Left, then set opacity to 80%"
+        }
+      ],
+      "order": 18
+    },
+    {
+      "id": "DR",
+      "token": "DR",
+      "name": "Dock out Right",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D"
+      ],
+      "parent": "D",
+      "path": "Position / Dock Out",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DR",
+      "description": "Run Dock out Right using DR.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DR",
+          "help": "Run Dock out Right"
+        },
+        {
+          "token": "DR w160",
+          "help": "Run Dock out Right, then set width to 160px"
+        },
+        {
+          "token": "DR h96",
+          "help": "Run Dock out Right, then set height to 96px"
+        },
+        {
+          "token": "DR op80",
+          "help": "Run Dock out Right, then set opacity to 80%"
+        }
+      ],
+      "order": 19
+    },
+    {
+      "id": "DT",
+      "token": "DT",
+      "name": "Dock out Top",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D"
+      ],
+      "parent": "D",
+      "path": "Position / Dock Out",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DT",
+      "description": "Command group for Dock out Top. Start with: DTL, DTR.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DT",
+          "help": "Run Dock out Top"
+        },
+        {
+          "token": "DT w160",
+          "help": "Run Dock out Top, then set width to 160px"
+        },
+        {
+          "token": "DT h96",
+          "help": "Run Dock out Top, then set height to 96px"
+        },
+        {
+          "token": "DT op80",
+          "help": "Run Dock out Top, then set opacity to 80%"
+        }
+      ],
+      "order": 21
+    },
+    {
+      "id": "DTL",
+      "token": "DTL",
+      "name": "Dock out to Top Left",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D",
+        "DT"
+      ],
+      "parent": "DT",
+      "path": "Position / Dock Out / Dock out Top",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DTL",
+      "description": "Run Dock out to Top Left using DTL.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DTL",
+          "help": "Run Dock out to Top Left"
+        },
+        {
+          "token": "DTL w160",
+          "help": "Run Dock out to Top Left, then set width to 160px"
+        },
+        {
+          "token": "DTL h96",
+          "help": "Run Dock out to Top Left, then set height to 96px"
+        },
+        {
+          "token": "DTL op80",
+          "help": "Run Dock out to Top Left, then set opacity to 80%"
+        }
+      ],
+      "order": 22
+    },
+    {
+      "id": "DTR",
+      "token": "DTR",
+      "name": "Dock out to Top Right",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D",
+        "DT"
+      ],
+      "parent": "DT",
+      "path": "Position / Dock Out / Dock out Top",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DTR",
+      "description": "Run Dock out to Top Right using DTR.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DTR",
+          "help": "Run Dock out to Top Right"
+        },
+        {
+          "token": "DTR w160",
+          "help": "Run Dock out to Top Right, then set width to 160px"
+        },
+        {
+          "token": "DTR h96",
+          "help": "Run Dock out to Top Right, then set height to 96px"
+        },
+        {
+          "token": "DTR op80",
+          "help": "Run Dock out to Top Right, then set opacity to 80%"
+        }
+      ],
+      "order": 23
+    },
+    {
+      "id": "DB",
+      "token": "DB",
+      "name": "Dock out Bottom",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D"
+      ],
+      "parent": "D",
+      "path": "Position / Dock Out",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DB",
+      "description": "Command group for Dock out Bottom. Start with: DBL, DBR.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DB",
+          "help": "Run Dock out Bottom"
+        },
+        {
+          "token": "DB w160",
+          "help": "Run Dock out Bottom, then set width to 160px"
+        },
+        {
+          "token": "DB h96",
+          "help": "Run Dock out Bottom, then set height to 96px"
+        },
+        {
+          "token": "DB op80",
+          "help": "Run Dock out Bottom, then set opacity to 80%"
+        }
+      ],
+      "order": 25
+    },
+    {
+      "id": "DBL",
+      "token": "DBL",
+      "name": "Dock out to Bottom Left",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D",
+        "DB"
+      ],
+      "parent": "DB",
+      "path": "Position / Dock Out / Dock out Bottom",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DBL",
+      "description": "Run Dock out to Bottom Left using DBL.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DBL",
+          "help": "Run Dock out to Bottom Left"
+        },
+        {
+          "token": "DBL w160",
+          "help": "Run Dock out to Bottom Left, then set width to 160px"
+        },
+        {
+          "token": "DBL h96",
+          "help": "Run Dock out to Bottom Left, then set height to 96px"
+        },
+        {
+          "token": "DBL op80",
+          "help": "Run Dock out to Bottom Left, then set opacity to 80%"
+        }
+      ],
+      "order": 26
+    },
+    {
+      "id": "DBR",
+      "token": "DBR",
+      "name": "Dock out to Bottom Right",
+      "group": "pos",
+      "groupName": "Position",
+      "groupPath": [
+        "pos",
+        "D",
+        "DB"
+      ],
+      "parent": "DB",
+      "path": "Position / Dock Out / Dock out Bottom",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": true,
+      "flags": [
+        "negative"
+      ],
+      "syntax": "DBR",
+      "description": "Run Dock out to Bottom Right using DBR.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "DBR",
+          "help": "Run Dock out to Bottom Right"
+        },
+        {
+          "token": "DBR w160",
+          "help": "Run Dock out to Bottom Right, then set width to 160px"
+        },
+        {
+          "token": "DBR h96",
+          "help": "Run Dock out to Bottom Right, then set height to 96px"
+        },
+        {
+          "token": "DBR op80",
+          "help": "Run Dock out to Bottom Right, then set opacity to 80%"
+        }
+      ],
+      "order": 27
+    },
+    {
+      "id": "w",
+      "token": "w",
+      "name": "Width",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size"
+      ],
+      "parent": "size",
+      "path": "Size",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "supportsOrigin": true,
+      "allowsNegative": false,
+      "flags": [
+        "value",
+        "modifiers",
+        "origin"
+      ],
+      "syntax": "w<value>",
+      "description": "Use w<value> to set Width.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "w100",
+          "help": "Set width to 100px"
+        },
+        {
+          "token": "w50%",
+          "help": "Set width to 50% of parent"
+        },
+        {
+          "token": "+w8",
+          "help": "Increase width by 8px"
+        },
+        {
+          "token": "++w8+2",
+          "help": "Grow width progressively across selection"
+        }
+      ],
+      "order": 29
+    },
+    {
+      "id": "h",
+      "token": "h",
+      "name": "Height",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size"
+      ],
+      "parent": "size",
+      "path": "Size",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "supportsOrigin": true,
+      "allowsNegative": false,
+      "flags": [
+        "value",
+        "modifiers",
+        "origin"
+      ],
+      "syntax": "h<value>",
+      "description": "Use h<value> to set Height.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "h100",
+          "help": "Set height to 100px"
+        },
+        {
+          "token": "h50%",
+          "help": "Set height to 50% of parent"
+        },
+        {
+          "token": "+h8",
+          "help": "Increase height by 8px"
+        },
+        {
+          "token": "++h8+2",
+          "help": "Grow height progressively across selection"
+        }
+      ],
+      "order": 30
+    },
+    {
+      "id": "sc:w",
+      "token": "sc:w",
+      "name": "Scale to Width",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size",
+        "sc"
+      ],
+      "parent": "sc",
+      "path": "Size / Scale",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "supportsOrigin": true,
+      "allowsNegative": false,
+      "flags": [
+        "value",
+        "modifiers",
+        "origin"
+      ],
+      "syntax": "sc:w<value>",
+      "description": "Use sc:w<value> to set Scale to Width.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sc:w120%",
+          "help": "Scale node to 120% width"
+        },
+        {
+          "token": "sc:w80%",
+          "help": "Scale node to 80% width"
+        },
+        {
+          "token": "+sc:w10%",
+          "help": "Increase width scale by 10%"
+        },
+        {
+          "token": "--sc:w100%-10%",
+          "help": "Progressively reduce width scale"
+        }
+      ],
+      "order": 32
+    },
+    {
+      "id": "sc:h",
+      "token": "sc:h",
+      "name": "Scale to Height",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size",
+        "sc"
+      ],
+      "parent": "sc",
+      "path": "Size / Scale",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "supportsOrigin": true,
+      "allowsNegative": false,
+      "flags": [
+        "value",
+        "modifiers",
+        "origin"
+      ],
+      "syntax": "sc:h<value>",
+      "description": "Use sc:h<value> to set Scale to Height.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sc:h120%",
+          "help": "Scale node to 120% height"
+        },
+        {
+          "token": "sc:h80%",
+          "help": "Scale node to 80% height"
+        },
+        {
+          "token": "+sc:h10%",
+          "help": "Increase height scale by 10%"
+        },
+        {
+          "token": "--sc:h100%-10%",
+          "help": "Progressively reduce height scale"
+        }
+      ],
+      "order": 33
+    },
+    {
+      "id": "wh",
+      "token": "wh",
+      "name": "Width and Height",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size"
+      ],
+      "parent": "size",
+      "path": "Size",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "supportsOrigin": true,
+      "allowsNegative": false,
+      "flags": [
+        "value",
+        "modifiers",
+        "origin"
+      ],
+      "syntax": "wh<value>",
+      "description": "Use wh<value> to set Width and Height.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "wh120,80",
+          "help": "Set width and height together"
+        },
+        {
+          "token": "wh80%,50%",
+          "help": "Set size using parent percentages"
+        },
+        {
+          "token": "+wh8",
+          "help": "Increase both width and height by 8px"
+        },
+        {
+          "token": "++wh8+4",
+          "help": "Progressively increase both dimensions"
+        }
+      ],
+      "order": 34
+    },
+    {
+      "id": "fit",
+      "token": "fit",
+      "name": "Fit to Parent",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size"
+      ],
+      "parent": "size",
+      "path": "Size",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "fit<value>",
+      "description": "Use fit<value> to set Fit to Parent.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fit",
+          "help": "Fit to parent width and height"
+        },
+        {
+          "token": "fitw",
+          "help": "Fit to parent width only"
+        },
+        {
+          "token": "fith",
+          "help": "Fit to parent height only"
+        },
+        {
+          "token": "fit op80",
+          "help": "Fit to parent, then set opacity to 80%"
+        }
+      ],
+      "order": 35
+    },
+    {
+      "id": "fill",
+      "token": "fill",
+      "name": "Fill Auto-layout Space",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size"
+      ],
+      "parent": "size",
+      "path": "Size",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "fill<value>",
+      "description": "Use fill<value> to set Fill Auto-layout Space.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fill",
+          "help": "Set auto-layout sizing to fill on both axes"
+        },
+        {
+          "token": "fillw",
+          "help": "Fill width only"
+        },
+        {
+          "token": "fillh",
+          "help": "Fill height only"
+        },
+        {
+          "token": "fill gap16",
+          "help": "Fill both axes, then set gap to 16"
+        }
+      ],
+      "order": 36
+    },
+    {
+      "id": "hug",
+      "token": "hug",
+      "name": "Hug Auto-layout Content",
+      "group": "size",
+      "groupName": "Size",
+      "groupPath": [
+        "size"
+      ],
+      "parent": "size",
+      "path": "Size",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "hug<value>",
+      "description": "Use hug<value> to set Hug Auto-layout Content.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "hug",
+          "help": "Set auto-layout sizing to hug on both axes"
+        },
+        {
+          "token": "hugw",
+          "help": "Hug width only"
+        },
+        {
+          "token": "hugh",
+          "help": "Hug height only"
+        },
+        {
+          "token": "hug p16",
+          "help": "Hug both axes, then set padding to 16"
+        }
+      ],
+      "order": 37
+    },
+    {
+      "id": "r",
+      "token": "r",
+      "name": "Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r"
+      ],
+      "parent": "r",
+      "path": "Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "r<value>",
+      "description": "Command group for Corner Radius. Start with: rt, rb, rl, rr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "r100",
+          "help": "Set Corner Radius to 100"
+        },
+        {
+          "token": "r50%",
+          "help": "Set Corner Radius to 50%"
+        },
+        {
+          "token": "+r8",
+          "help": "Increase Corner Radius by 8"
+        },
+        {
+          "token": "++r8+2",
+          "help": "Progressively increase Corner Radius"
+        }
+      ],
+      "order": 40
+    },
+    {
+      "id": "rt",
+      "token": "rt",
+      "name": "Top Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r"
+      ],
+      "parent": "r",
+      "path": "Corner Radius / Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rt<value>",
+      "description": "Command group for Top Corner Radius. Start with: rtl, rtr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rt100",
+          "help": "Set Top Corner Radius to 100"
+        },
+        {
+          "token": "rt50%",
+          "help": "Set Top Corner Radius to 50%"
+        },
+        {
+          "token": "+rt8",
+          "help": "Increase Top Corner Radius by 8"
+        },
+        {
+          "token": "++rt8+2",
+          "help": "Progressively increase Top Corner Radius"
+        }
+      ],
+      "order": 42
+    },
+    {
+      "id": "rtl",
+      "token": "rtl",
+      "name": "Top Left Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r",
+        "rt"
+      ],
+      "parent": "rt",
+      "path": "Corner Radius / Corner Radius / Top Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rtl<value>",
+      "description": "Use rtl<value> to set Top Left Corner Radius.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rtl100",
+          "help": "Set Top Left Corner Radius to 100"
+        },
+        {
+          "token": "rtl50%",
+          "help": "Set Top Left Corner Radius to 50%"
+        },
+        {
+          "token": "+rtl8",
+          "help": "Increase Top Left Corner Radius by 8"
+        },
+        {
+          "token": "++rtl8+2",
+          "help": "Progressively increase Top Left Corner Radius"
+        }
+      ],
+      "order": 43
+    },
+    {
+      "id": "rtr",
+      "token": "rtr",
+      "name": "Top Right Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r",
+        "rt"
+      ],
+      "parent": "rt",
+      "path": "Corner Radius / Corner Radius / Top Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rtr<value>",
+      "description": "Use rtr<value> to set Top Right Corner Radius.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rtr100",
+          "help": "Set Top Right Corner Radius to 100"
+        },
+        {
+          "token": "rtr50%",
+          "help": "Set Top Right Corner Radius to 50%"
+        },
+        {
+          "token": "+rtr8",
+          "help": "Increase Top Right Corner Radius by 8"
+        },
+        {
+          "token": "++rtr8+2",
+          "help": "Progressively increase Top Right Corner Radius"
+        }
+      ],
+      "order": 44
+    },
+    {
+      "id": "rb",
+      "token": "rb",
+      "name": "Bottom Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r"
+      ],
+      "parent": "r",
+      "path": "Corner Radius / Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rb<value>",
+      "description": "Command group for Bottom Corner Radius. Start with: rbl, rbr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rb100",
+          "help": "Set Bottom Corner Radius to 100"
+        },
+        {
+          "token": "rb50%",
+          "help": "Set Bottom Corner Radius to 50%"
+        },
+        {
+          "token": "+rb8",
+          "help": "Increase Bottom Corner Radius by 8"
+        },
+        {
+          "token": "++rb8+2",
+          "help": "Progressively increase Bottom Corner Radius"
+        }
+      ],
+      "order": 46
+    },
+    {
+      "id": "rbl",
+      "token": "rbl",
+      "name": "Bottom Left Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r",
+        "rb"
+      ],
+      "parent": "rb",
+      "path": "Corner Radius / Corner Radius / Bottom Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rbl<value>",
+      "description": "Use rbl<value> to set Bottom Left Corner Radius.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rbl100",
+          "help": "Set Bottom Left Corner Radius to 100"
+        },
+        {
+          "token": "rbl50%",
+          "help": "Set Bottom Left Corner Radius to 50%"
+        },
+        {
+          "token": "+rbl8",
+          "help": "Increase Bottom Left Corner Radius by 8"
+        },
+        {
+          "token": "++rbl8+2",
+          "help": "Progressively increase Bottom Left Corner Radius"
+        }
+      ],
+      "order": 47
+    },
+    {
+      "id": "rbr",
+      "token": "rbr",
+      "name": "Bottom Right Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r",
+        "rb"
+      ],
+      "parent": "rb",
+      "path": "Corner Radius / Corner Radius / Bottom Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rbr<value>",
+      "description": "Use rbr<value> to set Bottom Right Corner Radius.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rbr100",
+          "help": "Set Bottom Right Corner Radius to 100"
+        },
+        {
+          "token": "rbr50%",
+          "help": "Set Bottom Right Corner Radius to 50%"
+        },
+        {
+          "token": "+rbr8",
+          "help": "Increase Bottom Right Corner Radius by 8"
+        },
+        {
+          "token": "++rbr8+2",
+          "help": "Progressively increase Bottom Right Corner Radius"
+        }
+      ],
+      "order": 48
+    },
+    {
+      "id": "rl",
+      "token": "rl",
+      "name": "Left Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r"
+      ],
+      "parent": "r",
+      "path": "Corner Radius / Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rl<value>",
+      "description": "Use rl<value> to set Left Corner Radius.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rl100",
+          "help": "Set Left Corner Radius to 100"
+        },
+        {
+          "token": "rl50%",
+          "help": "Set Left Corner Radius to 50%"
+        },
+        {
+          "token": "+rl8",
+          "help": "Increase Left Corner Radius by 8"
+        },
+        {
+          "token": "++rl8+2",
+          "help": "Progressively increase Left Corner Radius"
+        }
+      ],
+      "order": 49
+    },
+    {
+      "id": "rr",
+      "token": "rr",
+      "name": "Right Corner Radius",
+      "group": "r",
+      "groupName": "Corner Radius",
+      "groupPath": [
+        "r",
+        "r"
+      ],
+      "parent": "r",
+      "path": "Corner Radius / Corner Radius",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rr<value>",
+      "description": "Use rr<value> to set Right Corner Radius.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rr100",
+          "help": "Set Right Corner Radius to 100"
+        },
+        {
+          "token": "rr50%",
+          "help": "Set Right Corner Radius to 50%"
+        },
+        {
+          "token": "+rr8",
+          "help": "Increase Right Corner Radius by 8"
+        },
+        {
+          "token": "++rr8+2",
+          "help": "Progressively increase Right Corner Radius"
+        }
+      ],
+      "order": 50
+    },
+    {
+      "id": "p",
+      "token": "p",
+      "name": "Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "p<value>",
+      "description": "Command group for Padding. Start with: pl, pr, pt, pb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "p100",
+          "help": "Set Padding to 100"
+        },
+        {
+          "token": "p50%",
+          "help": "Set Padding to 50%"
+        },
+        {
+          "token": "+p8",
+          "help": "Increase Padding by 8"
+        },
+        {
+          "token": "++p8+2",
+          "help": "Progressively increase Padding"
+        }
+      ],
+      "order": 53
+    },
+    {
+      "id": "pl",
+      "token": "pl",
+      "name": "Left Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p",
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding / Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "pl<value>",
+      "description": "Use pl<value> to set Left Padding.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "pl100",
+          "help": "Set Left Padding to 100"
+        },
+        {
+          "token": "pl50%",
+          "help": "Set Left Padding to 50%"
+        },
+        {
+          "token": "+pl8",
+          "help": "Increase Left Padding by 8"
+        },
+        {
+          "token": "++pl8+2",
+          "help": "Progressively increase Left Padding"
+        }
+      ],
+      "order": 54
+    },
+    {
+      "id": "pr",
+      "token": "pr",
+      "name": "Right Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p",
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding / Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "pr<value>",
+      "description": "Use pr<value> to set Right Padding.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "pr100",
+          "help": "Set Right Padding to 100"
+        },
+        {
+          "token": "pr50%",
+          "help": "Set Right Padding to 50%"
+        },
+        {
+          "token": "+pr8",
+          "help": "Increase Right Padding by 8"
+        },
+        {
+          "token": "++pr8+2",
+          "help": "Progressively increase Right Padding"
+        }
+      ],
+      "order": 55
+    },
+    {
+      "id": "pt",
+      "token": "pt",
+      "name": "Top Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p",
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding / Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "pt<value>",
+      "description": "Use pt<value> to set Top Padding.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "pt100",
+          "help": "Set Top Padding to 100"
+        },
+        {
+          "token": "pt50%",
+          "help": "Set Top Padding to 50%"
+        },
+        {
+          "token": "+pt8",
+          "help": "Increase Top Padding by 8"
+        },
+        {
+          "token": "++pt8+2",
+          "help": "Progressively increase Top Padding"
+        }
+      ],
+      "order": 56
+    },
+    {
+      "id": "pb",
+      "token": "pb",
+      "name": "Bottom Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p",
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding / Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "pb<value>",
+      "description": "Use pb<value> to set Bottom Padding.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "pb100",
+          "help": "Set Bottom Padding to 100"
+        },
+        {
+          "token": "pb50%",
+          "help": "Set Bottom Padding to 50%"
+        },
+        {
+          "token": "+pb8",
+          "help": "Increase Bottom Padding by 8"
+        },
+        {
+          "token": "++pb8+2",
+          "help": "Progressively increase Bottom Padding"
+        }
+      ],
+      "order": 57
+    },
+    {
+      "id": "px",
+      "token": "px",
+      "name": "Horizontal Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p",
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding / Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "px<value>",
+      "description": "Use px<value> to set Horizontal Padding.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "px100",
+          "help": "Set Horizontal Padding to 100"
+        },
+        {
+          "token": "px50%",
+          "help": "Set Horizontal Padding to 50%"
+        },
+        {
+          "token": "+px8",
+          "help": "Increase Horizontal Padding by 8"
+        },
+        {
+          "token": "++px8+2",
+          "help": "Progressively increase Horizontal Padding"
+        }
+      ],
+      "order": 58
+    },
+    {
+      "id": "py",
+      "token": "py",
+      "name": "Vertical Padding",
+      "group": "p",
+      "groupName": "Padding",
+      "groupPath": [
+        "p",
+        "p"
+      ],
+      "parent": "p",
+      "path": "Padding / Padding",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "py<value>",
+      "description": "Use py<value> to set Vertical Padding.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "py100",
+          "help": "Set Vertical Padding to 100"
+        },
+        {
+          "token": "py50%",
+          "help": "Set Vertical Padding to 50%"
+        },
+        {
+          "token": "+py8",
+          "help": "Increase Vertical Padding by 8"
+        },
+        {
+          "token": "++py8+2",
+          "help": "Progressively increase Vertical Padding"
+        }
+      ],
+      "order": 59
+    },
+    {
+      "id": "sw",
+      "token": "sw",
+      "name": "Strokes",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "sw<value>",
+      "description": "Command group for Strokes. Start with: swl, swr, swt, swb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sw100",
+          "help": "Set Strokes to 100"
+        },
+        {
+          "token": "sw50%",
+          "help": "Set Strokes to 50%"
+        },
+        {
+          "token": "+sw8",
+          "help": "Increase Strokes by 8"
+        },
+        {
+          "token": "++sw8+2",
+          "help": "Progressively increase Strokes"
+        }
+      ],
+      "order": 63
+    },
+    {
+      "id": "swl",
+      "token": "swl",
+      "name": "Left Stroke",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width / Strokes",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "swl<value>",
+      "description": "Use swl<value> to set Left Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swl100",
+          "help": "Set Left Stroke to 100"
+        },
+        {
+          "token": "swl50%",
+          "help": "Set Left Stroke to 50%"
+        },
+        {
+          "token": "+swl8",
+          "help": "Increase Left Stroke by 8"
+        },
+        {
+          "token": "++swl8+2",
+          "help": "Progressively increase Left Stroke"
+        }
+      ],
+      "order": 64
+    },
+    {
+      "id": "swr",
+      "token": "swr",
+      "name": "Right Stroke",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width / Strokes",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "swr<value>",
+      "description": "Use swr<value> to set Right Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swr100",
+          "help": "Set Right Stroke to 100"
+        },
+        {
+          "token": "swr50%",
+          "help": "Set Right Stroke to 50%"
+        },
+        {
+          "token": "+swr8",
+          "help": "Increase Right Stroke by 8"
+        },
+        {
+          "token": "++swr8+2",
+          "help": "Progressively increase Right Stroke"
+        }
+      ],
+      "order": 65
+    },
+    {
+      "id": "swt",
+      "token": "swt",
+      "name": "Top Stroke",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width / Strokes",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "swt<value>",
+      "description": "Use swt<value> to set Top Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swt100",
+          "help": "Set Top Stroke to 100"
+        },
+        {
+          "token": "swt50%",
+          "help": "Set Top Stroke to 50%"
+        },
+        {
+          "token": "+swt8",
+          "help": "Increase Top Stroke by 8"
+        },
+        {
+          "token": "++swt8+2",
+          "help": "Progressively increase Top Stroke"
+        }
+      ],
+      "order": 66
+    },
+    {
+      "id": "swb",
+      "token": "swb",
+      "name": "Bottom Stroke",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width / Strokes",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "swb<value>",
+      "description": "Use swb<value> to set Bottom Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swb100",
+          "help": "Set Bottom Stroke to 100"
+        },
+        {
+          "token": "swb50%",
+          "help": "Set Bottom Stroke to 50%"
+        },
+        {
+          "token": "+swb8",
+          "help": "Increase Bottom Stroke by 8"
+        },
+        {
+          "token": "++swb8+2",
+          "help": "Progressively increase Bottom Stroke"
+        }
+      ],
+      "order": 67
+    },
+    {
+      "id": "swx",
+      "token": "swx",
+      "name": "Horizontal Strokes",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width / Strokes",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "swx<value>",
+      "description": "Use swx<value> to set Horizontal Strokes.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swx100",
+          "help": "Set Horizontal Strokes to 100"
+        },
+        {
+          "token": "swx50%",
+          "help": "Set Horizontal Strokes to 50%"
+        },
+        {
+          "token": "+swx8",
+          "help": "Increase Horizontal Strokes by 8"
+        },
+        {
+          "token": "++swx8+2",
+          "help": "Progressively increase Horizontal Strokes"
+        }
+      ],
+      "order": 68
+    },
+    {
+      "id": "swy",
+      "token": "swy",
+      "name": "Vertical Strokes",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "sw",
+        "sw"
+      ],
+      "parent": "sw",
+      "path": "Strokes / Stroke Width / Strokes",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "swy<value>",
+      "description": "Use swy<value> to set Vertical Strokes.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swy100",
+          "help": "Set Vertical Strokes to 100"
+        },
+        {
+          "token": "swy50%",
+          "help": "Set Vertical Strokes to 50%"
+        },
+        {
+          "token": "+swy8",
+          "help": "Increase Vertical Strokes by 8"
+        },
+        {
+          "token": "++swy8+2",
+          "help": "Progressively increase Vertical Strokes"
+        }
+      ],
+      "order": 69
+    },
+    {
+      "id": "sai",
+      "token": "sai",
+      "name": "Stroke Align Inside",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "salign"
+      ],
+      "parent": "salign",
+      "path": "Strokes / Stroke Alignment",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "sai",
+      "description": "Run Stroke Align Inside using sai.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sai",
+          "help": "Run Stroke Align Inside"
+        },
+        {
+          "token": "sai w160",
+          "help": "Run Stroke Align Inside, then set width to 160px"
+        },
+        {
+          "token": "sai h96",
+          "help": "Run Stroke Align Inside, then set height to 96px"
+        },
+        {
+          "token": "sai op80",
+          "help": "Run Stroke Align Inside, then set opacity to 80%"
+        }
+      ],
+      "order": 71
+    },
+    {
+      "id": "sac",
+      "token": "sac",
+      "name": "Stroke Align Center",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "salign"
+      ],
+      "parent": "salign",
+      "path": "Strokes / Stroke Alignment",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "sac",
+      "description": "Run Stroke Align Center using sac.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sac",
+          "help": "Run Stroke Align Center"
+        },
+        {
+          "token": "sac w160",
+          "help": "Run Stroke Align Center, then set width to 160px"
+        },
+        {
+          "token": "sac h96",
+          "help": "Run Stroke Align Center, then set height to 96px"
+        },
+        {
+          "token": "sac op80",
+          "help": "Run Stroke Align Center, then set opacity to 80%"
+        }
+      ],
+      "order": 72
+    },
+    {
+      "id": "sao",
+      "token": "sao",
+      "name": "Stroke Align Outside",
+      "group": "sw",
+      "groupName": "Strokes",
+      "groupPath": [
+        "sw",
+        "salign"
+      ],
+      "parent": "salign",
+      "path": "Strokes / Stroke Alignment",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "sao",
+      "description": "Run Stroke Align Outside using sao.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sao",
+          "help": "Run Stroke Align Outside"
+        },
+        {
+          "token": "sao w160",
+          "help": "Run Stroke Align Outside, then set width to 160px"
+        },
+        {
+          "token": "sao h96",
+          "help": "Run Stroke Align Outside, then set height to 96px"
+        },
+        {
+          "token": "sao op80",
+          "help": "Run Stroke Align Outside, then set opacity to 80%"
+        }
+      ],
+      "order": 73
+    },
+    {
+      "id": "selr",
+      "token": "selr",
+      "name": "Select Right",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selr",
+      "description": "Run Select Right using selr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selr",
+          "help": "Run Select Right"
+        },
+        {
+          "token": "selr w160",
+          "help": "Run Select Right, then set width to 160px"
+        },
+        {
+          "token": "selr h96",
+          "help": "Run Select Right, then set height to 96px"
+        },
+        {
+          "token": "selr op80",
+          "help": "Run Select Right, then set opacity to 80%"
+        }
+      ],
+      "order": 77
+    },
+    {
+      "id": "sell",
+      "token": "sell",
+      "name": "Select Left",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "sell",
+      "description": "Run Select Left using sell.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sell",
+          "help": "Run Select Left"
+        },
+        {
+          "token": "sell w160",
+          "help": "Run Select Left, then set width to 160px"
+        },
+        {
+          "token": "sell h96",
+          "help": "Run Select Left, then set height to 96px"
+        },
+        {
+          "token": "sell op80",
+          "help": "Run Select Left, then set opacity to 80%"
+        }
+      ],
+      "order": 78
+    },
+    {
+      "id": "selt",
+      "token": "selt",
+      "name": "Select Top",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selt",
+      "description": "Run Select Top using selt.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selt",
+          "help": "Run Select Top"
+        },
+        {
+          "token": "selt w160",
+          "help": "Run Select Top, then set width to 160px"
+        },
+        {
+          "token": "selt h96",
+          "help": "Run Select Top, then set height to 96px"
+        },
+        {
+          "token": "selt op80",
+          "help": "Run Select Top, then set opacity to 80%"
+        }
+      ],
+      "order": 79
+    },
+    {
+      "id": "selb",
+      "token": "selb",
+      "name": "Select Bottom",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selb",
+      "description": "Run Select Bottom using selb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selb",
+          "help": "Run Select Bottom"
+        },
+        {
+          "token": "selb w160",
+          "help": "Run Select Bottom, then set width to 160px"
+        },
+        {
+          "token": "selb h96",
+          "help": "Run Select Bottom, then set height to 96px"
+        },
+        {
+          "token": "selb op80",
+          "help": "Run Select Bottom, then set opacity to 80%"
+        }
+      ],
+      "order": 80
+    },
+    {
+      "id": "root",
+      "token": "root",
+      "name": "Select Root Ancestor (Strict)",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "root",
+      "description": "Run Select Root Ancestor (Strict) using root.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "root",
+          "help": "Run Select Root Ancestor (Strict)"
+        },
+        {
+          "token": "root w160",
+          "help": "Run Select Root Ancestor (Strict), then set width to 160px"
+        },
+        {
+          "token": "root h96",
+          "help": "Run Select Root Ancestor (Strict), then set height to 96px"
+        },
+        {
+          "token": "root op80",
+          "help": "Run Select Root Ancestor (Strict), then set opacity to 80%"
+        }
+      ],
+      "order": 81
+    },
+    {
+      "id": "leaf",
+      "token": "leaf",
+      "name": "Select Leaf Descendants (Strict)",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "leaf",
+      "description": "Run Select Leaf Descendants (Strict) using leaf.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "leaf",
+          "help": "Run Select Leaf Descendants (Strict)"
+        },
+        {
+          "token": "leaf w160",
+          "help": "Run Select Leaf Descendants (Strict), then set width to 160px"
+        },
+        {
+          "token": "leaf h96",
+          "help": "Run Select Leaf Descendants (Strict), then set height to 96px"
+        },
+        {
+          "token": "leaf op80",
+          "help": "Run Select Leaf Descendants (Strict), then set opacity to 80%"
+        }
+      ],
+      "order": 82
+    },
+    {
+      "id": "selp",
+      "token": "selp",
+      "name": "Select Parent",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selp",
+      "description": "Run Select Parent using selp.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selp",
+          "help": "Run Select Parent"
+        },
+        {
+          "token": "selp w160",
+          "help": "Run Select Parent, then set width to 160px"
+        },
+        {
+          "token": "selp h96",
+          "help": "Run Select Parent, then set height to 96px"
+        },
+        {
+          "token": "selp op80",
+          "help": "Run Select Parent, then set opacity to 80%"
+        }
+      ],
+      "order": 83
+    },
+    {
+      "id": "selc",
+      "token": "selc",
+      "name": "Select Children",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selc",
+      "description": "Run Select Children using selc.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selc",
+          "help": "Run Select Children"
+        },
+        {
+          "token": "selc w160",
+          "help": "Run Select Children, then set width to 160px"
+        },
+        {
+          "token": "selc h96",
+          "help": "Run Select Children, then set height to 96px"
+        },
+        {
+          "token": "selc op80",
+          "help": "Run Select Children, then set opacity to 80%"
+        }
+      ],
+      "order": 84
+    },
+    {
+      "id": "selns",
+      "token": "selns",
+      "name": "Select Next Sibling",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selns",
+      "description": "Run Select Next Sibling using selns.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selns",
+          "help": "Run Select Next Sibling"
+        },
+        {
+          "token": "selns w160",
+          "help": "Run Select Next Sibling, then set width to 160px"
+        },
+        {
+          "token": "selns h96",
+          "help": "Run Select Next Sibling, then set height to 96px"
+        },
+        {
+          "token": "selns op80",
+          "help": "Run Select Next Sibling, then set opacity to 80%"
+        }
+      ],
+      "order": 85
+    },
+    {
+      "id": "selps",
+      "token": "selps",
+      "name": "Select Previous Sibling",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "selps",
+      "description": "Run Select Previous Sibling using selps.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "selps",
+          "help": "Run Select Previous Sibling"
+        },
+        {
+          "token": "selps w160",
+          "help": "Run Select Previous Sibling, then set width to 160px"
+        },
+        {
+          "token": "selps h96",
+          "help": "Run Select Previous Sibling, then set height to 96px"
+        },
+        {
+          "token": "selps op80",
+          "help": "Run Select Previous Sibling, then set opacity to 80%"
+        }
+      ],
+      "order": 86
+    },
+    {
+      "id": "seli",
+      "token": "seli",
+      "name": "Select Inverse Within Parent",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "sel",
+        "sel"
+      ],
+      "parent": "sel",
+      "path": "Selection / Quick Select / Quick Select",
+      "hasValue": false,
+      "value": "none",
+      "allowsNegative": false,
+      "flags": [],
+      "syntax": "seli",
+      "description": "Run Select Inverse Within Parent using seli.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "seli",
+          "help": "Run Select Inverse Within Parent"
+        },
+        {
+          "token": "seli w160",
+          "help": "Run Select Inverse Within Parent, then set width to 160px"
+        },
+        {
+          "token": "seli h96",
+          "help": "Run Select Inverse Within Parent, then set height to 96px"
+        },
+        {
+          "token": "seli op80",
+          "help": "Run Select Inverse Within Parent, then set opacity to 80%"
+        }
+      ],
+      "order": 87
+    },
+    {
+      "id": "fsf",
+      "token": "fsf",
+      "name": "Filter Selection to Frames",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsf",
+      "description": "Run Filter Selection to Frames using fsf.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsf",
+          "help": "Run Filter Selection to Frames"
+        },
+        {
+          "token": "fsf w160",
+          "help": "Run Filter Selection to Frames, then set width to 160px"
+        },
+        {
+          "token": "fsf h96",
+          "help": "Run Filter Selection to Frames, then set height to 96px"
+        },
+        {
+          "token": "fsf op80",
+          "help": "Run Filter Selection to Frames, then set opacity to 80%"
+        }
+      ],
+      "order": 89
+    },
+    {
+      "id": "fsg",
+      "token": "fsg",
+      "name": "Filter Selection to Groups",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsg",
+      "description": "Run Filter Selection to Groups using fsg.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsg",
+          "help": "Run Filter Selection to Groups"
+        },
+        {
+          "token": "fsg w160",
+          "help": "Run Filter Selection to Groups, then set width to 160px"
+        },
+        {
+          "token": "fsg h96",
+          "help": "Run Filter Selection to Groups, then set height to 96px"
+        },
+        {
+          "token": "fsg op80",
+          "help": "Run Filter Selection to Groups, then set opacity to 80%"
+        }
+      ],
+      "order": 90
+    },
+    {
+      "id": "fst",
+      "token": "fst",
+      "name": "Filter Selection to Text",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fst",
+      "description": "Run Filter Selection to Text using fst.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fst",
+          "help": "Run Filter Selection to Text"
+        },
+        {
+          "token": "fst w160",
+          "help": "Run Filter Selection to Text, then set width to 160px"
+        },
+        {
+          "token": "fst h96",
+          "help": "Run Filter Selection to Text, then set height to 96px"
+        },
+        {
+          "token": "fst op80",
+          "help": "Run Filter Selection to Text, then set opacity to 80%"
+        }
+      ],
+      "order": 91
+    },
+    {
+      "id": "fsc",
+      "token": "fsc",
+      "name": "Filter Selection to Components",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsc",
+      "description": "Run Filter Selection to Components using fsc.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsc",
+          "help": "Run Filter Selection to Components"
+        },
+        {
+          "token": "fsc w160",
+          "help": "Run Filter Selection to Components, then set width to 160px"
+        },
+        {
+          "token": "fsc h96",
+          "help": "Run Filter Selection to Components, then set height to 96px"
+        },
+        {
+          "token": "fsc op80",
+          "help": "Run Filter Selection to Components, then set opacity to 80%"
+        }
+      ],
+      "order": 92
+    },
+    {
+      "id": "fscs",
+      "token": "fscs",
+      "name": "Filter Selection to Component Sets",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fscs",
+      "description": "Run Filter Selection to Component Sets using fscs.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fscs",
+          "help": "Run Filter Selection to Component Sets"
+        },
+        {
+          "token": "fscs w160",
+          "help": "Run Filter Selection to Component Sets, then set width to 160px"
+        },
+        {
+          "token": "fscs h96",
+          "help": "Run Filter Selection to Component Sets, then set height to 96px"
+        },
+        {
+          "token": "fscs op80",
+          "help": "Run Filter Selection to Component Sets, then set opacity to 80%"
+        }
+      ],
+      "order": 93
+    },
+    {
+      "id": "fsi",
+      "token": "fsi",
+      "name": "Filter Selection to Instances",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsi",
+      "description": "Run Filter Selection to Instances using fsi.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsi",
+          "help": "Run Filter Selection to Instances"
+        },
+        {
+          "token": "fsi w160",
+          "help": "Run Filter Selection to Instances, then set width to 160px"
+        },
+        {
+          "token": "fsi h96",
+          "help": "Run Filter Selection to Instances, then set height to 96px"
+        },
+        {
+          "token": "fsi op80",
+          "help": "Run Filter Selection to Instances, then set opacity to 80%"
+        }
+      ],
+      "order": 94
+    },
+    {
+      "id": "fsl",
+      "token": "fsl",
+      "name": "Filter Selection to Lines",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsl",
+      "description": "Run Filter Selection to Lines using fsl.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsl",
+          "help": "Run Filter Selection to Lines"
+        },
+        {
+          "token": "fsl w160",
+          "help": "Run Filter Selection to Lines, then set width to 160px"
+        },
+        {
+          "token": "fsl h96",
+          "help": "Run Filter Selection to Lines, then set height to 96px"
+        },
+        {
+          "token": "fsl op80",
+          "help": "Run Filter Selection to Lines, then set opacity to 80%"
+        }
+      ],
+      "order": 95
+    },
+    {
+      "id": "fsv",
+      "token": "fsv",
+      "name": "Filter Selection to Vectors",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsv",
+      "description": "Run Filter Selection to Vectors using fsv.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsv",
+          "help": "Run Filter Selection to Vectors"
+        },
+        {
+          "token": "fsv w160",
+          "help": "Run Filter Selection to Vectors, then set width to 160px"
+        },
+        {
+          "token": "fsv h96",
+          "help": "Run Filter Selection to Vectors, then set height to 96px"
+        },
+        {
+          "token": "fsv op80",
+          "help": "Run Filter Selection to Vectors, then set opacity to 80%"
+        }
+      ],
+      "order": 96
+    },
+    {
+      "id": "fse",
+      "token": "fse",
+      "name": "Filter Selection to Ellipses",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fse",
+      "description": "Run Filter Selection to Ellipses using fse.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fse",
+          "help": "Run Filter Selection to Ellipses"
+        },
+        {
+          "token": "fse w160",
+          "help": "Run Filter Selection to Ellipses, then set width to 160px"
+        },
+        {
+          "token": "fse h96",
+          "help": "Run Filter Selection to Ellipses, then set height to 96px"
+        },
+        {
+          "token": "fse op80",
+          "help": "Run Filter Selection to Ellipses, then set opacity to 80%"
+        }
+      ],
+      "order": 97
+    },
+    {
+      "id": "fsp",
+      "token": "fsp",
+      "name": "Filter Selection to Polygons",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsp",
+      "description": "Run Filter Selection to Polygons using fsp.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsp",
+          "help": "Run Filter Selection to Polygons"
+        },
+        {
+          "token": "fsp w160",
+          "help": "Run Filter Selection to Polygons, then set width to 160px"
+        },
+        {
+          "token": "fsp h96",
+          "help": "Run Filter Selection to Polygons, then set height to 96px"
+        },
+        {
+          "token": "fsp op80",
+          "help": "Run Filter Selection to Polygons, then set opacity to 80%"
+        }
+      ],
+      "order": 98
+    },
+    {
+      "id": "fss",
+      "token": "fss",
+      "name": "Filter Selection to Stars",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fss",
+      "description": "Run Filter Selection to Stars using fss.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fss",
+          "help": "Run Filter Selection to Stars"
+        },
+        {
+          "token": "fss w160",
+          "help": "Run Filter Selection to Stars, then set width to 160px"
+        },
+        {
+          "token": "fss h96",
+          "help": "Run Filter Selection to Stars, then set height to 96px"
+        },
+        {
+          "token": "fss op80",
+          "help": "Run Filter Selection to Stars, then set opacity to 80%"
+        }
+      ],
+      "order": 99
+    },
+    {
+      "id": "fsr",
+      "token": "fsr",
+      "name": "Filter Selection to Rectangles",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsr",
+      "description": "Run Filter Selection to Rectangles using fsr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsr",
+          "help": "Run Filter Selection to Rectangles"
+        },
+        {
+          "token": "fsr w160",
+          "help": "Run Filter Selection to Rectangles, then set width to 160px"
+        },
+        {
+          "token": "fsr h96",
+          "help": "Run Filter Selection to Rectangles, then set height to 96px"
+        },
+        {
+          "token": "fsr op80",
+          "help": "Run Filter Selection to Rectangles, then set opacity to 80%"
+        }
+      ],
+      "order": 100
+    },
+    {
+      "id": "fsb",
+      "token": "fsb",
+      "name": "Filter Selection to Boolean Operations",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "fs"
+      ],
+      "parent": "fs",
+      "path": "Selection / Filter Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "fsb",
+      "description": "Run Filter Selection to Boolean Operations using fsb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fsb",
+          "help": "Run Filter Selection to Boolean Operations"
+        },
+        {
+          "token": "fsb w160",
+          "help": "Run Filter Selection to Boolean Operations, then set width to 160px"
+        },
+        {
+          "token": "fsb h96",
+          "help": "Run Filter Selection to Boolean Operations, then set height to 96px"
+        },
+        {
+          "token": "fsb op80",
+          "help": "Run Filter Selection to Boolean Operations, then set opacity to 80%"
+        }
+      ],
+      "order": 101
+    },
+    {
+      "id": "esf",
+      "token": "esf",
+      "name": "Exclude Frames from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esf",
+      "description": "Run Exclude Frames from Selection using esf.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esf",
+          "help": "Run Exclude Frames from Selection"
+        },
+        {
+          "token": "esf w160",
+          "help": "Run Exclude Frames from Selection, then set width to 160px"
+        },
+        {
+          "token": "esf h96",
+          "help": "Run Exclude Frames from Selection, then set height to 96px"
+        },
+        {
+          "token": "esf op80",
+          "help": "Run Exclude Frames from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 103
+    },
+    {
+      "id": "esg",
+      "token": "esg",
+      "name": "Exclude Groups from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esg",
+      "description": "Run Exclude Groups from Selection using esg.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esg",
+          "help": "Run Exclude Groups from Selection"
+        },
+        {
+          "token": "esg w160",
+          "help": "Run Exclude Groups from Selection, then set width to 160px"
+        },
+        {
+          "token": "esg h96",
+          "help": "Run Exclude Groups from Selection, then set height to 96px"
+        },
+        {
+          "token": "esg op80",
+          "help": "Run Exclude Groups from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 104
+    },
+    {
+      "id": "est",
+      "token": "est",
+      "name": "Exclude Text from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "est",
+      "description": "Run Exclude Text from Selection using est.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "est",
+          "help": "Run Exclude Text from Selection"
+        },
+        {
+          "token": "est w160",
+          "help": "Run Exclude Text from Selection, then set width to 160px"
+        },
+        {
+          "token": "est h96",
+          "help": "Run Exclude Text from Selection, then set height to 96px"
+        },
+        {
+          "token": "est op80",
+          "help": "Run Exclude Text from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 105
+    },
+    {
+      "id": "esc",
+      "token": "esc",
+      "name": "Exclude Components from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esc",
+      "description": "Run Exclude Components from Selection using esc.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esc",
+          "help": "Run Exclude Components from Selection"
+        },
+        {
+          "token": "esc w160",
+          "help": "Run Exclude Components from Selection, then set width to 160px"
+        },
+        {
+          "token": "esc h96",
+          "help": "Run Exclude Components from Selection, then set height to 96px"
+        },
+        {
+          "token": "esc op80",
+          "help": "Run Exclude Components from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 106
+    },
+    {
+      "id": "escs",
+      "token": "escs",
+      "name": "Exclude Component Sets from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "escs",
+      "description": "Run Exclude Component Sets from Selection using escs.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "escs",
+          "help": "Run Exclude Component Sets from Selection"
+        },
+        {
+          "token": "escs w160",
+          "help": "Run Exclude Component Sets from Selection, then set width to 160px"
+        },
+        {
+          "token": "escs h96",
+          "help": "Run Exclude Component Sets from Selection, then set height to 96px"
+        },
+        {
+          "token": "escs op80",
+          "help": "Run Exclude Component Sets from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 107
+    },
+    {
+      "id": "esi",
+      "token": "esi",
+      "name": "Exclude Instances from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esi",
+      "description": "Run Exclude Instances from Selection using esi.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esi",
+          "help": "Run Exclude Instances from Selection"
+        },
+        {
+          "token": "esi w160",
+          "help": "Run Exclude Instances from Selection, then set width to 160px"
+        },
+        {
+          "token": "esi h96",
+          "help": "Run Exclude Instances from Selection, then set height to 96px"
+        },
+        {
+          "token": "esi op80",
+          "help": "Run Exclude Instances from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 108
+    },
+    {
+      "id": "esl",
+      "token": "esl",
+      "name": "Exclude Lines from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esl",
+      "description": "Run Exclude Lines from Selection using esl.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esl",
+          "help": "Run Exclude Lines from Selection"
+        },
+        {
+          "token": "esl w160",
+          "help": "Run Exclude Lines from Selection, then set width to 160px"
+        },
+        {
+          "token": "esl h96",
+          "help": "Run Exclude Lines from Selection, then set height to 96px"
+        },
+        {
+          "token": "esl op80",
+          "help": "Run Exclude Lines from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 109
+    },
+    {
+      "id": "esv",
+      "token": "esv",
+      "name": "Exclude Vectors from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esv",
+      "description": "Run Exclude Vectors from Selection using esv.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esv",
+          "help": "Run Exclude Vectors from Selection"
+        },
+        {
+          "token": "esv w160",
+          "help": "Run Exclude Vectors from Selection, then set width to 160px"
+        },
+        {
+          "token": "esv h96",
+          "help": "Run Exclude Vectors from Selection, then set height to 96px"
+        },
+        {
+          "token": "esv op80",
+          "help": "Run Exclude Vectors from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 110
+    },
+    {
+      "id": "ese",
+      "token": "ese",
+      "name": "Exclude Ellipses from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ese",
+      "description": "Run Exclude Ellipses from Selection using ese.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ese",
+          "help": "Run Exclude Ellipses from Selection"
+        },
+        {
+          "token": "ese w160",
+          "help": "Run Exclude Ellipses from Selection, then set width to 160px"
+        },
+        {
+          "token": "ese h96",
+          "help": "Run Exclude Ellipses from Selection, then set height to 96px"
+        },
+        {
+          "token": "ese op80",
+          "help": "Run Exclude Ellipses from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 111
+    },
+    {
+      "id": "esp",
+      "token": "esp",
+      "name": "Exclude Polygons from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esp",
+      "description": "Run Exclude Polygons from Selection using esp.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esp",
+          "help": "Run Exclude Polygons from Selection"
+        },
+        {
+          "token": "esp w160",
+          "help": "Run Exclude Polygons from Selection, then set width to 160px"
+        },
+        {
+          "token": "esp h96",
+          "help": "Run Exclude Polygons from Selection, then set height to 96px"
+        },
+        {
+          "token": "esp op80",
+          "help": "Run Exclude Polygons from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 112
+    },
+    {
+      "id": "ess",
+      "token": "ess",
+      "name": "Exclude Stars from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ess",
+      "description": "Run Exclude Stars from Selection using ess.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ess",
+          "help": "Run Exclude Stars from Selection"
+        },
+        {
+          "token": "ess w160",
+          "help": "Run Exclude Stars from Selection, then set width to 160px"
+        },
+        {
+          "token": "ess h96",
+          "help": "Run Exclude Stars from Selection, then set height to 96px"
+        },
+        {
+          "token": "ess op80",
+          "help": "Run Exclude Stars from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 113
+    },
+    {
+      "id": "esr",
+      "token": "esr",
+      "name": "Exclude Rectangles from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esr",
+      "description": "Run Exclude Rectangles from Selection using esr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esr",
+          "help": "Run Exclude Rectangles from Selection"
+        },
+        {
+          "token": "esr w160",
+          "help": "Run Exclude Rectangles from Selection, then set width to 160px"
+        },
+        {
+          "token": "esr h96",
+          "help": "Run Exclude Rectangles from Selection, then set height to 96px"
+        },
+        {
+          "token": "esr op80",
+          "help": "Run Exclude Rectangles from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 114
+    },
+    {
+      "id": "esb",
+      "token": "esb",
+      "name": "Exclude Boolean Operations from Selection",
+      "group": "selection",
+      "groupName": "Selection",
+      "groupPath": [
+        "selection",
+        "es"
+      ],
+      "parent": "es",
+      "path": "Selection / Exclude Selection",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "esb",
+      "description": "Run Exclude Boolean Operations from Selection using esb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "esb",
+          "help": "Run Exclude Boolean Operations from Selection"
+        },
+        {
+          "token": "esb w160",
+          "help": "Run Exclude Boolean Operations from Selection, then set width to 160px"
+        },
+        {
+          "token": "esb h96",
+          "help": "Run Exclude Boolean Operations from Selection, then set height to 96px"
+        },
+        {
+          "token": "esb op80",
+          "help": "Run Exclude Boolean Operations from Selection, then set opacity to 80%"
+        }
+      ],
+      "order": 115
+    },
+    {
+      "id": "f",
+      "token": "f",
+      "name": "Replace Fill Color",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "f<value>",
+      "unit": "hex",
+      "description": "Use f<value> to set Replace Fill Color.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "f#1A73E8",
+          "help": "Replace all fills with #1A73E8"
+        },
+        {
+          "token": "f2#1A73E8",
+          "help": "Replace only the second fill"
+        },
+        {
+          "token": "f1-3#1A73E8@60",
+          "help": "Replace fills 1-3 with 60% opacity"
+        },
+        {
+          "token": "f#1A73E8:m:off",
+          "help": "Set blend mode and visibility for targeted fills"
+        }
+      ],
+      "order": 117
+    },
+    {
+      "id": "fa",
+      "token": "fa",
+      "name": "Add Fill",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "fa<value>",
+      "unit": "hex",
+      "description": "Use fa<value> to set Add Fill.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fa#1A73E8",
+          "help": "Append a new fill"
+        },
+        {
+          "token": "fa#1A73E8@20",
+          "help": "Append a fill with 20% opacity"
+        },
+        {
+          "token": "fa#1A73E8:overlay:on",
+          "help": "Append visible overlay fill"
+        },
+        {
+          "token": "fa#0D0D0D:n:off",
+          "help": "Append hidden normal-blend fill"
+        }
+      ],
+      "order": 118
+    },
+    {
+      "id": "fi",
+      "token": "fi",
+      "name": "Insert Fill",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "fi<value>",
+      "unit": "hex",
+      "description": "Use fi<value> to set Insert Fill.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fi1#1A73E8",
+          "help": "Insert fill at position 1"
+        },
+        {
+          "token": "fi3#000@20",
+          "help": "Insert fill 3 at 20% opacity"
+        },
+        {
+          "token": "fi2#1A73E8:screen:off",
+          "help": "Insert hidden screen-blend fill at 2"
+        },
+        {
+          "token": "fi4#FFB800:m:on",
+          "help": "Insert multiply fill at 4"
+        }
+      ],
+      "order": 119
+    },
+    {
+      "id": "fd",
+      "token": "fd",
+      "name": "Delete Fill",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "fd<value>",
+      "description": "Use fd<value> to set Delete Fill.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fd2",
+          "help": "Delete second fill"
+        },
+        {
+          "token": "fd1-3",
+          "help": "Delete fills 1 through 3"
+        },
+        {
+          "token": "fd3+",
+          "help": "Delete fill 3 onward"
+        },
+        {
+          "token": "fd-2",
+          "help": "Delete second-to-last fill"
+        }
+      ],
+      "order": 120
+    },
+    {
+      "id": "s",
+      "token": "s",
+      "name": "Replace Stroke Color",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "s<value>",
+      "unit": "hex",
+      "description": "Use s<value> to set Replace Stroke Color.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "s#1A73E8",
+          "help": "Replace all strokes with #1A73E8"
+        },
+        {
+          "token": "s2#1A73E8",
+          "help": "Replace only the second stroke"
+        },
+        {
+          "token": "s1-3#1A73E8@60",
+          "help": "Replace strokes 1-3 with 60% opacity"
+        },
+        {
+          "token": "s#1A73E8:m:off",
+          "help": "Set blend mode and visibility for targeted strokes"
+        }
+      ],
+      "order": 121
+    },
+    {
+      "id": "sa",
+      "token": "sa",
+      "name": "Add Stroke",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "sa<value>",
+      "unit": "hex",
+      "description": "Use sa<value> to set Add Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sa#1A73E8",
+          "help": "Append a new stroke"
+        },
+        {
+          "token": "sa#1A73E8@20",
+          "help": "Append a stroke with 20% opacity"
+        },
+        {
+          "token": "sa#1A73E8:overlay:on",
+          "help": "Append visible overlay stroke"
+        },
+        {
+          "token": "sa#0D0D0D:n:off",
+          "help": "Append hidden normal-blend stroke"
+        }
+      ],
+      "order": 122
+    },
+    {
+      "id": "si",
+      "token": "si",
+      "name": "Insert Stroke",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "si<value>",
+      "unit": "hex",
+      "description": "Use si<value> to set Insert Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "si1#1A73E8",
+          "help": "Insert stroke at position 1"
+        },
+        {
+          "token": "si3#000@20",
+          "help": "Insert stroke 3 at 20% opacity"
+        },
+        {
+          "token": "si2#1A73E8:screen:off",
+          "help": "Insert hidden screen-blend stroke at 2"
+        },
+        {
+          "token": "si4#FFB800:m:on",
+          "help": "Insert multiply stroke at 4"
+        }
+      ],
+      "order": 123
+    },
+    {
+      "id": "sd",
+      "token": "sd",
+      "name": "Delete Stroke",
+      "group": "colour",
+      "groupName": "Colour",
+      "groupPath": [
+        "colour"
+      ],
+      "parent": "colour",
+      "path": "Colour",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "sd<value>",
+      "description": "Use sd<value> to set Delete Stroke.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sd2",
+          "help": "Delete second stroke"
+        },
+        {
+          "token": "sd1-3",
+          "help": "Delete strokes 1 through 3"
+        },
+        {
+          "token": "sd3+",
+          "help": "Delete stroke 3 onward"
+        },
+        {
+          "token": "sd-2",
+          "help": "Delete second-to-last stroke"
+        }
+      ],
+      "order": 124
+    },
+    {
+      "id": "c",
+      "token": "c",
+      "name": "Stretch all Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c"
+      ],
+      "parent": "c",
+      "path": "Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "c",
+      "description": "Run Stretch all Constraints using c.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "c",
+          "help": "Run Stretch all Constraints"
+        },
+        {
+          "token": "c w160",
+          "help": "Run Stretch all Constraints, then set width to 160px"
+        },
+        {
+          "token": "c h96",
+          "help": "Run Stretch all Constraints, then set height to 96px"
+        },
+        {
+          "token": "c op80",
+          "help": "Run Stretch all Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 126
+    },
+    {
+      "id": "cc",
+      "token": "cc",
+      "name": "Center all Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c"
+      ],
+      "parent": "c",
+      "path": "Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cc",
+      "description": "Run Center all Constraints using cc.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cc",
+          "help": "Run Center all Constraints"
+        },
+        {
+          "token": "cc w160",
+          "help": "Run Center all Constraints, then set width to 160px"
+        },
+        {
+          "token": "cc h96",
+          "help": "Run Center all Constraints, then set height to 96px"
+        },
+        {
+          "token": "cc op80",
+          "help": "Run Center all Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 127
+    },
+    {
+      "id": "cs",
+      "token": "cs",
+      "name": "Scale all Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c"
+      ],
+      "parent": "c",
+      "path": "Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cs",
+      "description": "Run Scale all Constraints using cs.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cs",
+          "help": "Run Scale all Constraints"
+        },
+        {
+          "token": "cs w160",
+          "help": "Run Scale all Constraints, then set width to 160px"
+        },
+        {
+          "token": "cs h96",
+          "help": "Run Scale all Constraints, then set height to 96px"
+        },
+        {
+          "token": "cs op80",
+          "help": "Run Scale all Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 128
+    },
+    {
+      "id": "cx",
+      "token": "cx",
+      "name": "Stretch Horizontal Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c"
+      ],
+      "parent": "c",
+      "path": "Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cx",
+      "description": "Command group for Stretch Horizontal Constraints. Start with: cxc, cxs, cxl, cxr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cx",
+          "help": "Run Stretch Horizontal Constraints"
+        },
+        {
+          "token": "cx w160",
+          "help": "Run Stretch Horizontal Constraints, then set width to 160px"
+        },
+        {
+          "token": "cx h96",
+          "help": "Run Stretch Horizontal Constraints, then set height to 96px"
+        },
+        {
+          "token": "cx op80",
+          "help": "Run Stretch Horizontal Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 130
+    },
+    {
+      "id": "cxc",
+      "token": "cxc",
+      "name": "Center all Horizontal Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cx"
+      ],
+      "parent": "cx",
+      "path": "Constraints / Stretch Horizontal Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cxc",
+      "description": "Run Center all Horizontal Constraints using cxc.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cxc",
+          "help": "Run Center all Horizontal Constraints"
+        },
+        {
+          "token": "cxc w160",
+          "help": "Run Center all Horizontal Constraints, then set width to 160px"
+        },
+        {
+          "token": "cxc h96",
+          "help": "Run Center all Horizontal Constraints, then set height to 96px"
+        },
+        {
+          "token": "cxc op80",
+          "help": "Run Center all Horizontal Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 131
+    },
+    {
+      "id": "cxs",
+      "token": "cxs",
+      "name": "Scale all Horizontal Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cx"
+      ],
+      "parent": "cx",
+      "path": "Constraints / Stretch Horizontal Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cxs",
+      "description": "Run Scale all Horizontal Constraints using cxs.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cxs",
+          "help": "Run Scale all Horizontal Constraints"
+        },
+        {
+          "token": "cxs w160",
+          "help": "Run Scale all Horizontal Constraints, then set width to 160px"
+        },
+        {
+          "token": "cxs h96",
+          "help": "Run Scale all Horizontal Constraints, then set height to 96px"
+        },
+        {
+          "token": "cxs op80",
+          "help": "Run Scale all Horizontal Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 132
+    },
+    {
+      "id": "cxl",
+      "token": "cxl",
+      "name": "Set Horizontal Constraints to Left",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cx"
+      ],
+      "parent": "cx",
+      "path": "Constraints / Stretch Horizontal Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cxl",
+      "description": "Run Set Horizontal Constraints to Left using cxl.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cxl",
+          "help": "Run Set Horizontal Constraints to Left"
+        },
+        {
+          "token": "cxl w160",
+          "help": "Run Set Horizontal Constraints to Left, then set width to 160px"
+        },
+        {
+          "token": "cxl h96",
+          "help": "Run Set Horizontal Constraints to Left, then set height to 96px"
+        },
+        {
+          "token": "cxl op80",
+          "help": "Run Set Horizontal Constraints to Left, then set opacity to 80%"
+        }
+      ],
+      "order": 133
+    },
+    {
+      "id": "cxr",
+      "token": "cxr",
+      "name": "Set Horizontal Constraints to Right",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cx"
+      ],
+      "parent": "cx",
+      "path": "Constraints / Stretch Horizontal Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cxr",
+      "description": "Run Set Horizontal Constraints to Right using cxr.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cxr",
+          "help": "Run Set Horizontal Constraints to Right"
+        },
+        {
+          "token": "cxr w160",
+          "help": "Run Set Horizontal Constraints to Right, then set width to 160px"
+        },
+        {
+          "token": "cxr h96",
+          "help": "Run Set Horizontal Constraints to Right, then set height to 96px"
+        },
+        {
+          "token": "cxr op80",
+          "help": "Run Set Horizontal Constraints to Right, then set opacity to 80%"
+        }
+      ],
+      "order": 134
+    },
+    {
+      "id": "cy",
+      "token": "cy",
+      "name": "Stretch Vertical Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c"
+      ],
+      "parent": "c",
+      "path": "Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cy",
+      "description": "Command group for Stretch Vertical Constraints. Start with: cyc, cys, cyt, cyb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cy",
+          "help": "Run Stretch Vertical Constraints"
+        },
+        {
+          "token": "cy w160",
+          "help": "Run Stretch Vertical Constraints, then set width to 160px"
+        },
+        {
+          "token": "cy h96",
+          "help": "Run Stretch Vertical Constraints, then set height to 96px"
+        },
+        {
+          "token": "cy op80",
+          "help": "Run Stretch Vertical Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 136
+    },
+    {
+      "id": "cyc",
+      "token": "cyc",
+      "name": "Center all Vertical Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cy"
+      ],
+      "parent": "cy",
+      "path": "Constraints / Stretch Vertical Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cyc",
+      "description": "Run Center all Vertical Constraints using cyc.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cyc",
+          "help": "Run Center all Vertical Constraints"
+        },
+        {
+          "token": "cyc w160",
+          "help": "Run Center all Vertical Constraints, then set width to 160px"
+        },
+        {
+          "token": "cyc h96",
+          "help": "Run Center all Vertical Constraints, then set height to 96px"
+        },
+        {
+          "token": "cyc op80",
+          "help": "Run Center all Vertical Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 137
+    },
+    {
+      "id": "cys",
+      "token": "cys",
+      "name": "Scale all Vertical Constraints",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cy"
+      ],
+      "parent": "cy",
+      "path": "Constraints / Stretch Vertical Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cys",
+      "description": "Run Scale all Vertical Constraints using cys.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cys",
+          "help": "Run Scale all Vertical Constraints"
+        },
+        {
+          "token": "cys w160",
+          "help": "Run Scale all Vertical Constraints, then set width to 160px"
+        },
+        {
+          "token": "cys h96",
+          "help": "Run Scale all Vertical Constraints, then set height to 96px"
+        },
+        {
+          "token": "cys op80",
+          "help": "Run Scale all Vertical Constraints, then set opacity to 80%"
+        }
+      ],
+      "order": 138
+    },
+    {
+      "id": "cyt",
+      "token": "cyt",
+      "name": "Set Vertical Constraints to Top",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cy"
+      ],
+      "parent": "cy",
+      "path": "Constraints / Stretch Vertical Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cyt",
+      "description": "Run Set Vertical Constraints to Top using cyt.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cyt",
+          "help": "Run Set Vertical Constraints to Top"
+        },
+        {
+          "token": "cyt w160",
+          "help": "Run Set Vertical Constraints to Top, then set width to 160px"
+        },
+        {
+          "token": "cyt h96",
+          "help": "Run Set Vertical Constraints to Top, then set height to 96px"
+        },
+        {
+          "token": "cyt op80",
+          "help": "Run Set Vertical Constraints to Top, then set opacity to 80%"
+        }
+      ],
+      "order": 139
+    },
+    {
+      "id": "cyb",
+      "token": "cyb",
+      "name": "Set Vertical Constraints to Bottom",
+      "group": "c",
+      "groupName": "Constraints",
+      "groupPath": [
+        "c",
+        "cy"
+      ],
+      "parent": "cy",
+      "path": "Constraints / Stretch Vertical Constraints",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "cyb",
+      "description": "Run Set Vertical Constraints to Bottom using cyb.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "cyb",
+          "help": "Run Set Vertical Constraints to Bottom"
+        },
+        {
+          "token": "cyb w160",
+          "help": "Run Set Vertical Constraints to Bottom, then set width to 160px"
+        },
+        {
+          "token": "cyb h96",
+          "help": "Run Set Vertical Constraints to Bottom, then set height to 96px"
+        },
+        {
+          "token": "cyb op80",
+          "help": "Run Set Vertical Constraints to Bottom, then set opacity to 80%"
+        }
+      ],
+      "order": 140
+    },
+    {
+      "id": "ax",
+      "token": "ax",
+      "name": "Toggle Hug ↔ Fill Horizontally",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ax",
+      "description": "Run Toggle Hug ↔ Fill Horizontally using ax.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ax",
+          "help": "Run Toggle Hug ↔ Fill Horizontally"
+        },
+        {
+          "token": "ax w160",
+          "help": "Run Toggle Hug ↔ Fill Horizontally, then set width to 160px"
+        },
+        {
+          "token": "ax h96",
+          "help": "Run Toggle Hug ↔ Fill Horizontally, then set height to 96px"
+        },
+        {
+          "token": "ax op80",
+          "help": "Run Toggle Hug ↔ Fill Horizontally, then set opacity to 80%"
+        }
+      ],
+      "order": 142
+    },
+    {
+      "id": "ay",
+      "token": "ay",
+      "name": "Toggle Hug ↔ Fill Vertically",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ay",
+      "description": "Run Toggle Hug ↔ Fill Vertically using ay.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ay",
+          "help": "Run Toggle Hug ↔ Fill Vertically"
+        },
+        {
+          "token": "ay w160",
+          "help": "Run Toggle Hug ↔ Fill Vertically, then set width to 160px"
+        },
+        {
+          "token": "ay h96",
+          "help": "Run Toggle Hug ↔ Fill Vertically, then set height to 96px"
+        },
+        {
+          "token": "ay op80",
+          "help": "Run Toggle Hug ↔ Fill Vertically, then set opacity to 80%"
+        }
+      ],
+      "order": 143
+    },
+    {
+      "id": "aa",
+      "token": "aa",
+      "name": "Auto Behavior (Smart Fill/Hug)",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "aa",
+      "description": "Run Auto Behavior (Smart Fill/Hug) using aa.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "aa",
+          "help": "Run Auto Behavior (Smart Fill/Hug)"
+        },
+        {
+          "token": "aa w160",
+          "help": "Run Auto Behavior (Smart Fill/Hug), then set width to 160px"
+        },
+        {
+          "token": "aa h96",
+          "help": "Run Auto Behavior (Smart Fill/Hug), then set height to 96px"
+        },
+        {
+          "token": "aa op80",
+          "help": "Run Auto Behavior (Smart Fill/Hug), then set opacity to 80%"
+        }
+      ],
+      "order": 144
+    },
+    {
+      "id": "al",
+      "token": "al",
+      "name": "Apply Auto Layout (Smart)",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "al",
+      "description": "Run Apply Auto Layout (Smart) using al.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "al",
+          "help": "Run Apply Auto Layout (Smart)"
+        },
+        {
+          "token": "al w160",
+          "help": "Run Apply Auto Layout (Smart), then set width to 160px"
+        },
+        {
+          "token": "al h96",
+          "help": "Run Apply Auto Layout (Smart), then set height to 96px"
+        },
+        {
+          "token": "al op80",
+          "help": "Run Apply Auto Layout (Smart), then set opacity to 80%"
+        }
+      ],
+      "order": 145
+    },
+    {
+      "id": "alx",
+      "token": "alx",
+      "name": "Apply Auto Layout Horizontal",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "alx",
+      "description": "Run Apply Auto Layout Horizontal using alx.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "alx",
+          "help": "Run Apply Auto Layout Horizontal"
+        },
+        {
+          "token": "alx w160",
+          "help": "Run Apply Auto Layout Horizontal, then set width to 160px"
+        },
+        {
+          "token": "alx h96",
+          "help": "Run Apply Auto Layout Horizontal, then set height to 96px"
+        },
+        {
+          "token": "alx op80",
+          "help": "Run Apply Auto Layout Horizontal, then set opacity to 80%"
+        }
+      ],
+      "order": 146
+    },
+    {
+      "id": "aly",
+      "token": "aly",
+      "name": "Apply Auto Layout Vertical",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "aly",
+      "description": "Run Apply Auto Layout Vertical using aly.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "aly",
+          "help": "Run Apply Auto Layout Vertical"
+        },
+        {
+          "token": "aly w160",
+          "help": "Run Apply Auto Layout Vertical, then set width to 160px"
+        },
+        {
+          "token": "aly h96",
+          "help": "Run Apply Auto Layout Vertical, then set height to 96px"
+        },
+        {
+          "token": "aly op80",
+          "help": "Run Apply Auto Layout Vertical, then set opacity to 80%"
+        }
+      ],
+      "order": 147
+    },
+    {
+      "id": "gap",
+      "token": "gap",
+      "name": "Set Auto-layout Gap",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "gap<value>",
+      "description": "Use gap<value> to set Set Auto-layout Gap.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "gap100",
+          "help": "Set Set Auto-layout Gap to 100"
+        },
+        {
+          "token": "gap50%",
+          "help": "Set Set Auto-layout Gap to 50%"
+        },
+        {
+          "token": "+gap8",
+          "help": "Increase Set Auto-layout Gap by 8"
+        },
+        {
+          "token": "++gap8+2",
+          "help": "Progressively increase Set Auto-layout Gap"
+        }
+      ],
+      "order": 148
+    },
+    {
+      "id": "gapx",
+      "token": "gapx",
+      "name": "Set Horizontal Gap",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "gapx<value>",
+      "description": "Use gapx<value> to set Set Horizontal Gap.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "gapx100",
+          "help": "Set Set Horizontal Gap to 100"
+        },
+        {
+          "token": "gapx50%",
+          "help": "Set Set Horizontal Gap to 50%"
+        },
+        {
+          "token": "+gapx8",
+          "help": "Increase Set Horizontal Gap by 8"
+        },
+        {
+          "token": "++gapx8+2",
+          "help": "Progressively increase Set Horizontal Gap"
+        }
+      ],
+      "order": 149
+    },
+    {
+      "id": "gapy",
+      "token": "gapy",
+      "name": "Set Vertical Gap",
+      "group": "a",
+      "groupName": "Autolayout Behavior",
+      "groupPath": [
+        "a"
+      ],
+      "parent": "a",
+      "path": "Autolayout Behavior",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "gapy<value>",
+      "description": "Use gapy<value> to set Set Vertical Gap.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "gapy100",
+          "help": "Set Set Vertical Gap to 100"
+        },
+        {
+          "token": "gapy50%",
+          "help": "Set Set Vertical Gap to 50%"
+        },
+        {
+          "token": "+gapy8",
+          "help": "Increase Set Vertical Gap by 8"
+        },
+        {
+          "token": "++gapy8+2",
+          "help": "Progressively increase Set Vertical Gap"
+        }
+      ],
+      "order": 150
+    },
+    {
+      "id": "ls",
+      "token": "ls",
+      "name": "Letter Spacing",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "allowsNegative": true,
+      "flags": [
+        "value",
+        "modifiers",
+        "negative"
+      ],
+      "syntax": "ls<value>",
+      "description": "Use ls<value> to set Letter Spacing.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ls2",
+          "help": "Set letter spacing to 2px"
+        },
+        {
+          "token": "ls1.5px",
+          "help": "Set letter spacing with explicit px"
+        },
+        {
+          "token": "ls4%",
+          "help": "Set letter spacing to 4%"
+        },
+        {
+          "token": "+ls0.5",
+          "help": "Increase letter spacing by 0.5px"
+        }
+      ],
+      "order": 152
+    },
+    {
+      "id": "lh",
+      "token": "lh",
+      "name": "Line Height",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "lh<value>",
+      "description": "Use lh<value> to set Line Height.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "lh120%",
+          "help": "Set line height to 120%"
+        },
+        {
+          "token": "lh16px",
+          "help": "Set line height to 16px"
+        },
+        {
+          "token": "lh24",
+          "help": "Set line height to 24px"
+        },
+        {
+          "token": "+lh2",
+          "help": "Increase line height by 2px"
+        }
+      ],
+      "order": 153
+    },
+    {
+      "id": "lsp",
+      "token": "lsp",
+      "name": "Letter Spacing to %",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "lsp",
+      "description": "Run Letter Spacing to % using lsp.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "lsp",
+          "help": "Run Letter Spacing to %"
+        },
+        {
+          "token": "lsp w160",
+          "help": "Run Letter Spacing to %, then set width to 160px"
+        },
+        {
+          "token": "lsp h96",
+          "help": "Run Letter Spacing to %, then set height to 96px"
+        },
+        {
+          "token": "lsp op80",
+          "help": "Run Letter Spacing to %, then set opacity to 80%"
+        }
+      ],
+      "order": 154
+    },
+    {
+      "id": "lspx",
+      "token": "lspx",
+      "name": "Letter Spacing to px",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "lspx",
+      "description": "Run Letter Spacing to px using lspx.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "lspx",
+          "help": "Run Letter Spacing to px"
+        },
+        {
+          "token": "lspx w160",
+          "help": "Run Letter Spacing to px, then set width to 160px"
+        },
+        {
+          "token": "lspx h96",
+          "help": "Run Letter Spacing to px, then set height to 96px"
+        },
+        {
+          "token": "lspx op80",
+          "help": "Run Letter Spacing to px, then set opacity to 80%"
+        }
+      ],
+      "order": 155
+    },
+    {
+      "id": "lhp",
+      "token": "lhp",
+      "name": "Line Height to %",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "lhp",
+      "description": "Run Line Height to % using lhp.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "lhp",
+          "help": "Run Line Height to %"
+        },
+        {
+          "token": "lhp w160",
+          "help": "Run Line Height to %, then set width to 160px"
+        },
+        {
+          "token": "lhp h96",
+          "help": "Run Line Height to %, then set height to 96px"
+        },
+        {
+          "token": "lhp op80",
+          "help": "Run Line Height to %, then set opacity to 80%"
+        }
+      ],
+      "order": 156
+    },
+    {
+      "id": "lhpx",
+      "token": "lhpx",
+      "name": "Line Height to px",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "lhpx",
+      "description": "Run Line Height to px using lhpx.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "lhpx",
+          "help": "Run Line Height to px"
+        },
+        {
+          "token": "lhpx w160",
+          "help": "Run Line Height to px, then set width to 160px"
+        },
+        {
+          "token": "lhpx h96",
+          "help": "Run Line Height to px, then set height to 96px"
+        },
+        {
+          "token": "lhpx op80",
+          "help": "Run Line Height to px, then set opacity to 80%"
+        }
+      ],
+      "order": 157
+    },
+    {
+      "id": "clip",
+      "token": "clip",
+      "name": "Toggle Clipping",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc"
+      ],
+      "parent": "misc",
+      "path": "Misc",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "clip",
+      "description": "Run Toggle Clipping using clip.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "clip",
+          "help": "Run Toggle Clipping"
+        },
+        {
+          "token": "clip w160",
+          "help": "Run Toggle Clipping, then set width to 160px"
+        },
+        {
+          "token": "clip h96",
+          "help": "Run Toggle Clipping, then set height to 96px"
+        },
+        {
+          "token": "clip op80",
+          "help": "Run Toggle Clipping, then set opacity to 80%"
+        }
+      ],
+      "order": 159
+    },
+    {
+      "id": "count",
+      "token": "count",
+      "name": "Count Elements",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc",
+        "count"
+      ],
+      "parent": "count",
+      "path": "Misc / Count",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "count",
+      "description": "Command group for Count Elements. Start with: countn.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "count",
+          "help": "Run Count Elements"
+        },
+        {
+          "token": "count w160",
+          "help": "Run Count Elements, then set width to 160px"
+        },
+        {
+          "token": "count h96",
+          "help": "Run Count Elements, then set height to 96px"
+        },
+        {
+          "token": "count op80",
+          "help": "Run Count Elements, then set opacity to 80%"
+        }
+      ],
+      "order": 162
+    },
+    {
+      "id": "countn",
+      "token": "countn",
+      "name": "Count Nested Elements",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc",
+        "count",
+        "count"
+      ],
+      "parent": "count",
+      "path": "Misc / Count / Count Elements",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "countn",
+      "description": "Run Count Nested Elements using countn.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "countn",
+          "help": "Run Count Nested Elements"
+        },
+        {
+          "token": "countn w160",
+          "help": "Run Count Nested Elements, then set width to 160px"
+        },
+        {
+          "token": "countn h96",
+          "help": "Run Count Nested Elements, then set height to 96px"
+        },
+        {
+          "token": "countn op80",
+          "help": "Run Count Nested Elements, then set opacity to 80%"
+        }
+      ],
+      "order": 163
+    },
+    {
+      "id": "swap",
+      "token": "swap",
+      "name": "Swap Elements",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc",
+        "swap"
+      ],
+      "parent": "swap",
+      "path": "Misc / Swap Elements",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "swap",
+      "description": "Command group for Swap Elements. Start with: swapx, swapy.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swap",
+          "help": "Run Swap Elements"
+        },
+        {
+          "token": "swap w160",
+          "help": "Run Swap Elements, then set width to 160px"
+        },
+        {
+          "token": "swap h96",
+          "help": "Run Swap Elements, then set height to 96px"
+        },
+        {
+          "token": "swap op80",
+          "help": "Run Swap Elements, then set opacity to 80%"
+        }
+      ],
+      "order": 166
+    },
+    {
+      "id": "swapx",
+      "token": "swapx",
+      "name": "Swap Horizontally",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc",
+        "swap",
+        "swap"
+      ],
+      "parent": "swap",
+      "path": "Misc / Swap Elements / Swap Elements",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "swapx",
+      "description": "Run Swap Horizontally using swapx.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swapx",
+          "help": "Run Swap Horizontally"
+        },
+        {
+          "token": "swapx w160",
+          "help": "Run Swap Horizontally, then set width to 160px"
+        },
+        {
+          "token": "swapx h96",
+          "help": "Run Swap Horizontally, then set height to 96px"
+        },
+        {
+          "token": "swapx op80",
+          "help": "Run Swap Horizontally, then set opacity to 80%"
+        }
+      ],
+      "order": 167
+    },
+    {
+      "id": "swapy",
+      "token": "swapy",
+      "name": "Swap Vertically",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc",
+        "swap",
+        "swap"
+      ],
+      "parent": "swap",
+      "path": "Misc / Swap Elements / Swap Elements",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "swapy",
+      "description": "Run Swap Vertically using swapy.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "swapy",
+          "help": "Run Swap Vertically"
+        },
+        {
+          "token": "swapy w160",
+          "help": "Run Swap Vertically, then set width to 160px"
+        },
+        {
+          "token": "swapy h96",
+          "help": "Run Swap Vertically, then set height to 96px"
+        },
+        {
+          "token": "swapy op80",
+          "help": "Run Swap Vertically, then set opacity to 80%"
+        }
+      ],
+      "order": 168
+    },
+    {
+      "id": "wf",
+      "token": "wf",
+      "name": "Wrap in Frame",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc"
+      ],
+      "parent": "misc",
+      "path": "Misc",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "wf",
+      "description": "Wrap items in selection individually in frames",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "wf",
+          "help": "Run Wrap in Frame"
+        },
+        {
+          "token": "wf w160",
+          "help": "Run Wrap in Frame, then set width to 160px"
+        },
+        {
+          "token": "wf h96",
+          "help": "Run Wrap in Frame, then set height to 96px"
+        },
+        {
+          "token": "wf op80",
+          "help": "Run Wrap in Frame, then set opacity to 80%"
+        }
+      ],
+      "order": 169
+    },
+    {
+      "id": "dup",
+      "token": "dup",
+      "name": "Duplicate Selected Nodes",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc"
+      ],
+      "parent": "misc",
+      "path": "Misc",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "dup<value>",
+      "description": "Use dup<value> to set Duplicate Selected Nodes.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "dup1",
+          "help": "Duplicate once"
+        },
+        {
+          "token": "dup3",
+          "help": "Duplicate three times"
+        },
+        {
+          "token": "dup5",
+          "help": "Duplicate five times for a quick fanout"
+        },
+        {
+          "token": "dup10",
+          "help": "Duplicate ten times for stress-testing layout"
+        }
+      ],
+      "order": 170
+    },
+    {
+      "id": "rot",
+      "token": "rot",
+      "name": "Set Rotation",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc"
+      ],
+      "parent": "misc",
+      "path": "Misc",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "rot<value>",
+      "unit": "deg",
+      "description": "Use rot<value> to set Set Rotation.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "rot45",
+          "help": "Rotate to 45 degrees"
+        },
+        {
+          "token": "rot90deg",
+          "help": "Rotate to 90 degrees with explicit unit"
+        },
+        {
+          "token": "+rot15",
+          "help": "Rotate forward by 15 degrees"
+        },
+        {
+          "token": "--rot0-10",
+          "help": "Progressively rotate backwards across selection"
+        }
+      ],
+      "order": 171
+    },
+    {
+      "id": "op",
+      "token": "op",
+      "name": "Set Opacity",
+      "group": "misc",
+      "groupName": "Misc",
+      "groupPath": [
+        "misc"
+      ],
+      "parent": "misc",
+      "path": "Misc",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "op<value>",
+      "unit": "%",
+      "description": "Use op<value> to set Set Opacity.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "op100",
+          "help": "Set opacity to 100%"
+        },
+        {
+          "token": "op80",
+          "help": "Set opacity to 80%"
+        },
+        {
+          "token": "+op5",
+          "help": "Increase opacity by 5%"
+        },
+        {
+          "token": "--op100-10",
+          "help": "Progressively reduce opacity across selection"
+        }
+      ],
+      "order": 172
+    }
+  ]
+}
