@@ -53,7 +53,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Multiple commands: space-separated
 - Value is optional for action-only shortcuts (for example `clip`, `swapx`)
 - Numeric adjustments use modifier operators only.
-- Global numeric operators (supported for `h`, `w`, `wh`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`, `sc:w`, `sc:h`, `ls`, `lh`): `+`, `-`, `*`, `/`
+- Global numeric operators (supported for `h`, `w`, `wh`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `sw`, `swl`, `swr`, `swt`, `swb`, `swx`, `swy`, `gap`, `gapx`, `gapy`, `rot`, `op`, `sc:w`, `sc:h`, `ls`, `lh`): `+`, `-`, `*`, `/`
 - Flow/sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives cumulative `+24, +50, +78, ...`)
@@ -68,6 +68,8 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Optional alpha can be appended as percent or decimal: `@10`, `@10%`, `@0.1` (for example `f#1A73E8@10`)
 - Fill options can be appended using `:option` tokens: blend (`:m`, `:screen`, `:overlay`, etc.) and visibility (`:on`, `:off`)
 - Add/insert/delete fills: `fa<color>`, `fi<index><color>`, `fd<target>` (for example `fa#000@10:m`, `fi2#1A73E8:off`, `fd2+`)
+- Stroke color supports the same `1/2/3/4/6/8` hex, target selectors, `@alpha`, and `:option` tokens
+- Add/insert/delete strokes: `sa<color>`, `si<index><color>`, `sd<target>` (for example `sa#000@10:m`, `si2#1A73E8:off`, `sd2+`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
 - Size commands support `%` values (`w50%`, `h200%`) and dedicated fit/fill/hug commands (`fit`, `fitw`, `fith`, `fill`, `fillw`, `fillh`, `hug`, `hugw`, `hugh`)
 
@@ -87,9 +89,9 @@ Main families:
 - Size: `w`, `h`, `wh`, `sc:w`, `sc:h`, `fit`, `fitw`, `fith`, `fill`, `fillw`, `fillh`, `hug`, `hugw`, `hugh`
 - Radius: `r`, `rt`, `rb`, `rtl`, `rbr`, ...
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
-- Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)
+- Stroke: width (`sw`, `swl`, `swy`, ...), align (`sai`, `sac`, `sao`)
 - Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), traversal (`root`/`leaf`/`selp`/`selc`/`selns`/`selps`/`seli`), filter (`fs*`), exclude (`es*`)
-- Color: fill replace/add/insert/delete (`f`, `fa`, `fi`, `fd`)
+- Color: fill/stroke replace/add/insert/delete (`f`, `fa`, `fi`, `fd`, `s`, `sa`, `si`, `sd`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
 - Auto layout behavior: toggles (`ax`, `ay`), smart sizing (`aa`), apply auto layout (`al`, `alx`, `aly`)
 - Auto layout spacing: `gap`, `gapx`, `gapy`

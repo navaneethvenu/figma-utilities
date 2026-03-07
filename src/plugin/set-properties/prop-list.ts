@@ -21,6 +21,7 @@ import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
 import setFill, { addFill, deleteFill, insertFill } from './utils/color/replace-fill';
+import setStroke, { addStroke, deleteStroke, insertStroke } from './utils/color/replace-stroke';
 import setAutolayoutBehavior from './utils/autolayout/set-autolayout-behavior';
 import applyAutolayout from './utils/autolayout/apply-autolayout';
 import wrapInFrame from './utils/wrap/wrap-in-frame';
@@ -553,69 +554,69 @@ export const propList: Record<string, PropItem> = {
   },
 
   //Strokes
-  st: {
+  sw: {
     name: 'Strokes',
     description: 'Shortcuts for setting stroke width and alignment for elements, including individual edges.',
-    shortcut: 'st',
+    shortcut: 'sw',
     type: 'GROUP',
     subcommands: {
       //Set Stroke Width
-      st: {
+      sw: {
         name: 'Stroke Width',
-        shortcut: 'st',
+        shortcut: 'sw',
         description: 'These are the shortcuts related to adjusting the stroke width of any object',
         type: 'GROUP',
         subcommands: {
-          st: {
+          sw: {
             name: 'Strokes',
-            shortcut: 'st',
+            shortcut: 'sw',
             hasValue: true,
             supportsModifiers: true,
             getModifierValue: readNumberProp('strokeWeight'),
             subcommands: {
-              stl: {
+              swl: {
                 name: 'Left Stroke',
-                shortcut: 'stl',
+                shortcut: 'swl',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeLeftWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              str: {
+              swr: {
                 name: 'Right Stroke',
-                shortcut: 'str',
+                shortcut: 'swr',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeRightWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              stt: {
+              swt: {
                 name: 'Top Stroke',
-                shortcut: 'stt',
+                shortcut: 'swt',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeTopWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              stb: {
+              swb: {
                 name: 'Bottom Stroke',
-                shortcut: 'stb',
+                shortcut: 'swb',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeBottomWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              stx: {
+              swx: {
                 name: 'Horizontal Strokes',
-                shortcut: 'stx',
+                shortcut: 'swx',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeLeftWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              sty: {
+              swy: {
                 name: 'Vertical Strokes',
-                shortcut: 'sty',
+                shortcut: 'swy',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeTopWeight'),
@@ -628,30 +629,30 @@ export const propList: Record<string, PropItem> = {
       },
 
       //Set Stroke Align
-      sta: {
+      salign: {
         name: 'Stroke Alignment',
-        shortcut: 'sta',
+        shortcut: 'salign',
         description: 'These are the shortcuts related to adjusting the stroke alignment of any object',
         type: 'GROUP',
         subcommands: {
-          sti: {
+          sai: {
             name: 'Stroke Align Inside',
             message: 'Set alignment of stroke to inside',
-            shortcut: 'sti',
+            shortcut: 'sai',
             hasValue: false,
             action: ({ param, nodes }) => setStrokeAlign({ param, nodes }),
           },
-          stc: {
+          sac: {
             name: 'Stroke Align Center',
             message: 'Set alignment of stroke to center',
-            shortcut: 'stc',
+            shortcut: 'sac',
             hasValue: false,
             action: ({ param, nodes }) => setStrokeAlign({ param, nodes }),
           },
-          sto: {
+          sao: {
             name: 'Stroke Align Outside',
             message: 'Set alignment of stroke to outside',
-            shortcut: 'sto',
+            shortcut: 'sao',
             hasValue: false,
             action: ({ param, nodes }) => setStrokeAlign({ param, nodes }),
           },
@@ -999,6 +1000,37 @@ export const propList: Record<string, PropItem> = {
         hasValue: true,
         message: 'Delete targeted fills',
         action: ({ param, value, nodes }) => deleteFill({ param, value, nodes }),
+      },
+      s: {
+        name: 'Replace Stroke Color',
+        shortcut: 's',
+        hasValue: true,
+        message: 'Replace targeted strokes with',
+        unit: 'hex',
+        action: ({ param, value, nodes }) => setStroke({ param, value, nodes }),
+      },
+      sa: {
+        name: 'Add Stroke',
+        shortcut: 'sa',
+        hasValue: true,
+        message: 'Append stroke',
+        unit: 'hex',
+        action: ({ param, value, nodes }) => addStroke({ param, value, nodes }),
+      },
+      si: {
+        name: 'Insert Stroke',
+        shortcut: 'si',
+        hasValue: true,
+        message: 'Insert stroke at target index with',
+        unit: 'hex',
+        action: ({ param, value, nodes }) => insertStroke({ param, value, nodes }),
+      },
+      sd: {
+        name: 'Delete Stroke',
+        shortcut: 'sd',
+        hasValue: true,
+        message: 'Delete targeted strokes',
+        action: ({ param, value, nodes }) => deleteStroke({ param, value, nodes }),
       },
     },
   },

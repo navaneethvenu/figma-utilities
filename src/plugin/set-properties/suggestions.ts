@@ -2,6 +2,7 @@ import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
 import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken, splitOriginPrefixedToken, TransformOrigin } from './origin';
 import { isFillAddValue, isFillDeleteValue, isFillInsertValue, isFillReplaceValue } from './utils/color/replace-fill';
+import { isStrokeAddValue, isStrokeDeleteValue, isStrokeInsertValue, isStrokeReplaceValue } from './utils/color/replace-stroke';
 
 interface getSuggestionsProps {
   query: string;
@@ -116,11 +117,11 @@ function isAxisModeCommand(command: PropItem) {
   return ['fit', 'fill', 'hug'].includes(command.shortcut);
 }
 
-function isFillCommand(shortcut: string) {
-  return ['f', 'fa', 'fi', 'fd'].includes(shortcut);
+function isPaintCommand(shortcut: string) {
+  return ['f', 'fa', 'fi', 'fd', 's', 'sa', 'si', 'sd'].includes(shortcut);
 }
 
-function isValidFillCommandValue(command: PropItem, value: string) {
+function isValidPaintCommandValue(command: PropItem, value: string) {
   switch (command.shortcut) {
     case 'f':
       return isFillReplaceValue(value);
@@ -130,6 +131,14 @@ function isValidFillCommandValue(command: PropItem, value: string) {
       return isFillInsertValue(value);
     case 'fd':
       return isFillDeleteValue(value);
+    case 's':
+      return isStrokeReplaceValue(value);
+    case 'sa':
+      return isStrokeAddValue(value);
+    case 'si':
+      return isStrokeInsertValue(value);
+    case 'sd':
+      return isStrokeDeleteValue(value);
     default:
       return false;
   }
@@ -519,9 +528,31 @@ function getCommandExamples(shortcut: string) {
       { token: 'p16', help: 'Set all padding to 16' },
       { token: 'px24', help: 'Set horizontal padding to 24' },
     ],
-    st: [
-      { token: 'st2', help: 'Set stroke width to 2' },
-      { token: 'stx1', help: 'Set horizontal stroke to 1' },
+    sw: [
+      { token: 'sw2', help: 'Set stroke width to 2' },
+      { token: 'swx1', help: 'Set horizontal stroke to 1' },
+    ],
+    s: [
+      { token: 's#1A73E8', help: 'Replace all strokes with #hex color' },
+      { token: 's2#1A73E8', help: 'Replace second stroke only' },
+      { token: 's1-3#1A73E8', help: 'Replace strokes 1 through 3' },
+      { token: 's#1A73E8@10', help: 'Set stroke color with 10% opacity' },
+      { token: 's#1A73E8:m:off', help: 'Set multiply blend and hide stroke' },
+    ],
+    sa: [
+      { token: 'sa#1A73E8', help: 'Append a new stroke' },
+      { token: 'sa#1A73E8@10', help: 'Append stroke with 10% opacity' },
+      { token: 'sa#1A73E8:overlay:on', help: 'Append visible overlay stroke' },
+    ],
+    si: [
+      { token: 'si1#1A73E8', help: 'Insert stroke at position 1' },
+      { token: 'si3#000@20', help: 'Insert stroke 3 with 20% opacity' },
+      { token: 'si2#1A73E8:screen:off', help: 'Insert hidden screen stroke at 2' },
+    ],
+    sd: [
+      { token: 'sd2', help: 'Delete second stroke' },
+      { token: 'sd1-3', help: 'Delete strokes 1 through 3' },
+      { token: 'sd3+', help: 'Delete strokes from 3 onward' },
     ],
     gap: [
       { token: 'gap16', help: 'Set auto-layout gap to 16' },
@@ -542,6 +573,14 @@ function invalidValueHint(command: PropItem) {
       return `Use fi<index><hex> with optional @alpha and :options (e.g. fi2#1A73E8:screen:off)`;
     case 'fd':
       return `Use fd<target> (e.g. fd2, fd1-3, fd3+, fd-2)`;
+    case 's':
+      return `Use s<target><hex> with optional @alpha and :options (e.g. s2#1A73E8@10:m:off)`;
+    case 'sa':
+      return `Use sa<hex> with optional @alpha and :options (e.g. sa#1A73E8@10:overlay:on)`;
+    case 'si':
+      return `Use si<index><hex> with optional @alpha and :options (e.g. si2#1A73E8:screen:off)`;
+    case 'sd':
+      return `Use sd<target> (e.g. sd2, sd1-3, sd3+, sd-2)`;
     case 'dup':
       return `Use a whole number (e.g. dup3)`;
     case 'op':
@@ -567,7 +606,7 @@ function invalidValueHint(command: PropItem) {
 
 function displayUnitForCommand(command: PropItem) {
   if (command.unit && command.unit !== 'hex') return command.unit;
-  if (['f', 'fa', 'fi', 'fd', 'dup'].includes(command.shortcut)) return '';
+  if (['f', 'fa', 'fi', 'fd', 's', 'sa', 'si', 'sd', 'dup'].includes(command.shortcut)) return '';
   if (command.hasValue) return 'px';
   return '';
 }
@@ -586,14 +625,14 @@ function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string, pr
 }
 
 function getLikelyNextShortcuts(previousCommand?: string) {
-  const fallback = ['w', 'h', 'fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 'op', 'rot', 'p', 'st', 'gap'];
+  const fallback = ['w', 'h', 'fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot', 'p', 'sw', 'gap'];
   if (!previousCommand) return fallback;
 
-  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand)) return ['fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 'op', 'rot'];
-  if (['fit', 'fill', 'hug'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'r', 'f'];
+  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand)) return ['fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot'];
+  if (['fit', 'fill', 'hug'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'r', 'f', 's'];
   if (['x', 'y'].includes(previousCommand)) return ['w', 'h', 'r', 'f', 'op'];
-  if (previousCommand === 'f') return ['op', 'st', 'r', 'w', 'h'];
-  if (['r', 'st', 'p', 'gap'].includes(previousCommand)) return ['f', 'op', 'w', 'h'];
+  if (['f', 's'].includes(previousCommand)) return ['op', 'sw', 'r', 'w', 'h'];
+  if (['r', 'sw', 'p', 'gap'].includes(previousCommand)) return ['f', 's', 'op', 'w', 'h'];
   if (['op', 'rot'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'f'];
 
   return fallback;
@@ -878,11 +917,11 @@ function generateSuggestions(
 
     if (command.hasValue) {
       if (lastCommand.value !== '') {
-        if (isFillCommand(command.shortcut)) {
+        if (isPaintCommand(command.shortcut)) {
           if (lastCommand.prefix !== '') {
             lastMessage = `Error: ${command.name} does not support modifier operators`;
             hasError = true;
-          } else if (isValidFillCommandValue(command, value)) {
+          } else if (isValidPaintCommandValue(command, value)) {
             lastMessage = command.message ? `${command.message} ${value}` : `${defaultSetLabel(command.name)} ${value}`;
           } else {
             lastMessage = invalidValueHint(command);

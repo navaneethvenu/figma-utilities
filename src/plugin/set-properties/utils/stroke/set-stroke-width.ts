@@ -30,7 +30,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
     if (nodeTypeCheck) {
       if (strokeWidth !== null && Number.isFinite(strokeWidth)) {
         //Left Stroke
-        if (/stl\b/.test(param)) {
+        if (/swl\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {
             node.strokeLeftWeight = strokeWidth;
           } else {
@@ -43,7 +43,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
         }
 
         //Right Stroke
-        else if (/str\b/.test(param)) {
+        else if (/swr\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {
             node.strokeRightWeight = strokeWidth;
           } else {
@@ -56,7 +56,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
         }
 
         //Top Stroke
-        else if (/stt\b/.test(param)) {
+        else if (/swt\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {
             node.strokeTopWeight = strokeWidth;
           } else {
@@ -69,7 +69,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
         }
 
         //Bottom Stroke
-        else if (/stb\b/.test(param)) {
+        else if (/swb\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {
             node.strokeBottomWeight = strokeWidth;
           } else {
@@ -82,7 +82,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
         }
 
         //Horizontal Stroke
-        else if (/stx\b/.test(param)) {
+        else if (/swx\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {
             node.strokeLeftWeight = strokeWidth;
             node.strokeRightWeight = strokeWidth;
@@ -96,7 +96,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
         }
 
         //Vertical Stroke
-        else if (/sty\b/.test(param)) {
+        else if (/swy\b/.test(param)) {
           if (specificStrokeNodeTypeCheck) {
             node.strokeTopWeight = strokeWidth;
             node.strokeBottomWeight = strokeWidth;
@@ -110,7 +110,7 @@ export default function setStrokeWidth({ param, value, nodes }: setStrokeProps) 
         }
 
         //All Strokes
-        else if (/st\b/.test(param)) {
+        else if (/sw\b/.test(param)) {
           node.strokeWeight = strokeWidth;
         }
 

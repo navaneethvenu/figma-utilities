@@ -3,6 +3,7 @@ import parseModifiedToken from './modifiers/parse-modified-token';
 import parseScopedScaleToken from './modifiers/parse-scoped-scale-token';
 import { parseOriginToken, splitOriginPrefixedToken } from './origin';
 import { isFillAddValue, isFillDeleteValue, isFillInsertValue, isFillReplaceValue } from './utils/color/replace-fill';
+import { isStrokeAddValue, isStrokeDeleteValue, isStrokeInsertValue, isStrokeReplaceValue } from './utils/color/replace-stroke';
 
 export interface ParsedParameter {
   param: string;
@@ -40,6 +41,10 @@ function isValueValidForCommand(shortcut: string, value: string) {
   if (shortcut === 'fa') return isFillAddValue(value);
   if (shortcut === 'fi') return isFillInsertValue(value);
   if (shortcut === 'fd') return isFillDeleteValue(value);
+  if (shortcut === 's') return isStrokeReplaceValue(value);
+  if (shortcut === 'sa') return isStrokeAddValue(value);
+  if (shortcut === 'si') return isStrokeInsertValue(value);
+  if (shortcut === 'sd') return isStrokeDeleteValue(value);
   if (shortcut === 'dup') return /^\d+$/.test(value.trim());
   if (shortcut === 'op') return isNumericValue(value, ['%']);
   if (shortcut === 'rot') return isNumericValue(value, ['deg']);
