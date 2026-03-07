@@ -434,133 +434,8 @@ function composeTokenWithContext(contextTokens: string[], nextToken: string) {
   return tokens.join(' ');
 }
 
-function getCommandExamples(shortcut: string) {
-  const examples: Record<string, Array<{ token: string; help: string }>> = {
-    w: [
-      { token: 'w100', help: 'Set width to 100' },
-      { token: 'w50%', help: 'Set width to 50% of parent' },
-      { token: '+w8', help: 'Increase width by 8' },
-      { token: '++w8+2', help: 'Progressive width increase' },
-    ],
-    h: [
-      { token: 'h100', help: 'Set height to 100' },
-      { token: 'h200%', help: 'Set height to 200% of parent' },
-      { token: '+h8', help: 'Increase height by 8' },
-      { token: '++h8+2', help: 'Progressive height increase' },
-    ],
-    wh: [
-      { token: 'wh120,80', help: 'Set width and height' },
-      { token: 'wh80%,50%', help: 'Set width and height by parent percentages' },
-      { token: '+wh8', help: 'Increase size by 8' },
-    ],
-    fit: [
-      { token: 'fit', help: 'Fit to parent width and height' },
-      { token: 'fitw', help: 'Fit to parent width only' },
-      { token: 'fith', help: 'Fit to parent height only' },
-    ],
-    fill: [
-      { token: 'fill', help: 'Set auto-layout fill on both axes' },
-      { token: 'fillw', help: 'Set auto-layout fill width' },
-      { token: 'fillh', help: 'Set auto-layout fill height' },
-    ],
-    hug: [
-      { token: 'hug', help: 'Set auto-layout hug on both axes' },
-      { token: 'hugw', help: 'Set auto-layout hug width' },
-      { token: 'hugh', help: 'Set auto-layout hug height' },
-    ],
-    op: [
-      { token: 'op80', help: 'Set opacity to 80%' },
-    ],
-    rot: [
-      { token: 'rot45', help: 'Set rotation to 45 degrees' },
-      { token: 'rot45deg', help: 'Explicit rotation unit' },
-    ],
-    ls: [
-      { token: 'ls2', help: 'Set letter spacing to 2' },
-      { token: 'ls2px', help: 'Letter spacing in px' },
-      { token: 'ls4%', help: 'Letter spacing in %' },
-    ],
-    lh: [
-      { token: 'lh120', help: 'Set line height to 120' },
-      { token: 'lh120%', help: 'Line height in %' },
-      { token: 'lh16px', help: 'Line height in px' },
-    ],
-    dup: [
-      { token: 'dup3', help: 'Duplicate selection 3 times' },
-      { token: 'dup1', help: 'Duplicate once' },
-    ],
-    f: [
-      { token: 'f#1A73E8', help: 'Replace all fills with #hex color' },
-      { token: 'f2#1A73E8', help: 'Replace second fill only' },
-      { token: 'f1-3#1A73E8', help: 'Replace fills 1 through 3' },
-      { token: 'f3+#1A73E8', help: 'Replace fill 3 onward' },
-      { token: 'f#1A73E8@10', help: 'Set color with 10% opacity' },
-      { token: 'f#1A73E8:m:off', help: 'Set multiply blend and hide fill' },
-    ],
-    fa: [
-      { token: 'fa#1A73E8', help: 'Append a new fill' },
-      { token: 'fa#1A73E8@10', help: 'Append fill with 10% opacity' },
-      { token: 'fa#1A73E8:overlay:on', help: 'Append visible overlay fill' },
-    ],
-    fi: [
-      { token: 'fi1#1A73E8', help: 'Insert fill at position 1' },
-      { token: 'fi3#000@20', help: 'Insert fill 3 with 20% opacity' },
-      { token: 'fi2#1A73E8:screen:off', help: 'Insert hidden screen fill at 2' },
-    ],
-    fd: [
-      { token: 'fd2', help: 'Delete second fill' },
-      { token: 'fd1-3', help: 'Delete fills 1 through 3' },
-      { token: 'fd3+', help: 'Delete fills from 3 onward' },
-    ],
-    x: [
-      { token: 'x100', help: 'Set x position' },
-      { token: '+x16', help: 'Move right by 16' },
-    ],
-    y: [
-      { token: 'y100', help: 'Set y position' },
-      { token: '+y16', help: 'Move down by 16' },
-    ],
-    r: [
-      { token: 'r8', help: 'Set corner radius to 8' },
-      { token: '+r2', help: 'Increase corner radius by 2' },
-    ],
-    p: [
-      { token: 'p16', help: 'Set all padding to 16' },
-      { token: 'px24', help: 'Set horizontal padding to 24' },
-    ],
-    sw: [
-      { token: 'sw2', help: 'Set stroke width to 2' },
-      { token: 'swx1', help: 'Set horizontal stroke to 1' },
-    ],
-    s: [
-      { token: 's#1A73E8', help: 'Replace all strokes with #hex color' },
-      { token: 's2#1A73E8', help: 'Replace second stroke only' },
-      { token: 's1-3#1A73E8', help: 'Replace strokes 1 through 3' },
-      { token: 's#1A73E8@10', help: 'Set stroke color with 10% opacity' },
-      { token: 's#1A73E8:m:off', help: 'Set multiply blend and hide stroke' },
-    ],
-    sa: [
-      { token: 'sa#1A73E8', help: 'Append a new stroke' },
-      { token: 'sa#1A73E8@10', help: 'Append stroke with 10% opacity' },
-      { token: 'sa#1A73E8:overlay:on', help: 'Append visible overlay stroke' },
-    ],
-    si: [
-      { token: 'si1#1A73E8', help: 'Insert stroke at position 1' },
-      { token: 'si3#000@20', help: 'Insert stroke 3 with 20% opacity' },
-      { token: 'si2#1A73E8:screen:off', help: 'Insert hidden screen stroke at 2' },
-    ],
-    sd: [
-      { token: 'sd2', help: 'Delete second stroke' },
-      { token: 'sd1-3', help: 'Delete strokes 1 through 3' },
-      { token: 'sd3+', help: 'Delete strokes from 3 onward' },
-    ],
-    gap: [
-      { token: 'gap16', help: 'Set auto-layout gap to 16' },
-      { token: 'gapx24', help: 'Set horizontal gap to 24' },
-    ],
-  };
-
-  return examples[shortcut] ?? [];
+function getCommandExamples(command: PropItem) {
+  return command.examples ?? [];
 }
 
 function invalidValueHint(command: PropItem) {
@@ -683,7 +558,7 @@ function buildNextCommandSuggestions(
     const command = flattenedCommands[shortcut];
     if (!command || !command.action) continue;
 
-    const example = getCommandExamples(shortcut)[0];
+    const example = getCommandExamples(command)[0];
     const token = command.hasValue ? (example?.token ?? `${shortcut}100`) : shortcut;
     const composed = composeTokenWithContext(contextTokens, token);
     suggestions.push({
@@ -698,7 +573,7 @@ function buildNextCommandSuggestions(
 }
 
 function buildPendingValueSuggestions(command: PropItem, contextTokens: string[]) {
-  const examples = getCommandExamples(command.shortcut);
+  const examples = getCommandExamples(command);
   if (examples.length === 0) return [];
 
   const suggestions: SuggestionCandidate[] = [];
@@ -730,7 +605,7 @@ function buildPendingValueRecoverySuggestions(
   contextTokens: string[],
   nextToken: string
 ): Suggestion[] {
-  const examples = getCommandExamples(command.shortcut);
+  const examples = getCommandExamples(command);
   if (examples.length === 0) {
     return buildErrorSuggestion(
       composeTokenWithContext(contextTokens, `${command.shortcut} ${nextToken}`),
@@ -1026,7 +901,7 @@ function generateSuggestions(
     }
 
     if (command.action) {
-      const examples = getCommandExamples(command.shortcut);
+      const examples = getCommandExamples(command);
       if (command.hasValue && (lastCommand.value === '' || hasError) && examples.length > 0) {
         for (let i = 0; i < Math.min(examples.length, 2); i++) {
           const example = examples[i];
