@@ -5,6 +5,7 @@ import { ErrorType } from '../utils/errorType';
 import { applyModifiedCommand } from './modifiers/apply-modified-token';
 import { applyScopedScaleCommand } from './modifiers/apply-scoped-scale-token';
 import { parseOriginToken, TransformOrigin } from './origin';
+import applyTextCommand from './utils/text/apply-text-command';
 
 export default async function setProperties(parameters: { [key: string]: string }) {
   try {
@@ -13,7 +14,7 @@ export default async function setProperties(parameters: { [key: string]: string 
       let currentOrigin: TransformOrigin | undefined;
       let executableCount = 0;
 
-      for (const { param, value, raw, modified, scopedScaleModifier, originModifier } of parsedParams) {
+      for (const { param, value, raw, modified, scopedScaleModifier, originModifier, textCommand } of parsedParams) {
         const currentSelection = figma.currentPage.selection;
         if (!currentSelection || currentSelection.length === 0) {
           figma.notify('Selection became empty while applying commands.');
@@ -37,6 +38,12 @@ export default async function setProperties(parameters: { [key: string]: string 
 
         if (scopedScaleModifier) {
           await applyScopedScaleCommand(raw ?? param, currentSelection, currentOrigin);
+          executableCount++;
+          continue;
+        }
+
+        if (textCommand) {
+          await applyTextCommand(raw ?? param, currentSelection);
           executableCount++;
           continue;
         }

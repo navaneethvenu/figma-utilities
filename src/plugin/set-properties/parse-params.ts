@@ -12,9 +12,84 @@ export interface ParsedParameter {
   modified?: boolean;
   scopedScaleModifier?: boolean;
   originModifier?: boolean;
+  textCommand?: boolean;
 }
 
 const OP_PREFIX_RE = /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?/;
+const TEXT_QUOTED = '"((?:\\\\.|[^"\\\\])*)"';
+
+function tokenizeParameterInput(input: string): string[] {
+  const tokens: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  let escaped = false;
+
+  for (const ch of input) {
+    if (escaped) {
+      current += ch;
+      escaped = false;
+      continue;
+    }
+
+    if (ch === '\\') {
+      current += ch;
+      escaped = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      current += ch;
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (!inQuotes && /\s/.test(ch)) {
+      if (current.trim() !== '') tokens.push(current);
+      current = '';
+      continue;
+    }
+
+    current += ch;
+  }
+
+  if (inQuotes) {
+    throw new Error('Invalid Value: unterminated quote');
+  }
+
+  if (current.trim() !== '') tokens.push(current);
+  return tokens;
+}
+
+function parseTextCommandToken(token: string): ParsedParameter | null {
+  const replaceFirstRe = new RegExp(`^t:?${TEXT_QUOTED}=>${TEXT_QUOTED}$`);
+  const replaceAllRe = new RegExp(`^all:t:?${TEXT_QUOTED}=>${TEXT_QUOTED}$`);
+  const setRe = new RegExp(`^t:?${TEXT_QUOTED}$`);
+  const appendRe = new RegExp(`^\\+t:?${TEXT_QUOTED}$`);
+  const prependRe = new RegExp(`^pre:\\+t:?${TEXT_QUOTED}$`);
+  const postAppendRe = new RegExp(`^post:\\+t:?${TEXT_QUOTED}$`);
+  const splitRe = new RegExp(`^split:?${TEXT_QUOTED}$`);
+
+  if (/^(upper|lower|sentence|title)$/i.test(token)) {
+    return { param: token.toLowerCase(), value: '', raw: token, textCommand: true };
+  }
+
+  if (
+    replaceFirstRe.test(token) ||
+    replaceAllRe.test(token) ||
+    setRe.test(token) ||
+    appendRe.test(token) ||
+    prependRe.test(token) ||
+    postAppendRe.test(token) ||
+    token === 'split' ||
+    token === 'split:' ||
+    splitRe.test(token) ||
+    /^\*t\d+$/.test(token)
+  ) {
+    return { param: token, value: '', raw: token, textCommand: true };
+  }
+
+  return null;
+}
 
 function isNumericValue(value: string, allowedUnits: readonly string[] = []) {
   const match = value.trim().match(/^(-?\d*\.?\d+)([a-z%]+)?$/i);
@@ -48,6 +123,16 @@ function isValueValidForCommand(shortcut: string, value: string) {
   if (shortcut === 'dup') return /^\d+$/.test(value.trim());
   if (shortcut === 'op') return isNumericValue(value, ['%']);
   if (shortcut === 'rot') return isNumericValue(value, ['deg']);
+  if (shortcut === 'fs') return isNumericValue(value, ['px']);
+  if (shortcut === 'fw')
+    return /^(?:\d{3}|thin|hairline|extralight|ultralight|light|regular|normal|book|medium|semibold|demibold|bold|extrabold|ultrabold|black|heavy)$/i.test(
+      value.trim()
+    );
+  if (shortcut === 'ta') return /^(?:l|left|c|center|r|right|j|justify|justified)$/i.test(value.trim());
+  if (shortcut === 'tt')
+    return /^(?:none|original|upper|uppercase|lower|lowercase|title|smallcaps|small_caps|smallcapsforced|small_caps_forced)$/i.test(
+      value.trim()
+    );
   if (shortcut === 'ls' || shortcut === 'lh') return isNumericValue(value, ['px', '%']);
   if (shortcut === 'w' || shortcut === 'h') return isNumericValue(value, ['px', '%']);
   if (shortcut === 'wh') return isNumericValue(value, ['px', '%']) || isPairNumericValue(value, ['px', '%']);
@@ -113,8 +198,7 @@ export default function parseParameters(parameters: { [key: string]: string }): 
   const parsedParams: ParsedParameter[] = [];
 
   for (const key in parameters) {
-    const values = parameters[key]
-      .split(' ')
+    const values = tokenizeParameterInput(parameters[key])
       .flatMap((value) => splitOriginPrefixedToken(value))
       .filter((value) => value.trim() !== '');
 
@@ -122,6 +206,12 @@ export default function parseParameters(parameters: { [key: string]: string }): 
       const parsedOrigin = parseOriginToken(value);
       if (parsedOrigin) {
         parsedParams.push({ param: value, value: '', raw: value, originModifier: true });
+        continue;
+      }
+
+      const parsedTextCommand = parseTextCommandToken(value);
+      if (parsedTextCommand) {
+        parsedParams.push(parsedTextCommand);
         continue;
       }
 

@@ -1,8 +1,6 @@
 import { getHistory } from './history';
 import { flattenCommands, PropItem, propList } from './prop-list';
 import { getOriginLabel, ORIGIN_TOKENS, parseOriginToken, splitOriginPrefixedToken, TransformOrigin } from './origin';
-import { isFillAddValue, isFillDeleteValue, isFillInsertValue, isFillReplaceValue } from './utils/color/replace-fill';
-import { isStrokeAddValue, isStrokeDeleteValue, isStrokeInsertValue, isStrokeReplaceValue } from './utils/color/replace-stroke';
 
 interface getSuggestionsProps {
   query: string;
@@ -24,6 +22,100 @@ type CandidateBucket = 'exact' | 'example' | 'next' | 'error';
 interface SuggestionCandidate extends Suggestion {
   score: number;
   bucket: CandidateBucket;
+}
+
+function tokenizeSuggestionInput(input: string): string[] {
+  const tokens: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  let escaped = false;
+
+  for (const ch of input) {
+    if (escaped) {
+      current += ch;
+      escaped = false;
+      continue;
+    }
+
+    if (ch === '\\') {
+      current += ch;
+      escaped = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      current += ch;
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (!inQuotes && /\s/.test(ch)) {
+      if (current.trim() !== '') tokens.push(current);
+      current = '';
+      continue;
+    }
+
+    current += ch;
+  }
+
+  if (current.trim() !== '') tokens.push(current);
+  return tokens;
+}
+
+function buildTextCommandSuggestions(values: string[]): Suggestion[] {
+  const lastToken = values[values.length - 1] ?? '';
+  const isTexty =
+    lastToken === '' ||
+    /^(?:t|t:|\+t|\+t:|pre:\+t|post:\+t|all:t|all:t:|split|split:|\*t|up|upp|upper|low|lower|sent|sentence|tit|title)/i.test(
+      lastToken
+    );
+  if (!isTexty) return [];
+
+  // Live payload suggestions while typing quoted text commands.
+  const livePatterns: Array<{ re: RegExp; desc: string }> = [
+    { re: /^t:?"(?:\\.|[^"\\])*"?$/, desc: 'Set text content' },
+    { re: /^\+t:?"(?:\\.|[^"\\])*"?$/, desc: 'Append text' },
+    { re: /^pre:\+t:?"(?:\\.|[^"\\])*"?$/, desc: 'Prepend text' },
+    { re: /^post:\+t:?"(?:\\.|[^"\\])*"?$/, desc: 'Append text (explicit)' },
+    { re: /^t:?"(?:\\.|[^"\\])*"=>(?:"(?:\\.|[^"\\])*"?)?$/, desc: 'Replace first (literal or /regex/flags)' },
+    { re: /^all:t:?"(?:\\.|[^"\\])*"=>(?:"(?:\\.|[^"\\])*"?)?$/, desc: 'Replace all (literal or /regex/flags)' },
+    { re: /^\*t\d*$/, desc: 'Repeat text N times' },
+    { re: /^split:?$/, desc: 'Split by space delimiter' },
+    { re: /^split:?"(?:\\.|[^"\\])*"?$/, desc: 'Split text into sibling clones' },
+  ];
+  for (const item of livePatterns) {
+    if (item.re.test(lastToken)) {
+      const base = values.slice(0, values.length - 1).filter(Boolean).join(' ');
+      const data = base ? `${base} ${lastToken}` : lastToken;
+      return [{ name: `${data} - ${item.desc}`, data }];
+    }
+  }
+
+  const templates: Array<{ token: string; desc: string }> = [
+    { token: 't""', desc: 'Set text content' },
+    { token: '+t""', desc: 'Append text' },
+    { token: 'pre:+t""', desc: 'Prepend text' },
+    { token: 'post:+t""', desc: 'Append text (explicit)' },
+    { token: 't""=>""', desc: 'Replace first (literal or /regex/flags)' },
+    { token: 'all:t""=>""', desc: 'Replace all (literal or /regex/flags)' },
+    { token: '*t2', desc: 'Repeat text 2x' },
+    { token: 'split', desc: 'Split by space delimiter' },
+    { token: 'split""', desc: 'Split text into sibling clones' },
+    { token: 'upper', desc: 'Transform actual text to uppercase' },
+    { token: 'lower', desc: 'Transform actual text to lowercase' },
+    { token: 'sentence', desc: 'Transform actual text to sentence case' },
+    { token: 'title', desc: 'Transform actual text to title case' },
+  ];
+
+  const base = values.slice(0, values.length - 1).filter(Boolean).join(' ');
+  const prefix = lastToken.toLowerCase();
+  const matches = templates.filter((item) => item.token.toLowerCase().startsWith(prefix) || prefix === '');
+  if (matches.length === 0) return [];
+
+  return matches.slice(0, 10).map((item) => {
+    const data = base ? `${base} ${item.token}` : item.token;
+    return { name: `${data} - ${item.desc}`, data };
+  });
 }
 
 function isSequentialPrefix(prefix: string) {
@@ -114,34 +206,8 @@ function isPairNumericValue(value: string, allowedUnits: readonly string[] = [])
 }
 
 function isAxisModeCommand(command: PropItem) {
+  if (command.valueKind) return command.valueKind === 'axis';
   return ['fit', 'fill', 'hug'].includes(command.shortcut);
-}
-
-function isPaintCommand(shortcut: string) {
-  return ['f', 'fa', 'fi', 'fd', 's', 'sa', 'si', 'sd'].includes(shortcut);
-}
-
-function isValidPaintCommandValue(command: PropItem, value: string) {
-  switch (command.shortcut) {
-    case 'f':
-      return isFillReplaceValue(value);
-    case 'fa':
-      return isFillAddValue(value);
-    case 'fi':
-      return isFillInsertValue(value);
-    case 'fd':
-      return isFillDeleteValue(value);
-    case 's':
-      return isStrokeReplaceValue(value);
-    case 'sa':
-      return isStrokeAddValue(value);
-    case 'si':
-      return isStrokeInsertValue(value);
-    case 'sd':
-      return isStrokeDeleteValue(value);
-    default:
-      return false;
-  }
 }
 
 function isAxisValue(value: string) {
@@ -149,21 +215,24 @@ function isAxisValue(value: string) {
   return normalized === '' || normalized === 'w' || normalized === 'h';
 }
 
-function allowedUnitsForCommand(shortcut: string) {
+function allowedUnitsForCommand(command: PropItem) {
+  if (command.allowedUnits && command.allowedUnits.length > 0) return command.allowedUnits;
+  const shortcut = command.shortcut;
   if (shortcut === 'op') return ['%'];
   if (shortcut === 'rot') return ['deg'];
+  if (shortcut === 'fs') return ['px'];
   if (shortcut === 'ls' || shortcut === 'lh') return ['px', '%'];
   if (shortcut === 'w' || shortcut === 'h' || shortcut === 'wh') return ['px', '%'];
   return ['px'];
 }
 
 function isScalarAllowedForCommand(command: PropItem, value: string, scalarUnit: string) {
-  if (command.shortcut === 'dup') return /^\d+$/.test(value.trim());
-  if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px', '%']);
+  if (command.valueKind === 'integer') return /^\d+$/.test(value.trim());
+  if (command.valueKind === 'pair' && value.includes(',')) return isPairNumericValue(value, allowedUnitsForCommand(command));
 
   const unit = scalarUnit.toLowerCase();
   if (!unit) return true;
-  return allowedUnitsForCommand(command.shortcut).includes(unit);
+  return allowedUnitsForCommand(command).includes(unit);
 }
 
 function parseScalarValue(value: string) {
@@ -439,49 +508,34 @@ function getCommandExamples(command: PropItem) {
 }
 
 function invalidValueHint(command: PropItem) {
-  switch (command.shortcut) {
-    case 'f':
-      return `Use f<target><hex> with optional @alpha and :options (e.g. f2#1A73E8@10:m:off)`;
-    case 'fa':
-      return `Use fa<hex> with optional @alpha and :options (e.g. fa#1A73E8@10:overlay:on)`;
-    case 'fi':
-      return `Use fi<index><hex> with optional @alpha and :options (e.g. fi2#1A73E8:screen:off)`;
-    case 'fd':
-      return `Use fd<target> (e.g. fd2, fd1-3, fd3+, fd-2)`;
-    case 's':
-      return `Use s<target><hex> with optional @alpha and :options (e.g. s2#1A73E8@10:m:off)`;
-    case 'sa':
-      return `Use sa<hex> with optional @alpha and :options (e.g. sa#1A73E8@10:overlay:on)`;
-    case 'si':
-      return `Use si<index><hex> with optional @alpha and :options (e.g. si2#1A73E8:screen:off)`;
-    case 'sd':
-      return `Use sd<target> (e.g. sd2, sd1-3, sd3+, sd-2)`;
-    case 'dup':
-      return `Use a whole number (e.g. dup3)`;
-    case 'op':
-      return `Use 0-100 with optional % (e.g. op80 or op80%)`;
-    case 'rot':
-      return `Use a number with optional deg (e.g. rot45 or rot45deg)`;
-    case 'w':
-    case 'h':
-      return `Use number or % (e.g. ${command.shortcut}100, ${command.shortcut}50%)`;
-    case 'wh':
-      return `Use number, %, or width,height (e.g. wh120, wh80,50%)`;
-    case 'fit':
-    case 'fill':
-    case 'hug':
-      return `Use optional axis value: empty, w, or h (e.g. ${command.shortcut}, ${command.shortcut}w, ${command.shortcut}h)`;
-    case 'ls':
-    case 'lh':
-      return `Use number with optional px/% (e.g. ${command.shortcut}16px)`;
-    default:
-      return `Enter a valid value (e.g. ${command.shortcut}100)`;
+  if (command.invalidValueHint) return command.invalidValueHint;
+  const usage = command.hasValue === false ? command.shortcut : `${command.shortcut}<value>`;
+
+  if (command.valueKind === 'axis') {
+    return `Use optional axis value: empty, w, or h (e.g. ${command.shortcut}, ${command.shortcut}w, ${command.shortcut}h)`;
   }
+  if (command.valueKind === 'integer') {
+    return `Use a whole number (e.g. ${command.shortcut}3)`;
+  }
+  if (command.valueKind === 'pair') {
+    return `Use a pair value (e.g. ${command.shortcut}120,80 or ${command.shortcut}80%,50%)`;
+  }
+
+  const allowedUnits = allowedUnitsForCommand(command);
+  if (allowedUnits.length > 1) {
+    return `Use a number with optional ${allowedUnits.join('/')} (e.g. ${command.shortcut}16${allowedUnits[0]})`;
+  }
+  if (allowedUnits.length === 1 && allowedUnits[0] !== 'px') {
+    return `Use a number with optional ${allowedUnits[0]} (e.g. ${command.shortcut}80${allowedUnits[0]})`;
+  }
+
+  return `Enter a valid value (e.g. ${usage})`;
 }
 
 function displayUnitForCommand(command: PropItem) {
+  if (command.defaultUnit !== undefined) return command.defaultUnit;
   if (command.unit && command.unit !== 'hex') return command.unit;
-  if (['f', 'fa', 'fi', 'fd', 's', 'sa', 'si', 'sd', 'dup'].includes(command.shortcut)) return '';
+  if (command.valueKind === 'paint' || command.valueKind === 'integer') return '';
   if (command.hasValue) return 'px';
   return '';
 }
@@ -493,13 +547,18 @@ function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string, pr
   const defaultUnit = displayUnitForCommand(command);
   if (!defaultUnit) return [];
 
-  const validUnits = allowedUnitsForCommand(command.shortcut);
+  const validUnits = allowedUnitsForCommand(command);
   if (validUnits.length <= 1) return [];
 
   return validUnits.filter((unit) => unit !== defaultUnit);
 }
 
-function getLikelyNextShortcuts(previousCommand?: string) {
+function getLikelyNextShortcuts(previousCommand: string | undefined, flattenedCommands: Record<string, PropItem>) {
+  if (previousCommand) {
+    const configured = flattenedCommands[previousCommand]?.nextShortcuts;
+    if (configured && configured.length > 0) return configured;
+  }
+
   const fallback = ['w', 'h', 'fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot', 'p', 'sw', 'gap'];
   if (!previousCommand) return fallback;
 
@@ -551,7 +610,7 @@ function buildNextCommandSuggestions(
   previousCommand?: string
 ) {
   const suggestions: SuggestionCandidate[] = [];
-  const nextShortcuts = getLikelyNextShortcuts(previousCommand);
+  const nextShortcuts = getLikelyNextShortcuts(previousCommand, flattenedCommands);
 
   for (let i = 0; i < nextShortcuts.length; i++) {
     const shortcut = nextShortcuts[i];
@@ -662,13 +721,16 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
   if (!query) return [];
 
-  const values = query
-    .split(' ')
+  const values = tokenizeSuggestionInput(query)
     .flatMap((value) => splitOriginPrefixedToken(value))
     .map((value) => normalizeScopedScaleToken(value))
     .filter((value) => value.trim() !== '');
   if (query.endsWith(' ')) values.push('');
   if (values.length === 0) return [];
+
+  const textSuggestions = buildTextCommandSuggestions(values);
+  if (textSuggestions.length > 0) return textSuggestions;
+
   const lastToken = values[values.length - 1];
 
   if (lastToken !== '' && isOriginQueryToken(lastToken)) {
@@ -792,11 +854,21 @@ function generateSuggestions(
 
     if (command.hasValue) {
       if (lastCommand.value !== '') {
-        if (isPaintCommand(command.shortcut)) {
+        if (command.valueKind === 'paint') {
           if (lastCommand.prefix !== '') {
             lastMessage = `Error: ${command.name} does not support modifier operators`;
             hasError = true;
-          } else if (isValidPaintCommandValue(command, value)) {
+          } else if (command.validateValue ? command.validateValue(value) : true) {
+            lastMessage = command.message ? `${command.message} ${value}` : `${defaultSetLabel(command.name)} ${value}`;
+          } else {
+            lastMessage = invalidValueHint(command);
+            hasError = true;
+          }
+        } else if (command.valueKind === 'none' && command.validateValue) {
+          if (lastCommand.prefix !== '') {
+            lastMessage = `Error: ${command.name} does not support modifier operators`;
+            hasError = true;
+          } else if (command.validateValue(value)) {
             lastMessage = command.message ? `${command.message} ${value}` : `${defaultSetLabel(command.name)} ${value}`;
           } else {
             lastMessage = invalidValueHint(command);
@@ -806,7 +878,7 @@ function generateSuggestions(
         const range = parseRangeValue(value);
         const rangeExpression = parseRangeExpression(value);
         const scalar = parseScalarValue(value);
-        const pairValue = command.shortcut === 'wh' && isPairNumericValue(value, ['px', '%']);
+        const pairValue = command.valueKind === 'pair' && isPairNumericValue(value, allowedUnitsForCommand(command));
         const axisValue = isAxisModeCommand(command) && isAxisValue(value);
 
         const supportsRange = Boolean(command.supportsModifiers);

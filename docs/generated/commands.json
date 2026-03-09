@@ -1,9 +1,9 @@
 {
   "generatedFrom": "src/plugin/set-properties/prop-list.ts",
-  "generatedAt": "2026-03-07T10:43:15.229Z",
+  "generatedAt": "2026-03-09T16:42:35.116Z",
   "counts": {
     "groups": 36,
-    "commands": 136
+    "commands": 144
   },
   "groups": [
     {
@@ -271,7 +271,7 @@
       "id": "text",
       "shortcut": "text",
       "name": "Text",
-      "description": "Shortcuts for text spacing controls.",
+      "description": "Shortcuts for text spacing, typography, and casing controls.",
       "depth": 0,
       "order": 151
     },
@@ -281,7 +281,7 @@
       "name": "Misc",
       "description": "Miscellaneous shortcuts that do not fit into other categories.",
       "depth": 0,
-      "order": 158
+      "order": 166
     },
     {
       "id": "misc/count",
@@ -290,7 +290,7 @@
       "description": "These are the shortcuts related to counting elements",
       "parent": "misc",
       "depth": 1,
-      "order": 160
+      "order": 168
     },
     {
       "id": "misc/count/count",
@@ -299,7 +299,7 @@
       "description": "Command group for Count Elements. Start with: countn.",
       "parent": "misc/count",
       "depth": 2,
-      "order": 161
+      "order": 169
     },
     {
       "id": "misc/swap",
@@ -308,7 +308,7 @@
       "description": "Shortcuts for swapping the positions of two selected elements horizontally or vertically.",
       "parent": "misc",
       "depth": 1,
-      "order": 164
+      "order": 172
     },
     {
       "id": "misc/swap/swap",
@@ -317,7 +317,7 @@
       "description": "Command group for Swap Elements. Start with: swapx, swapy.",
       "parent": "misc/swap",
       "depth": 2,
-      "order": 165
+      "order": 173
     }
   ],
   "commands": [
@@ -5122,6 +5122,312 @@
       "order": 150
     },
     {
+      "id": "fs",
+      "token": "fs",
+      "name": "Font Size",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": true,
+      "value": "required",
+      "supportsModifiers": true,
+      "flags": [
+        "value",
+        "modifiers"
+      ],
+      "syntax": "fs<value>",
+      "description": "Use fs<value> to set Font Size.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fs100",
+          "help": "Set Font Size to 100"
+        },
+        {
+          "token": "fs50%",
+          "help": "Set Font Size to 50%"
+        },
+        {
+          "token": "+fs8",
+          "help": "Increase Font Size by 8"
+        },
+        {
+          "token": "++fs8+2",
+          "help": "Progressively increase Font Size"
+        }
+      ],
+      "order": 152
+    },
+    {
+      "id": "fw",
+      "token": "fw",
+      "name": "Font Weight",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "fw<value>",
+      "description": "Use fw<value> to set Font Weight.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "fw100",
+          "help": "Set Font Weight to 100"
+        },
+        {
+          "token": "fw50%",
+          "help": "Set Font Weight to 50%"
+        },
+        {
+          "token": "+fw8",
+          "help": "Increase Font Weight by 8"
+        },
+        {
+          "token": "++fw8+2",
+          "help": "Progressively increase Font Weight"
+        }
+      ],
+      "order": 153
+    },
+    {
+      "id": "ta",
+      "token": "ta",
+      "name": "Text Align Horizontal",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "ta<value>",
+      "description": "Use ta<value> to set Text Align Horizontal.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ta100",
+          "help": "Set Text Align Horizontal to 100"
+        },
+        {
+          "token": "ta50%",
+          "help": "Set Text Align Horizontal to 50%"
+        },
+        {
+          "token": "+ta8",
+          "help": "Increase Text Align Horizontal by 8"
+        },
+        {
+          "token": "++ta8+2",
+          "help": "Progressively increase Text Align Horizontal"
+        }
+      ],
+      "order": 154
+    },
+    {
+      "id": "tt",
+      "token": "tt",
+      "name": "Text Case (Figma)",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": true,
+      "value": "required",
+      "flags": [
+        "value"
+      ],
+      "syntax": "tt<value>",
+      "description": "Use tt<value> to set Text Case (Figma).",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "tt100",
+          "help": "Set Text Case (Figma) to 100"
+        },
+        {
+          "token": "tt50%",
+          "help": "Set Text Case (Figma) to 50%"
+        },
+        {
+          "token": "+tt8",
+          "help": "Increase Text Case (Figma) by 8"
+        },
+        {
+          "token": "++tt8+2",
+          "help": "Progressively increase Text Case (Figma)"
+        }
+      ],
+      "order": 155
+    },
+    {
+      "id": "upper",
+      "token": "upper",
+      "name": "Transform To Uppercase (Actual)",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "upper",
+      "description": "Run upper to transform characters to uppercase.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "upper",
+          "help": "Run Transform To Uppercase (Actual)"
+        },
+        {
+          "token": "upper w160",
+          "help": "Run Transform To Uppercase (Actual), then set width to 160px"
+        },
+        {
+          "token": "upper h96",
+          "help": "Run Transform To Uppercase (Actual), then set height to 96px"
+        },
+        {
+          "token": "upper op80",
+          "help": "Run Transform To Uppercase (Actual), then set opacity to 80%"
+        }
+      ],
+      "order": 156
+    },
+    {
+      "id": "lower",
+      "token": "lower",
+      "name": "Transform To Lowercase (Actual)",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "lower",
+      "description": "Run lower to transform characters to lowercase.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "lower",
+          "help": "Run Transform To Lowercase (Actual)"
+        },
+        {
+          "token": "lower w160",
+          "help": "Run Transform To Lowercase (Actual), then set width to 160px"
+        },
+        {
+          "token": "lower h96",
+          "help": "Run Transform To Lowercase (Actual), then set height to 96px"
+        },
+        {
+          "token": "lower op80",
+          "help": "Run Transform To Lowercase (Actual), then set opacity to 80%"
+        }
+      ],
+      "order": 157
+    },
+    {
+      "id": "sentence",
+      "token": "sentence",
+      "name": "Transform To Sentence Case (Actual)",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "sentence",
+      "description": "Run sentence to transform characters to sentence case.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "sentence",
+          "help": "Run Transform To Sentence Case (Actual)"
+        },
+        {
+          "token": "sentence w160",
+          "help": "Run Transform To Sentence Case (Actual), then set width to 160px"
+        },
+        {
+          "token": "sentence h96",
+          "help": "Run Transform To Sentence Case (Actual), then set height to 96px"
+        },
+        {
+          "token": "sentence op80",
+          "help": "Run Transform To Sentence Case (Actual), then set opacity to 80%"
+        }
+      ],
+      "order": 158
+    },
+    {
+      "id": "title",
+      "token": "title",
+      "name": "Transform To Title Case (Actual)",
+      "group": "text",
+      "groupName": "Text",
+      "groupPath": [
+        "text"
+      ],
+      "parent": "text",
+      "path": "Text",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "title",
+      "description": "Run title to transform characters to title case.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "title",
+          "help": "Run Transform To Title Case (Actual)"
+        },
+        {
+          "token": "title w160",
+          "help": "Run Transform To Title Case (Actual), then set width to 160px"
+        },
+        {
+          "token": "title h96",
+          "help": "Run Transform To Title Case (Actual), then set height to 96px"
+        },
+        {
+          "token": "title op80",
+          "help": "Run Transform To Title Case (Actual), then set opacity to 80%"
+        }
+      ],
+      "order": 159
+    },
+    {
       "id": "ls",
       "token": "ls",
       "name": "Letter Spacing",
@@ -5162,7 +5468,7 @@
           "help": "Increase letter spacing by 0.5px"
         }
       ],
-      "order": 152
+      "order": 160
     },
     {
       "id": "lh",
@@ -5203,7 +5509,7 @@
           "help": "Increase line height by 2px"
         }
       ],
-      "order": 153
+      "order": 161
     },
     {
       "id": "lsp",
@@ -5240,7 +5546,7 @@
           "help": "Run Letter Spacing to %, then set opacity to 80%"
         }
       ],
-      "order": 154
+      "order": 162
     },
     {
       "id": "lspx",
@@ -5277,7 +5583,7 @@
           "help": "Run Letter Spacing to px, then set opacity to 80%"
         }
       ],
-      "order": 155
+      "order": 163
     },
     {
       "id": "lhp",
@@ -5314,7 +5620,7 @@
           "help": "Run Line Height to %, then set opacity to 80%"
         }
       ],
-      "order": 156
+      "order": 164
     },
     {
       "id": "lhpx",
@@ -5351,7 +5657,7 @@
           "help": "Run Line Height to px, then set opacity to 80%"
         }
       ],
-      "order": 157
+      "order": 165
     },
     {
       "id": "clip",
@@ -5388,7 +5694,7 @@
           "help": "Run Toggle Clipping, then set opacity to 80%"
         }
       ],
-      "order": 159
+      "order": 167
     },
     {
       "id": "count",
@@ -5426,7 +5732,7 @@
           "help": "Run Count Elements, then set opacity to 80%"
         }
       ],
-      "order": 162
+      "order": 170
     },
     {
       "id": "countn",
@@ -5465,7 +5771,7 @@
           "help": "Run Count Nested Elements, then set opacity to 80%"
         }
       ],
-      "order": 163
+      "order": 171
     },
     {
       "id": "swap",
@@ -5503,7 +5809,7 @@
           "help": "Run Swap Elements, then set opacity to 80%"
         }
       ],
-      "order": 166
+      "order": 174
     },
     {
       "id": "swapx",
@@ -5542,7 +5848,7 @@
           "help": "Run Swap Horizontally, then set opacity to 80%"
         }
       ],
-      "order": 167
+      "order": 175
     },
     {
       "id": "swapy",
@@ -5581,7 +5887,7 @@
           "help": "Run Swap Vertically, then set opacity to 80%"
         }
       ],
-      "order": 168
+      "order": 176
     },
     {
       "id": "wf",
@@ -5618,7 +5924,7 @@
           "help": "Run Wrap in Frame, then set opacity to 80%"
         }
       ],
-      "order": 169
+      "order": 177
     },
     {
       "id": "dup",
@@ -5657,7 +5963,7 @@
           "help": "Duplicate ten times for stress-testing layout"
         }
       ],
-      "order": 170
+      "order": 178
     },
     {
       "id": "rot",
@@ -5699,7 +6005,7 @@
           "help": "Progressively rotate backwards across selection"
         }
       ],
-      "order": 171
+      "order": 179
     },
     {
       "id": "op",
@@ -5741,7 +6047,7 @@
           "help": "Progressively reduce opacity across selection"
         }
       ],
-      "order": 172
+      "order": 180
     }
   ]
 }

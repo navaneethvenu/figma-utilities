@@ -28,10 +28,10 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@figma/plugin-typings@^1.112.0":
-  version "1.112.0"
-  resolved "https://registry.yarnpkg.com/@figma/plugin-typings/-/plugin-typings-1.112.0.tgz#faaa95752deec7c66f135264667e0d8ca0c8c41e"
-  integrity sha512-WWvXk7pqKD1J7H9eXrGjSPRjdlpYY5vRM/FxLliOVxtLISs411CrlWIKoKUJNM+24m1ouZB20vqMElvA3+MvHA==
+"@figma/plugin-typings@^1.123.0":
+  version "1.123.0"
+  resolved "https://registry.yarnpkg.com/@figma/plugin-typings/-/plugin-typings-1.123.0.tgz#f672c918b78d0d0cb5e46b99aa5cd2cc88e442f5"
+  integrity sha512-NLv2aQ8R9dP5psDplWpq+pJxRUGsJ1YEYYbBV2oTd03kS+aau7N9XWLjw52s1uVgi8jQ33N001EX3f7vSCztjQ==
 
 "@jridgewell/gen-mapping@^0.3.0":
   version "0.3.2"

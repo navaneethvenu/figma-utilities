@@ -20,8 +20,24 @@ import traverseSelection from './utils/selection/traverse-selection';
 import countSelectedElements from './utils/count/count';
 import { swapSelectedElements } from './utils/swap/swap-position';
 import { fitToParent } from './utils/fit/fit';
-import setFill, { addFill, deleteFill, insertFill } from './utils/color/replace-fill';
-import setStroke, { addStroke, deleteStroke, insertStroke } from './utils/color/replace-stroke';
+import setFill, {
+  addFill,
+  deleteFill,
+  insertFill,
+  isFillAddValue,
+  isFillDeleteValue,
+  isFillInsertValue,
+  isFillReplaceValue,
+} from './utils/color/replace-fill';
+import setStroke, {
+  addStroke,
+  deleteStroke,
+  insertStroke,
+  isStrokeAddValue,
+  isStrokeDeleteValue,
+  isStrokeInsertValue,
+  isStrokeReplaceValue,
+} from './utils/color/replace-stroke';
 import setAutolayoutBehavior from './utils/autolayout/set-autolayout-behavior';
 import applyAutolayout from './utils/autolayout/apply-autolayout';
 import wrapInFrame from './utils/wrap/wrap-in-frame';
@@ -29,12 +45,19 @@ import setRotation from './utils/rotation/set-rotation';
 import setOpacity from './utils/opacity/set-opacity';
 import setGap from './utils/autolayout/set-gap';
 import setTextSpacing from './utils/text/set-text-spacing';
+import setTextFormat from './utils/text/set-text-format';
 import duplicateSelection from './utils/duplicate/duplicate';
 
 export interface PropItem {
   name: string;
   shortcut: string;
   hasValue?: boolean;
+  valueKind?: 'none' | 'number' | 'pair' | 'axis' | 'paint' | 'integer';
+  allowedUnits?: string[];
+  defaultUnit?: string;
+  invalidValueHint?: string;
+  nextShortcuts?: string[];
+  groupSummary?: string;
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
   supportsModifiers?: boolean;
@@ -45,6 +68,7 @@ export interface PropItem {
   description?: string;
   notes?: string;
   examples?: Array<{ token: string; help: string }>;
+  validateValue?: (value: string) => boolean;
   type?: 'GROUP' | 'ACTION';
   action?: ({ param, value, nodes }: parameterRoutingProps) => void | Promise<void>;
 }
@@ -119,6 +143,12 @@ function readLineHeight(node: SceneNode): number | null {
   if (node.lineHeight === figma.mixed) return null;
   if (node.lineHeight.unit === 'AUTO') return null;
   return asFiniteNumber(node.lineHeight.value);
+}
+
+function readFontSize(node: SceneNode): number | null {
+  if (node.type !== 'TEXT') return null;
+  if (node.fontSize === figma.mixed) return null;
+  return asFiniteNumber(node.fontSize);
 }
 
 const rawPropList: Record<string, PropItem> = {
@@ -332,6 +362,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'w',
         description: 'Use w<value> to set Width.',
         hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['px', '%'],
+        defaultUnit: 'px',
         allowsNegative: false,
         supportsModifiers: true,
         supportsOrigin: true,
@@ -345,6 +378,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'h',
         description: 'Use h<value> to set Height.',
         hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['px', '%'],
+        defaultUnit: 'px',
         allowsNegative: false,
         supportsModifiers: true,
         supportsOrigin: true,
@@ -390,6 +426,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'wh',
         description: 'Use wh<value> to set Width and Height.',
         hasValue: true,
+        valueKind: 'pair',
+        allowedUnits: ['px', '%'],
+        defaultUnit: 'px',
         allowsNegative: false,
         supportsModifiers: true,
         supportsOrigin: true,
@@ -403,6 +442,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'fit',
         description: 'Use fit<value> to set Fit to Parent.',
         hasValue: true,
+        valueKind: 'axis',
+        defaultUnit: '',
+        invalidValueHint: 'Use optional axis value: empty, w, or h (e.g. fit, fitw, fith)',
         message: 'Fit element to parent (value: "", w, h)',
         action: ({ param, value, nodes }) => fitToParent({ param, value, nodes }),
       },
@@ -411,6 +453,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'fill',
         description: 'Use fill<value> to set Fill Auto-layout Space.',
         hasValue: true,
+        valueKind: 'axis',
+        defaultUnit: '',
+        invalidValueHint: 'Use optional axis value: empty, w, or h (e.g. fill, fillw, fillh)',
         message: 'Set auto-layout sizing to fill (value: "", w, h)',
         action: ({ param, value, nodes }) => setAutolayoutBehavior({ command: param, value, nodes }),
       },
@@ -419,6 +464,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'hug',
         description: 'Use hug<value> to set Hug Auto-layout Content.',
         hasValue: true,
+        valueKind: 'axis',
+        defaultUnit: '',
+        invalidValueHint: 'Use optional axis value: empty, w, or h (e.g. hug, hugw, hugh)',
         message: 'Set auto-layout sizing to hug (value: "", w, h)',
         action: ({ param, value, nodes }) => setAutolayoutBehavior({ command: param, value, nodes }),
       },
@@ -1068,6 +1116,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'f',
         description: 'Use f<value> to set Replace Fill Color.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use f<target><hex> with optional @alpha and :options (e.g. f2#1A73E8@10:m:off)',
+        validateValue: (value) => isFillReplaceValue(value),
         message: 'Replace targeted fills with',
         unit: 'hex',
         action: ({ param, value, nodes }) => setFill({ param, value, nodes }),
@@ -1077,6 +1129,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'fa',
         description: 'Use fa<value> to set Add Fill.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use fa<hex> with optional @alpha and :options (e.g. fa#1A73E8@10:overlay:on)',
+        validateValue: (value) => isFillAddValue(value),
         message: 'Append fill',
         unit: 'hex',
         action: ({ param, value, nodes }) => addFill({ param, value, nodes }),
@@ -1086,6 +1142,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'fi',
         description: 'Use fi<value> to set Insert Fill.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use fi<index><hex> with optional @alpha and :options (e.g. fi2#1A73E8:screen:off)',
+        validateValue: (value) => isFillInsertValue(value),
         message: 'Insert fill at target index with',
         unit: 'hex',
         action: ({ param, value, nodes }) => insertFill({ param, value, nodes }),
@@ -1095,6 +1155,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'fd',
         description: 'Use fd<value> to set Delete Fill.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use fd<target> (e.g. fd2, fd1-3, fd3+, fd-2)',
+        validateValue: (value) => isFillDeleteValue(value),
         message: 'Delete targeted fills',
         action: ({ param, value, nodes }) => deleteFill({ param, value, nodes }),
       },
@@ -1103,6 +1167,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 's',
         description: 'Use s<value> to set Replace Stroke Color.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use s<target><hex> with optional @alpha and :options (e.g. s2#1A73E8@10:m:off)',
+        validateValue: (value) => isStrokeReplaceValue(value),
         message: 'Replace targeted strokes with',
         unit: 'hex',
         action: ({ param, value, nodes }) => setStroke({ param, value, nodes }),
@@ -1112,6 +1180,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'sa',
         description: 'Use sa<value> to set Add Stroke.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use sa<hex> with optional @alpha and :options (e.g. sa#1A73E8@10:overlay:on)',
+        validateValue: (value) => isStrokeAddValue(value),
         message: 'Append stroke',
         unit: 'hex',
         action: ({ param, value, nodes }) => addStroke({ param, value, nodes }),
@@ -1121,6 +1193,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'si',
         description: 'Use si<value> to set Insert Stroke.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use si<index><hex> with optional @alpha and :options (e.g. si2#1A73E8:screen:off)',
+        validateValue: (value) => isStrokeInsertValue(value),
         message: 'Insert stroke at target index with',
         unit: 'hex',
         action: ({ param, value, nodes }) => insertStroke({ param, value, nodes }),
@@ -1130,6 +1206,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'sd',
         description: 'Use sd<value> to set Delete Stroke.',
         hasValue: true,
+        valueKind: 'paint',
+        defaultUnit: '',
+        invalidValueHint: 'Use sd<target> (e.g. sd2, sd1-3, sd3+, sd-2)',
+        validateValue: (value) => isStrokeDeleteValue(value),
         message: 'Delete targeted strokes',
         action: ({ param, value, nodes }) => deleteStroke({ param, value, nodes }),
       },
@@ -1328,14 +1408,101 @@ const rawPropList: Record<string, PropItem> = {
   text: {
     name: 'Text',
     shortcut: 'text',
-    description: 'Shortcuts for text spacing controls.',
+    description: 'Shortcuts for text spacing, typography, and casing controls.',
     type: 'GROUP',
     subcommands: {
+      fs: {
+        name: 'Font Size',
+        shortcut: 'fs',
+        description: 'Use fs<value> to set Font Size.',
+        hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['px'],
+        defaultUnit: 'px',
+        supportsModifiers: true,
+        getModifierValue: readFontSize,
+        message: 'Set font size',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      fw: {
+        name: 'Font Weight',
+        shortcut: 'fw',
+        description: 'Use fw<value> to set Font Weight.',
+        hasValue: true,
+        valueKind: 'none',
+        invalidValueHint: 'Use 100..900 or aliases like regular, medium, bold',
+        validateValue: (value) =>
+          /^(?:\d{3}|thin|hairline|extralight|ultralight|light|regular|normal|book|medium|semibold|demibold|bold|extrabold|ultrabold|black|heavy)$/i.test(
+            value.trim()
+          ),
+        message: 'Set font weight',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      ta: {
+        name: 'Text Align Horizontal',
+        shortcut: 'ta',
+        description: 'Use ta<value> to set Text Align Horizontal.',
+        hasValue: true,
+        valueKind: 'none',
+        invalidValueHint: 'Use l|c|r|j (or left|center|right|justify)',
+        validateValue: (value) => /^(?:l|left|c|center|r|right|j|justify|justified)$/i.test(value.trim()),
+        message: 'Set text alignment',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      tt: {
+        name: 'Text Case (Figma)',
+        shortcut: 'tt',
+        description: 'Use tt<value> to set Text Case (Figma).',
+        hasValue: true,
+        valueKind: 'none',
+        invalidValueHint: 'Use original|upper|lower|title|smallcaps|smallcapsforced',
+        validateValue: (value) =>
+          /^(?:none|original|upper|uppercase|lower|lowercase|title|smallcaps|small_caps|smallcapsforced|small_caps_forced)$/i.test(
+            value.trim()
+          ),
+        message: 'Set Figma textCase',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      upper: {
+        name: 'Transform To Uppercase (Actual)',
+        shortcut: 'upper',
+        description: 'Run upper to transform characters to uppercase.',
+        hasValue: false,
+        message: 'Transform selected text to uppercase',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      lower: {
+        name: 'Transform To Lowercase (Actual)',
+        shortcut: 'lower',
+        description: 'Run lower to transform characters to lowercase.',
+        hasValue: false,
+        message: 'Transform selected text to lowercase',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      sentence: {
+        name: 'Transform To Sentence Case (Actual)',
+        shortcut: 'sentence',
+        description: 'Run sentence to transform characters to sentence case.',
+        hasValue: false,
+        message: 'Transform selected text to sentence case',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      title: {
+        name: 'Transform To Title Case (Actual)',
+        shortcut: 'title',
+        description: 'Run title to transform characters to title case.',
+        hasValue: false,
+        message: 'Transform selected text to title case',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
       ls: {
         name: 'Letter Spacing',
         shortcut: 'ls',
         description: 'Use ls<value> to set Letter Spacing.',
         hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['px', '%'],
+        defaultUnit: 'px',
         allowsNegative: true,
         supportsModifiers: true,
         getModifierValue: readLetterSpacing,
@@ -1347,6 +1514,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'lh',
         description: 'Use lh<value> to set Line Height.',
         hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['px', '%'],
+        defaultUnit: 'px',
         supportsModifiers: true,
         getModifierValue: readLineHeight,
         message: 'Set line height (supports px or %)',
@@ -1475,6 +1645,9 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'dup',
         description: 'Use dup<value> to set Duplicate Selected Nodes.',
         hasValue: true,
+        valueKind: 'integer',
+        defaultUnit: '',
+        invalidValueHint: 'Use a whole number (e.g. dup3)',
         message: 'Duplicate selected nodes',
         action: ({ param, value, nodes }) => duplicateSelection({ param, value, nodes }),
       },
@@ -1483,6 +1656,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'rot',
         description: 'Use rot<value> to set Set Rotation.',
         hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['deg'],
+        defaultUnit: 'deg',
+        invalidValueHint: 'Use a number with optional deg (e.g. rot45 or rot45deg)',
         supportsModifiers: true,
         getModifierValue: readNumberProp('rotation'),
         unit: 'deg',
@@ -1493,6 +1670,10 @@ const rawPropList: Record<string, PropItem> = {
         shortcut: 'op',
         description: 'Use op<value> to set Set Opacity.',
         hasValue: true,
+        valueKind: 'number',
+        allowedUnits: ['%'],
+        defaultUnit: '%',
+        invalidValueHint: 'Use 0-100 with optional % (e.g. op80 or op80%)',
         supportsModifiers: true,
         getModifierValue: readOpacityPct,
         unit: '%',
@@ -1700,31 +1881,135 @@ function lowerFirst(value: string) {
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
 
+const groupDescriptionOverrides: Record<string, string> = {
+  pos: 'Commands for moving, docking, and positioning elements within their parent container.',
+  xy: 'Commands for setting element coordinates on the X and Y axes.',
+  d: 'Commands for docking elements to container edges from the inside.',
+  dt: 'Commands for docking elements to top-aligned positions inside a container.',
+  db: 'Commands for docking elements to bottom-aligned positions inside a container.',
+  D: 'Commands for docking elements to container edges from the outside.',
+  DT: 'Commands for docking elements to top-aligned positions outside a container.',
+  DB: 'Commands for docking elements to bottom-aligned positions outside a container.',
+  size: 'Commands for resizing, scaling, and fitting elements to their parent.',
+  sc: 'Commands for scaling selected elements by width or height.',
+  r: 'Commands for setting corner radius across all corners or specific sides.',
+  rt: 'Commands for setting top corner radius values.',
+  rb: 'Commands for setting bottom corner radius values.',
+  p: 'Commands for setting auto-layout padding on individual sides or axes.',
+  sw: 'Commands for setting stroke width on all sides or specific edges.',
+  salign: 'Commands for changing stroke alignment to inside, center, or outside.',
+  selection: 'Commands for selecting, filtering, and excluding elements in the current selection.',
+  sel: 'Commands for quick directional and hierarchy-based selection.',
+  fs: 'Commands for filtering the current selection by layer type.',
+  es: 'Commands for excluding layer types from the current selection.',
+  colour: 'Commands for replacing, adding, inserting, and deleting fills and strokes.',
+  c: 'Commands for setting horizontal and vertical constraints.',
+  cx: 'Commands for horizontal constraint alignment and scaling.',
+  cy: 'Commands for vertical constraint alignment and scaling.',
+  a: 'Commands for auto-layout behavior, direction, and spacing.',
+  text: 'Commands for letter spacing and line-height adjustments.',
+  misc: 'Commands for clipping, counting, swapping, wrapping, duplicating, rotation, and opacity.',
+  count: 'Commands for counting selected elements at top level or nested levels.',
+  swap: 'Commands for swapping selected elements horizontally or vertically.',
+};
+
+function buildActionSentence(command: PropItem) {
+  const name = command.name.trim();
+
+  if (name === 'Wrap in Frame') {
+    return 'Wraps each selected element in its own frame.';
+  }
+
+  if (name.startsWith('Set ')) {
+    return `Sets ${lowerFirst(name.slice(4))} for the selected elements.`;
+  }
+
+  if (name.startsWith('Replace ')) {
+    return `Replaces ${lowerFirst(name.slice(8))} on the selected elements.`;
+  }
+
+  if (name.startsWith('Add ')) {
+    return `Adds ${lowerFirst(name.slice(4))} to the selected elements.`;
+  }
+
+  if (name.startsWith('Insert ')) {
+    return `Inserts ${lowerFirst(name.slice(7))} on the selected elements.`;
+  }
+
+  if (name.startsWith('Delete ')) {
+    return `Deletes ${lowerFirst(name.slice(7))} from the selected elements.`;
+  }
+
+  if (name.startsWith('Toggle ')) {
+    return `Toggles ${lowerFirst(name.slice(7))} for the selected elements.`;
+  }
+
+  if (name.startsWith('Apply ')) {
+    return `Applies ${lowerFirst(name.slice(6))} to the selected elements.`;
+  }
+
+  if (name.startsWith('Select ')) {
+    return `Selects ${lowerFirst(name.slice(7))} relative to the current selection.`;
+  }
+
+  if (name.startsWith('Filter Selection to ')) {
+    return `Keeps only ${lowerFirst(name.slice('Filter Selection to '.length))} in the current selection.`;
+  }
+
+  if (name.startsWith('Exclude ') && name.endsWith(' from Selection')) {
+    return `Removes ${lowerFirst(name.slice(8, -' from Selection'.length))} from the current selection.`;
+  }
+
+  if (name.startsWith('Count ')) {
+    return `Counts ${lowerFirst(name.slice(6))} in the current selection.`;
+  }
+
+  if (command.hasValue === false) {
+    return `Applies ${lowerFirst(name)} to the selected elements.`;
+  }
+
+  return `Sets ${lowerFirst(name)} for the selected elements.`;
+}
+
+function buildNotes(command: PropItem) {
+  const notes: string[] = [];
+
+  if (command.allowsNegative) notes.push('Supports negative values.');
+  if (command.supportsModifiers) notes.push('Supports modifier adjustments.');
+  if (command.supportsOrigin) notes.push('Supports origin-based resizing.');
+  if (command.unit === 'hex') notes.push('Accepts hex color values.');
+
+  return notes;
+}
+
 function buildGeneratedDescription(
   command: PropItem,
   examples: Array<{ token: string; help: string }>,
   childShortcuts: string[]
 ) {
   if (command.type === 'GROUP') {
-    if (childShortcuts.length === 0) {
-      return `Command group for ${command.name}.`;
-    }
+    const summary = command.groupSummary ?? groupDescriptionOverrides[command.shortcut] ?? `Commands for ${lowerFirst(command.name)}.`;
 
-    const preview = childShortcuts.slice(0, 4).map((shortcut) => `\`${shortcut}\``).join(', ');
-    return `Command group for ${command.name}. Start with: ${preview}.`;
+    if (childShortcuts.length === 0) return summary;
+
+    const preview = childShortcuts.slice(0, 6).join(', ');
+    return `${summary}\n\nIncludes:\n${preview}`;
   }
 
-  const syntax = command.hasValue === false ? `\`${command.shortcut}\`` : `\`${command.shortcut}<value>\``;
-  const examplesPreview = examples
-    .slice(0, 2)
-    .map((example) => `\`${example.token}\``)
-    .join(', ');
+  const syntax = command.hasValue === false ? `${command.shortcut}` : `${command.shortcut}<value>`;
+  const example = examples[0] ?? buildFallbackExamples(command)[0];
+  const notes = buildNotes(command);
+  const sections = [
+    buildActionSentence(command),
+    `Usage:\n${syntax}`,
+    `Example:\n${example.token} -> ${example.help}`,
+  ];
 
-  if (command.hasValue === false) {
-    return `Use ${syntax} to ${lowerFirst(command.name)}. Common usage: ${examplesPreview}.`;
+  if (notes.length > 0) {
+    sections.push(`Notes:\n${notes.join(' ')}`);
   }
 
-  return `Use ${syntax} to ${lowerFirst(command.name)}. Try: ${examplesPreview}.`;
+  return sections.join('\n\n');
 }
 
 function addExamplesToCommands(commands: Record<string, PropItem>): Record<string, PropItem> {
@@ -1736,14 +2021,12 @@ function addExamplesToCommands(commands: Record<string, PropItem>): Record<strin
     const childShortcuts = children ? Object.values(children).map((child) => child.shortcut) : [];
 
     if (withChildren.type !== 'GROUP') {
-      const explicitExamples = byShortcutExamples(withChildren.shortcut);
+      const explicitExamples = withChildren.examples ?? byShortcutExamples(withChildren.shortcut);
       const fallbackExamples = buildFallbackExamples(withChildren);
       const examples = ensureAtLeastFourExamples([...explicitExamples, ...fallbackExamples]);
       withChildren.examples = examples;
-      if (!withChildren.description?.trim()) {
-        withChildren.description = buildGeneratedDescription(withChildren, examples, childShortcuts);
-      }
-    } else if (!withChildren.description?.trim()) {
+      withChildren.description = buildGeneratedDescription(withChildren, examples, childShortcuts);
+    } else {
       withChildren.description = buildGeneratedDescription(withChildren, [], childShortcuts);
     }
 
