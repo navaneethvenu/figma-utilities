@@ -85,7 +85,10 @@ function buildTextCommandSuggestions(values: string[]): Suggestion[] {
   ];
   for (const item of livePatterns) {
     if (item.re.test(lastToken)) {
-      const base = values.slice(0, values.length - 1).filter(Boolean).join(' ');
+      const base = values
+        .slice(0, values.length - 1)
+        .filter(Boolean)
+        .join(' ');
       const data = base ? `${base} ${lastToken}` : lastToken;
       return [{ name: `${data} - ${item.desc}`, data }];
     }
@@ -107,7 +110,10 @@ function buildTextCommandSuggestions(values: string[]): Suggestion[] {
     { token: 'title', desc: 'Transform actual text to title case' },
   ];
 
-  const base = values.slice(0, values.length - 1).filter(Boolean).join(' ');
+  const base = values
+    .slice(0, values.length - 1)
+    .filter(Boolean)
+    .join(' ');
   const prefix = lastToken.toLowerCase();
   const matches = templates.filter((item) => item.token.toLowerCase().startsWith(prefix) || prefix === '');
   if (matches.length === 0) return [];
@@ -152,6 +158,11 @@ function isOriginQueryToken(token: string) {
   return ORIGIN_TOKENS.some((origin) => origin.startsWith(candidate));
 }
 
+function isExactCommandShortcut(token: string, flattenedCommands: Record<string, PropItem>) {
+  const normalized = normalizeScopedScaleToken(token.trim().toLowerCase());
+  return normalized in flattenedCommands;
+}
+
 function buildOriginSuggestions(values: string[], lastToken: string): Suggestion[] {
   const trimmed = lastToken.trim().toLowerCase();
   const prefix = trimmed.endsWith(':') ? trimmed.slice(0, -1) : trimmed;
@@ -167,7 +178,9 @@ function buildOriginSuggestions(values: string[], lastToken: string): Suggestion
 
     const token = `${origin}:`;
     const label = getOriginLabel(origin);
-    const name = base ? `${base} ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
+    const name = base
+      ? `${base} ${token} - Set transform origin to ${label}`
+      : `${token} - Set transform origin to ${label}`;
     const data = base ? `${base} ${token}` : token;
     suggestions.push({ name, data });
   }
@@ -177,7 +190,9 @@ function buildOriginSuggestions(values: string[], lastToken: string): Suggestion
     if (exact) {
       const token = `${exact}:`;
       const label = getOriginLabel(exact);
-      const name = base ? `${base} ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
+      const name = base
+        ? `${base} ${token} - Set transform origin to ${label}`
+        : `${token} - Set transform origin to ${label}`;
       const data = base ? `${base} ${token}` : token;
       suggestions.push({ name, data });
     }
@@ -228,7 +243,8 @@ function allowedUnitsForCommand(command: PropItem) {
 
 function isScalarAllowedForCommand(command: PropItem, value: string, scalarUnit: string) {
   if (command.valueKind === 'integer') return /^\d+$/.test(value.trim());
-  if (command.valueKind === 'pair' && value.includes(',')) return isPairNumericValue(value, allowedUnitsForCommand(command));
+  if (command.valueKind === 'pair' && value.includes(','))
+    return isPairNumericValue(value, allowedUnitsForCommand(command));
 
   const unit = scalarUnit.toLowerCase();
   if (!unit) return true;
@@ -266,9 +282,7 @@ function parseRangeValue(value: string) {
 }
 
 function parseRangeExpression(value: string) {
-  const match = value.match(
-    /^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/
-  );
+  const match = value.match(/^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/);
   if (!match) return null;
 
   const left = parseRangeValue(match[1]) ?? parseScalarValue(match[1]);
@@ -410,8 +424,8 @@ function renderScalarValue(raw: string, defaultUnit: string, prefix: string) {
   const withUnit = parsed.unit
     ? `${normalized}${parsed.unit}`
     : shouldAppendDefaultUnit
-      ? `${normalized}${defaultUnit}`.trim()
-      : normalized;
+    ? `${normalized}${defaultUnit}`.trim()
+    : normalized;
   if (parsed.progressionOp && parsed.progressionValue !== null) {
     const op = parsed.progressionOp;
     const val = parsed.progressionValue;
@@ -562,7 +576,8 @@ function getLikelyNextShortcuts(previousCommand: string | undefined, flattenedCo
   const fallback = ['w', 'h', 'fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot', 'p', 'sw', 'gap'];
   if (!previousCommand) return fallback;
 
-  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand)) return ['fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot'];
+  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand))
+    return ['fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot'];
   if (['fit', 'fill', 'hug'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'r', 'f', 's'];
   if (['x', 'y'].includes(previousCommand)) return ['w', 'h', 'r', 'f', 'op'];
   if (['f', 's'].includes(previousCommand)) return ['op', 'sw', 'r', 'w', 'h'];
@@ -618,7 +633,7 @@ function buildNextCommandSuggestions(
     if (!command || !command.action) continue;
 
     const example = getCommandExamples(command)[0];
-    const token = command.hasValue ? (example?.token ?? `${shortcut}100`) : shortcut;
+    const token = command.hasValue ? example?.token ?? `${shortcut}100` : shortcut;
     const composed = composeTokenWithContext(contextTokens, token);
     suggestions.push({
       name: `${composed} - Next: ${example?.help ?? command.name}`,
@@ -733,7 +748,13 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
 
   const lastToken = values[values.length - 1];
 
-  if (lastToken !== '' && isOriginQueryToken(lastToken)) {
+  const trimmedLastToken = lastToken.trim();
+  const shouldPrioritizeOriginSuggestions =
+    trimmedLastToken !== '' &&
+    isOriginQueryToken(lastToken) &&
+    (trimmedLastToken.endsWith(':') || !isExactCommandShortcut(lastToken, flattenedCommands));
+
+  if (shouldPrioritizeOriginSuggestions) {
     return buildOriginSuggestions(values, lastToken);
   }
 
@@ -875,59 +896,59 @@ function generateSuggestions(
             hasError = true;
           }
         } else {
-        const range = parseRangeValue(value);
-        const rangeExpression = parseRangeExpression(value);
-        const scalar = parseScalarValue(value);
-        const pairValue = command.valueKind === 'pair' && isPairNumericValue(value, allowedUnitsForCommand(command));
-        const axisValue = isAxisModeCommand(command) && isAxisValue(value);
+          const range = parseRangeValue(value);
+          const rangeExpression = parseRangeExpression(value);
+          const scalar = parseScalarValue(value);
+          const pairValue = command.valueKind === 'pair' && isPairNumericValue(value, allowedUnitsForCommand(command));
+          const axisValue = isAxisModeCommand(command) && isAxisValue(value);
 
-        const supportsRange = Boolean(command.supportsModifiers);
-        const requiresUnitlessScalar = lastCommand.prefix !== '';
-        const isValidScalarValue =
-          scalar !== null &&
-          (scalar.num >= 0 || command.allowsNegative === true) &&
-          (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)) &&
-          (!requiresUnitlessScalar || scalar.unit === '') &&
-          isScalarAllowedForCommand(command, value, scalar.unit);
-        const isValidAxisValue = axisValue && lastCommand.prefix === '';
-        const isValidValue =
-          (supportsRange && range !== null) ||
-          (supportsRange && rangeExpression !== null && isSequentialPrefix(lastCommand.prefix)) ||
-          pairValue ||
-          isValidAxisValue ||
-          isValidScalarValue;
+          const supportsRange = Boolean(command.supportsModifiers);
+          const requiresUnitlessScalar = lastCommand.prefix !== '';
+          const isValidScalarValue =
+            scalar !== null &&
+            (scalar.num >= 0 || command.allowsNegative === true) &&
+            (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)) &&
+            (!requiresUnitlessScalar || scalar.unit === '') &&
+            isScalarAllowedForCommand(command, value, scalar.unit);
+          const isValidAxisValue = axisValue && lastCommand.prefix === '';
+          const isValidValue =
+            (supportsRange && range !== null) ||
+            (supportsRange && rangeExpression !== null && isSequentialPrefix(lastCommand.prefix)) ||
+            pairValue ||
+            isValidAxisValue ||
+            isValidScalarValue;
 
-        if (hasMalformedRangeValue(value)) {
-          lastMessage = `Invalid range format. Use start..end (e.g. ${command.shortcut}100..300)`;
-          hasError = true;
-        } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
-          lastMessage = `Progression needs sequential operators (++, --, **, //)`;
-          hasError = true;
-        } else if (isValidValue) {
-          const defaultUnit = displayUnitForCommand(command);
-          if (range) {
-            lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
-          } else if (pairValue) {
-            lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
-          } else if (rangeExpression) {
-            lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
-          } else if (isValidAxisValue) {
-            lastMessage = formatAxisMessage(lastCommand.prefix, command, value);
-          } else {
-            const renderedValue = renderScalarValue(value, defaultUnit, lastCommand.prefix);
-            lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
+          if (hasMalformedRangeValue(value)) {
+            lastMessage = `Invalid range format. Use start..end (e.g. ${command.shortcut}100..300)`;
+            hasError = true;
+          } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
+            lastMessage = `Progression needs sequential operators (++, --, **, //)`;
+            hasError = true;
+          } else if (isValidValue) {
+            const defaultUnit = displayUnitForCommand(command);
+            if (range) {
+              lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
+            } else if (pairValue) {
+              lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
+            } else if (rangeExpression) {
+              lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
+            } else if (isValidAxisValue) {
+              lastMessage = formatAxisMessage(lastCommand.prefix, command, value);
+            } else {
+              const renderedValue = renderScalarValue(value, defaultUnit, lastCommand.prefix);
+              lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
 
-            const alternateUnits = getAlternateUnitsForCommand(command, scalar?.unit ?? '', lastCommand.prefix);
-            for (let i = 0; i < alternateUnits.length; i++) {
-              const altUnit = alternateUnits[i];
-              const altRenderedValue = renderScalarValue(value, altUnit, lastCommand.prefix);
-              alternateUnitCandidates.push({ renderedValue: altRenderedValue, unitIndex: i });
+              const alternateUnits = getAlternateUnitsForCommand(command, scalar?.unit ?? '', lastCommand.prefix);
+              for (let i = 0; i < alternateUnits.length; i++) {
+                const altUnit = alternateUnits[i];
+                const altRenderedValue = renderScalarValue(value, altUnit, lastCommand.prefix);
+                alternateUnitCandidates.push({ renderedValue: altRenderedValue, unitIndex: i });
+              }
             }
+          } else {
+            lastMessage = invalidValueHint(command);
+            hasError = true;
           }
-        } else {
-          lastMessage = invalidValueHint(command);
-          hasError = true;
-        }
         }
       } else {
         if (isAxisModeCommand(command) && lastCommand.prefix === '') {

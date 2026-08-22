@@ -47,6 +47,7 @@ import setGap from './utils/autolayout/set-gap';
 import setTextSpacing from './utils/text/set-text-spacing';
 import setTextFormat from './utils/text/set-text-format';
 import duplicateSelection from './utils/duplicate/duplicate';
+import { createByMethod } from './utils/create/create-node';
 
 export interface PropItem {
   name: string;
@@ -62,6 +63,7 @@ export interface PropItem {
   allowsNegative?: boolean;
   supportsModifiers?: boolean;
   supportsOrigin?: boolean;
+  requiresSelection?: boolean;
   getModifierValue?: (node: SceneNode) => number | null;
   unit?: string;
   message?: string;
@@ -1557,6 +1559,178 @@ const rawPropList: Record<string, PropItem> = {
     },
   },
 
+  // Create
+  create: {
+    name: 'Create',
+    shortcut: 'n',
+    description: 'Create new nodes directly from command shortcuts.',
+    type: 'GROUP',
+    subcommands: {
+      nr: {
+        name: 'Create Rectangle',
+        shortcut: 'nr',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createRectangle');
+        },
+      },
+      nl: {
+        name: 'Create Line',
+        shortcut: 'nl',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createLine');
+        },
+      },
+      ne: {
+        name: 'Create Ellipse',
+        shortcut: 'ne',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createEllipse');
+        },
+      },
+      np: {
+        name: 'Create Polygon',
+        shortcut: 'np',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createPolygon');
+        },
+      },
+      ns: {
+        name: 'Create Star',
+        shortcut: 'ns',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createStar');
+        },
+      },
+      nv: {
+        name: 'Create Vector',
+        shortcut: 'nv',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createVector');
+        },
+      },
+      nt: {
+        name: 'Create Text',
+        shortcut: 'nt',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createText');
+        },
+      },
+      nf: {
+        name: 'Create Frame',
+        shortcut: 'nf',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createFrame');
+        },
+      },
+      nse: {
+        name: 'Create Section',
+        shortcut: 'nse',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSection');
+        },
+      },
+      nst: {
+        name: 'Create Sticky',
+        shortcut: 'nst',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSticky');
+        },
+      },
+      nct: {
+        name: 'Create Connector',
+        shortcut: 'nct',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createConnector');
+        },
+      },
+      nsh: {
+        name: 'Create Shape With Text',
+        shortcut: 'nsh',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createShapeWithText');
+        },
+      },
+      ncb: {
+        name: 'Create Code Block',
+        shortcut: 'ncb',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createCodeBlock');
+        },
+      },
+      ntb: {
+        name: 'Create Table',
+        shortcut: 'ntb',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createTable');
+        },
+      },
+      nsd: {
+        name: 'Create Slide',
+        shortcut: 'nsd',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSlide');
+        },
+      },
+      nsr: {
+        name: 'Create Slide Row',
+        shortcut: 'nsr',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSlideRow');
+        },
+      },
+      npg: {
+        name: 'Create Page',
+        shortcut: 'npg',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createPage');
+        },
+      },
+      ndv: {
+        name: 'Create Page Divider',
+        shortcut: 'ndv',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createPageDivider');
+        },
+      },
+    },
+  },
+
   //Misc
   misc: {
     name: 'Misc',
@@ -1988,7 +2162,10 @@ function buildGeneratedDescription(
   childShortcuts: string[]
 ) {
   if (command.type === 'GROUP') {
-    const summary = command.groupSummary ?? groupDescriptionOverrides[command.shortcut] ?? `Commands for ${lowerFirst(command.name)}.`;
+    const summary =
+      command.groupSummary ??
+      groupDescriptionOverrides[command.shortcut] ??
+      `Commands for ${lowerFirst(command.name)}.`;
 
     if (childShortcuts.length === 0) return summary;
 
@@ -1999,11 +2176,7 @@ function buildGeneratedDescription(
   const syntax = command.hasValue === false ? `${command.shortcut}` : `${command.shortcut}<value>`;
   const example = examples[0] ?? buildFallbackExamples(command)[0];
   const notes = buildNotes(command);
-  const sections = [
-    buildActionSentence(command),
-    `Usage:\n${syntax}`,
-    `Example:\n${example.token} -> ${example.help}`,
-  ];
+  const sections = [buildActionSentence(command), `Usage:\n${syntax}`, `Example:\n${example.token} -> ${example.help}`];
 
   if (notes.length > 0) {
     sections.push(`Notes:\n${notes.join(' ')}`);
