@@ -10,6 +10,7 @@ interface BindedCommand {
   command: PropItem;
   value: string;
   prefix: string;
+  searchTerm?: string;
 }
 
 interface Suggestion {
@@ -731,6 +732,21 @@ function isOperatorOnlyToken(token: string) {
   return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)$/.test(token.trim());
 }
 
+function fuzzyNameScore(query: string, name: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedName = name.trim().toLowerCase();
+  if (!normalizedQuery || !normalizedName) return null;
+  if (normalizedName === normalizedQuery) return 30;
+  if (normalizedName.includes(normalizedQuery)) return 20 - normalizedName.indexOf(normalizedQuery) / 100;
+
+  let queryIndex = 0;
+  for (const character of normalizedName) {
+    if (character === normalizedQuery[queryIndex]) queryIndex++;
+    if (queryIndex === normalizedQuery.length) return 10 - (normalizedName.length - normalizedQuery.length) / 100;
+  }
+  return null;
+}
+
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
@@ -804,6 +820,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
       command: contextCommand,
       value: paramVal,
       prefix: directPrefixedCommand ? '' : prefix,
+      searchTerm: token,
     });
   }
 
@@ -834,12 +851,14 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
         command: directPrefixedCommand,
         value: paramVal,
         prefix: '',
+        searchTerm: lastToken,
       });
     } else {
       suggestionRow.push({
         command: { name: '', shortcut: param, hasValue: true },
         value: paramVal,
         prefix,
+        searchTerm: lastToken,
       });
     }
   }
@@ -1015,9 +1034,13 @@ function generateSuggestions(
 
 function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<string, PropItem>) {
   const commands: BindedCommand[] = [];
+  const nameQuery = item.searchTerm?.replace(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/, '') ?? '';
   for (const command in flattenedCommands) {
-    if (command.startsWith(item.command.shortcut)) {
-      commands.push({ command: flattenedCommands[command], value: item.value, prefix: item.prefix });
+    const candidate = flattenedCommands[command];
+    const shortcutMatch = command.startsWith(item.command.shortcut);
+    const nameScore = fuzzyNameScore(nameQuery, candidate.name);
+    if (shortcutMatch || nameScore !== null) {
+      commands.push({ command: candidate, value: item.value, prefix: item.prefix, searchTerm: item.searchTerm });
     }
   }
 
@@ -1025,6 +1048,9 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
     const aExact = a.command.shortcut === item.command.shortcut ? 1 : 0;
     const bExact = b.command.shortcut === item.command.shortcut ? 1 : 0;
     if (aExact !== bExact) return bExact - aExact;
+    const aNameScore = fuzzyNameScore(nameQuery, a.command.name) ?? 0;
+    const bNameScore = fuzzyNameScore(nameQuery, b.command.name) ?? 0;
+    if (aNameScore !== bNameScore) return bNameScore - aNameScore;
     return a.command.shortcut.length - b.command.shortcut.length;
   });
 
