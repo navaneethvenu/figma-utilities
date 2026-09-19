@@ -11,6 +11,7 @@ interface BindedCommand {
   value: string;
   prefix: string;
   searchTerm?: string;
+  nameMatchScore?: number;
 }
 
 interface Suggestion {
@@ -732,17 +733,31 @@ function isOperatorOnlyToken(token: string) {
   return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)$/.test(token.trim());
 }
 
-function fuzzyNameScore(query: string, name: string) {
+export function fuzzyNameScore(query: string, name: string) {
   const normalizedQuery = query.trim().toLowerCase();
   const normalizedName = name.trim().toLowerCase();
   if (!normalizedQuery || !normalizedName) return null;
-  if (normalizedName === normalizedQuery) return 30;
-  if (normalizedName.includes(normalizedQuery)) return 20 - normalizedName.indexOf(normalizedQuery) / 100;
+  if (normalizedName === normalizedQuery) return 92;
+  const substringIndex = normalizedName.indexOf(normalizedQuery);
+  if (substringIndex >= 0) return 90 - substringIndex / 100;
 
-  let queryIndex = 0;
-  for (const character of normalizedName) {
-    if (character === normalizedQuery[queryIndex]) queryIndex++;
-    if (queryIndex === normalizedQuery.length) return 10 - (normalizedName.length - normalizedQuery.length) / 100;
+  const words = normalizedName.split(/[^a-z0-9]+/).filter(Boolean);
+  const initials = words.map((word) => word[0]).join('');
+  if (initials.includes(normalizedQuery)) return 82 - initials.indexOf(normalizedQuery) / 100;
+
+  for (const word of words) {
+    let queryIndex = 0;
+    let lastIndex = -1;
+    let gap = 0;
+    for (let index = 0; index < word.length && queryIndex < normalizedQuery.length; index++) {
+      if (word[index] !== normalizedQuery[queryIndex]) continue;
+      if (lastIndex >= 0) gap += index - lastIndex - 1;
+      lastIndex = index;
+      queryIndex++;
+    }
+    if (queryIndex === normalizedQuery.length && gap <= normalizedQuery.length) {
+      return 70 - gap - (word.length - normalizedQuery.length) / 100;
+    }
   }
   return null;
 }
@@ -984,10 +999,11 @@ function generateSuggestions(
 
     const suggestionToken = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''}`;
     const composed = composeTokenWithContext(contextTokens, suggestionToken);
-    const isExactShortcut = command.shortcut === lastItem.command.shortcut;
-    const scoreBase =
-      (isExactShortcut ? 95 : 72 - Math.max(0, command.shortcut.length - lastItem.command.shortcut.length)) +
-      (hasError ? -50 : 0);
+    const normalizedSearchTerm = lastItem.searchTerm
+      ?.replace(/^\+\+|^--|^\*\*|^\/\/|^\+|^-|^\*|^\//, '')
+      .toLowerCase();
+    const isExactShortcut = command.shortcut === lastItem.command.shortcut && normalizedSearchTerm === command.shortcut;
+    const scoreBase = (isExactShortcut ? 95 : lastCommand.nameMatchScore ?? 0) + (hasError ? -50 : 0);
     candidates.push({
       name: `${composed} - ${lastMessage}`,
       data: composed,
@@ -1037,10 +1053,17 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
   const nameQuery = item.searchTerm?.replace(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/, '') ?? '';
   for (const command in flattenedCommands) {
     const candidate = flattenedCommands[command];
-    const shortcutMatch = command.startsWith(item.command.shortcut);
+    const shortcutMatch = command === item.command.shortcut ||
+      (nameQuery.length <= command.length && command.startsWith(nameQuery));
     const nameScore = fuzzyNameScore(nameQuery, candidate.name);
     if (shortcutMatch || nameScore !== null) {
-      commands.push({ command: candidate, value: item.value, prefix: item.prefix, searchTerm: item.searchTerm });
+      commands.push({
+        command: candidate,
+        value: item.value,
+        prefix: item.prefix,
+        searchTerm: item.searchTerm,
+        nameMatchScore: nameScore ?? 0,
+      });
     }
   }
 
@@ -1048,8 +1071,8 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
     const aExact = a.command.shortcut === item.command.shortcut ? 1 : 0;
     const bExact = b.command.shortcut === item.command.shortcut ? 1 : 0;
     if (aExact !== bExact) return bExact - aExact;
-    const aNameScore = fuzzyNameScore(nameQuery, a.command.name) ?? 0;
-    const bNameScore = fuzzyNameScore(nameQuery, b.command.name) ?? 0;
+    const aNameScore = a.nameMatchScore ?? fuzzyNameScore(nameQuery, a.command.name) ?? 0;
+    const bNameScore = b.nameMatchScore ?? fuzzyNameScore(nameQuery, b.command.name) ?? 0;
     if (aNameScore !== bNameScore) return bNameScore - aNameScore;
     return a.command.shortcut.length - b.command.shortcut.length;
   });
