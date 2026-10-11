@@ -53,7 +53,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Multiple commands: space-separated
 - Value is optional for action-only shortcuts (for example `clip`, `swapx`)
 - Numeric adjustments use modifier operators only.
-- Global numeric operators (supported for `h`, `w`, `wh`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `st`, `stl`, `str`, `stt`, `stb`, `stx`, `sty`, `gap`, `gapx`, `gapy`, `rot`, `op`, `sc:w`, `sc:h`, `ls`, `lh`): `+`, `-`, `*`, `/`
+- Global numeric operators (supported for `h`, `w`, `wh`, `x`, `y`, `p`, `pl`, `pr`, `pt`, `pb`, `px`, `py`, `r`, `rt`, `rtl`, `rtr`, `rb`, `rbl`, `rbr`, `rl`, `rr`, `sw`, `swl`, `swr`, `swt`, `swb`, `swx`, `swy`, `gap`, `gapx`, `gapy`, `rot`, `op`, `sc:w`, `sc:h`, `ls`, `lh`): `+`, `-`, `*`, `/`
 - Flow/sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives cumulative `+24, +50, +78, ...`)
@@ -83,7 +83,7 @@ Main families:
 - Size: `w`, `h`, `wh`, `sc:w`, `sc:h`, `fit`, `fitw`, `fith`, `fill`, `fillw`, `fillh`, `hug`, `hugw`, `hugh`
 - Radius: `r`, `rt`, `rb`, `rtl`, `rbr`, ...
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
-- Stroke: width (`st`, `stl`, `sty`, ...), align (`sti`, `stc`, `sto`)
+- Stroke: width (`sw`, `swl`, `swy`, ...), align (`sai`, `sac`, `sao`)
 - Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), traversal (`root`/`leaf`/`selp`/`selc`/`selns`/`selps`/`seli`), filter (`fs*`), exclude (`es*`)
 - Color: fill replace (`f<hex>`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`

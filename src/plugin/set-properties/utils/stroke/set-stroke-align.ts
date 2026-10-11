@@ -19,15 +19,15 @@ export default function setStrokeAlign({ param, nodes }: setStrokeProps) {
 
     if (nodeTypeCheck) {
       //Inside Stroke
-      if (param === 'sti') {
+      if (param === 'sai') {
         node.strokeAlign = 'INSIDE';
       }
       //Center Stroke
-      else if (param === 'stc') {
+      else if (param === 'sac') {
         node.strokeAlign = 'CENTER';
       }
       //Outside Stroke
-      else if (param === 'sto') {
+      else if (param === 'sao') {
         node.strokeAlign = 'OUTSIDE';
       } else {
         notifyError({

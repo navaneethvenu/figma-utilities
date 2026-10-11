@@ -552,69 +552,69 @@ export const propList: Record<string, PropItem> = {
   },
 
   //Strokes
-  st: {
+  sw: {
     name: 'Strokes',
     description: 'Shortcuts for setting stroke width and alignment for elements, including individual edges.',
-    shortcut: 'st',
+    shortcut: 'sw',
     type: 'GROUP',
     subcommands: {
       //Set Stroke Width
-      st: {
+      sw: {
         name: 'Stroke Width',
-        shortcut: 'st',
+        shortcut: 'sw',
         description: 'These are the shortcuts related to adjusting the stroke width of any object',
         type: 'GROUP',
         subcommands: {
-          st: {
+          sw: {
             name: 'Strokes',
-            shortcut: 'st',
+            shortcut: 'sw',
             hasValue: true,
             supportsModifiers: true,
             getModifierValue: readNumberProp('strokeWeight'),
             subcommands: {
-              stl: {
+              swl: {
                 name: 'Left Stroke',
-                shortcut: 'stl',
+                shortcut: 'swl',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeLeftWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              str: {
+              swr: {
                 name: 'Right Stroke',
-                shortcut: 'str',
+                shortcut: 'swr',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeRightWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              stt: {
+              swt: {
                 name: 'Top Stroke',
-                shortcut: 'stt',
+                shortcut: 'swt',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeTopWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              stb: {
+              swb: {
                 name: 'Bottom Stroke',
-                shortcut: 'stb',
+                shortcut: 'swb',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeBottomWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              stx: {
+              swx: {
                 name: 'Horizontal Strokes',
-                shortcut: 'stx',
+                shortcut: 'swx',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeLeftWeight'),
                 action: ({ param, value, nodes }) => setStrokeWidth({ param, value, nodes }),
               },
-              sty: {
+              swy: {
                 name: 'Vertical Strokes',
-                shortcut: 'sty',
+                shortcut: 'swy',
                 hasValue: true,
                 supportsModifiers: true,
                 getModifierValue: readNumberProp('strokeTopWeight'),
@@ -627,30 +627,30 @@ export const propList: Record<string, PropItem> = {
       },
 
       //Set Stroke Align
-      sta: {
+      sa: {
         name: 'Stroke Alignment',
-        shortcut: 'sta',
+        shortcut: 'sa',
         description: 'These are the shortcuts related to adjusting the stroke alignment of any object',
         type: 'GROUP',
         subcommands: {
-          sti: {
+          sai: {
             name: 'Stroke Align Inside',
             message: 'Set alignment of stroke to inside',
-            shortcut: 'sti',
+            shortcut: 'sai',
             hasValue: false,
             action: ({ param, nodes }) => setStrokeAlign({ param, nodes }),
           },
-          stc: {
+          sac: {
             name: 'Stroke Align Center',
             message: 'Set alignment of stroke to center',
-            shortcut: 'stc',
+            shortcut: 'sac',
             hasValue: false,
             action: ({ param, nodes }) => setStrokeAlign({ param, nodes }),
           },
-          sto: {
+          sao: {
             name: 'Stroke Align Outside',
             message: 'Set alignment of stroke to outside',
-            shortcut: 'sto',
+            shortcut: 'sao',
             hasValue: false,
             action: ({ param, nodes }) => setStrokeAlign({ param, nodes }),
           },
