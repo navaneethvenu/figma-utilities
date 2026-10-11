@@ -1,0 +1,24 @@
+const fs=require('fs'),ts=require('typescript'),assert=require('assert');
+require.extensions['.ts']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,f);
+global.figma={notify:()=>{},mixed:Symbol('mixed'),clientStorage:{getAsync:async()=>[]}};
+const parse=require('../src/plugin/set-properties/parse-params.ts').default;
+const suggest=require('../src/plugin/set-properties/suggestions.ts').default;
+const {flattenCommands,propList}=require('../src/plugin/set-properties/prop-list.ts');
+const catalog=flattenCommands(propList,{});let pass=0;
+function test(name,f){f();console.log('PASS',name);pass++}
+for(const input of ['wh120,80','sc:w200','sc:*w2','++h40/2','++h10..20-5..15','w50%','fit','fitw','fith','fill','fillw','fillh','hug','hugw','hugh','sw2','swl2','swx2','swy2','sai','sac','sao'])test('parse '+input,()=>assert(parse({property:input}).length===1));
+for(const input of ['s120,80','scw200','sch120','+++h40','ah','af','afi','st2','sti','fitx','+fillw','saF00','siF00','sd'])test('reject '+input,()=>assert.throws(()=>parse({property:input})));
+for(const input of ['fitw','fith','fillw','fillh','hugw','hugh','w50%','wh80%,50%'])test('suggest '+input,()=>assert(suggest({query:input}).some(x=>x.data===input&&!x.name.includes('Error:'))));
+test('axis chain suggestion',()=>assert(suggest({query:'fillw hugh'}).some(x=>x.data==='fillw hugh')));
+test('no new paint commands',()=>{for(const x of ['s','sa','si','sd','fa','fi','fd'])assert(!catalog[x]?.action,x)});
+const stroke=require('../src/plugin/set-properties/utils/stroke/set-stroke-width.ts').default;
+const align=require('../src/plugin/set-properties/utils/stroke/set-stroke-align.ts').default;
+test('stroke width edge routes',()=>{const n={type:'RECTANGLE',strokes:[{type:'SOLID'}],strokeWeight:1};stroke({param:'swl',value:'3',nodes:[n]});assert.equal(n.strokeLeftWeight,3);stroke({param:'swx',value:'4',nodes:[n]});assert.equal(n.strokeLeftWeight,4);assert.equal(n.strokeRightWeight,4);stroke({param:'swy',value:'5',nodes:[n]});assert.equal(n.strokeTopWeight,5);assert.equal(n.strokeBottomWeight,5);stroke({param:'sw',value:'2',nodes:[n]});assert.equal(n.strokeWeight,2)});
+test('stroke alignment routes',()=>{const n={type:'RECTANGLE'};for(const [param,val]of [['sai','INSIDE'],['sac','CENTER'],['sao','OUTSIDE']]){align({param,nodes:[n]});assert.equal(n.strokeAlign,val)}});
+const auto=require('../src/plugin/set-properties/utils/autolayout/set-autolayout-behavior.ts').default;
+test('fill width leaves height',()=>{const n={type:'FRAME',name:'test',layoutMode:'HORIZONTAL',layoutSizingHorizontal:'FIXED',layoutSizingVertical:'FIXED'};auto({command:'fill',value:'w',nodes:[n]});assert.equal(n.layoutSizingHorizontal,'FILL');assert.equal(n.layoutSizingVertical,'FIXED');auto({command:'hug',value:'h',nodes:[n]});assert.equal(n.layoutSizingVertical,'HUG')});
+const dim=require('../src/plugin/set-properties/utils/set-dimensions/resolve-dimension-value.ts').resolveDimensionValue;
+test('parent-relative width percent',()=>assert.equal(dim('50%',{parent:{width:320,height:200}},'width'),160));
+test('parent-relative height percent',()=>assert.equal(dim('200%',{parent:{width:320,height:200}},'height'),400));
+test('percent without parent fails closed',()=>assert.equal(dim('50%',{parent:null},'width'),null));
+console.log('TOTAL',pass,'focused checks passed; mock source checks, not native Figma');

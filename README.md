@@ -57,7 +57,7 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Flow/sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives cumulative `+24, +50, +78, ...`)
-  - `*n` or `/n` for geometric progression (for example `++h24/2` gives `+24, +12, +6, ...`)
+  - `*n` or `/n` for geometric progression (for example `++h24/2` gives cumulative `+24, +36, +42, ...`)
 - `++` is cumulative for additive flow (for example `++h40/2` gives `+40, +60, +70, ...`).
 - Double operators use cumulative flow with their own operator semantics: `++` cumulative add, `--` cumulative subtract, `**` cumulative multiply, `//` cumulative divide.
 - Range operands are supported with `start..end` (for example `h1..20`, `+h1..24`, `++h20..40`, `w10..100`)
