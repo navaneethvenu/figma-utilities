@@ -2,7 +2,7 @@ import notifyError from '../../../utils/error';
 import { ErrorType } from '../../../utils/errorType';
 import { SupportedNodes, supportedNodes } from './supported-nodes';
 import { runWithOrigin, TransformOrigin } from '../../origin';
-import { parseNumberWithOptionalUnit } from '../node-safety';
+import { resolveDimensionValue } from './resolve-dimension-value';
 
 interface setWidthProps {
   param: string;
@@ -12,14 +12,12 @@ interface setWidthProps {
 }
 
 export default function setWidth({ param, value, nodes, origin }: setWidthProps) {
-  const parsedValue = parseNumberWithOptionalUnit(value, ['px']);
-
   for (const node of nodes) {
     const nodeCheck = supportedNodes.find((type) => node.type === type);
     let assertedNode = node as SupportedNodes;
 
     if (nodeCheck !== undefined) {
-      const newWidth = parsedValue;
+      const newWidth = resolveDimensionValue(value, assertedNode, 'width');
 
       if (newWidth !== null && Number.isFinite(newWidth)) {
         runWithOrigin(assertedNode, origin, () => assertedNode.resize(newWidth, node.height));

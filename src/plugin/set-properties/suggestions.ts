@@ -103,14 +103,14 @@ function isPairNumericValue(value: string, allowedUnits: readonly string[] = [])
 function allowedUnitsForCommand(shortcut: string) {
   if (shortcut === 'op') return ['%'];
   if (shortcut === 'rot') return ['deg'];
-  if (shortcut === 'ls' || shortcut === 'lh') return ['px', '%'];
+  if (shortcut === 'ls' || shortcut === 'lh' || shortcut === 'w' || shortcut === 'h' || shortcut === 'wh') return ['px', '%'];
   return ['px'];
 }
 
 function isScalarAllowedForCommand(command: PropItem, value: string, scalarUnit: string) {
   if (command.shortcut === 'f') return /^#?[0-9a-fA-F]+$/.test(value);
   if (command.shortcut === 'dup') return /^\d+$/.test(value.trim());
-  if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px']);
+  if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px', '%']);
 
   const unit = scalarUnit.toLowerCase();
   if (!unit) return true;
@@ -304,6 +304,9 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
 }
 
 function splitToken(token: string) {
+  // Axis suffixes are values, not autocomplete command names.
+  const axis = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?(fit|fill|hug)([wh])?$/);
+  if (axis) return { prefix: axis[1] ?? '', param: axis[2], value: axis[3] ?? '' };
   const match = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
   if (!match) return null;
   return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
@@ -431,12 +434,21 @@ function generateSuggestions(
     let lastMessage = '';
     const { value, command } = lastCommand;
 
-    if (command.hasValue) {
+    if (['fit', 'fill', 'hug'].includes(command.shortcut)) {
+      const axis = value === 'w' ? 'width' : value === 'h' ? 'height' : 'width and height';
+      lastMessage = lastCommand.prefix
+        ? `Error: ${command.name} does not support modifier operators`
+        : !['', 'w', 'h'].includes(value)
+          ? 'Error: Use an optional w or h axis'
+          : command.shortcut === 'fit'
+            ? `Fit element to parent ${axis}`
+            : `Set auto-layout sizing to ${command.shortcut} ${axis}`;
+    } else if (command.hasValue) {
       if (lastCommand.value !== '') {
         const range = parseRangeValue(value);
         const rangeExpression = parseRangeExpression(value);
         const scalar = parseScalarValue(value);
-        const pairValue = command.shortcut === 'wh' && isPairNumericValue(value, ['px']);
+        const pairValue = command.shortcut === 'wh' && isPairNumericValue(value, ['px', '%']);
 
         const supportsRange = Boolean(command.supportsModifiers);
         const isValidScalarValue =
