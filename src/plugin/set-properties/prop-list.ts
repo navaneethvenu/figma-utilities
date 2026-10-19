@@ -70,6 +70,7 @@ export interface PropItem {
   description?: string;
   notes?: string;
   examples?: Array<{ token: string; help: string }>;
+  searchText?: string;
   validateValue?: (value: string) => boolean;
   type?: 'GROUP' | 'ACTION';
   action?: ({ param, value, nodes }: parameterRoutingProps) => void | Promise<void>;
@@ -2213,13 +2214,18 @@ export const propList: Record<string, PropItem> = addExamplesToCommands(rawPropL
 
 export function flattenCommands(
   commands: Record<string, PropItem>,
-  flattenedCommands: Record<string, PropItem> = {}
+  flattenedCommands: Record<string, PropItem> = {},
+  parentSearchText = ''
 ): Record<string, PropItem> {
   for (const key in commands) {
-    if (commands[key].type !== 'GROUP') flattenedCommands[key] = commands[key];
+    const command = commands[key];
+    const searchText = [parentSearchText, command.name, command.shortcut, command.description]
+      .filter(Boolean)
+      .join(' ');
+    if (command.type !== 'GROUP') flattenedCommands[key] = { ...command, searchText };
 
-    if (commands[key].subcommands) {
-      flattenCommands(commands[key].subcommands!, flattenedCommands);
+    if (command.subcommands) {
+      flattenCommands(command.subcommands, flattenedCommands, searchText);
     }
   }
 
