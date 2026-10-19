@@ -1055,7 +1055,7 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
     const candidate = flattenedCommands[command];
     const shortcutMatch = command === item.command.shortcut ||
       (nameQuery.length <= command.length && command.startsWith(nameQuery));
-    const nameScore = fuzzyNameScore(nameQuery, candidate.name);
+    const nameScore = fuzzyNameScore(nameQuery, candidate.searchText ?? candidate.name);
     if (shortcutMatch || nameScore !== null) {
       commands.push({
         command: candidate,
@@ -1071,8 +1071,8 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
     const aExact = a.command.shortcut === item.command.shortcut ? 1 : 0;
     const bExact = b.command.shortcut === item.command.shortcut ? 1 : 0;
     if (aExact !== bExact) return bExact - aExact;
-    const aNameScore = a.nameMatchScore ?? fuzzyNameScore(nameQuery, a.command.name) ?? 0;
-    const bNameScore = b.nameMatchScore ?? fuzzyNameScore(nameQuery, b.command.name) ?? 0;
+    const aNameScore = a.nameMatchScore ?? fuzzyNameScore(nameQuery, a.command.searchText ?? a.command.name) ?? 0;
+    const bNameScore = b.nameMatchScore ?? fuzzyNameScore(nameQuery, b.command.searchText ?? b.command.name) ?? 0;
     if (aNameScore !== bNameScore) return bNameScore - aNameScore;
     return a.command.shortcut.length - b.command.shortcut.length;
   });
