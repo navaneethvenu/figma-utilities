@@ -47,6 +47,7 @@ import setGap from './utils/autolayout/set-gap';
 import setTextSpacing from './utils/text/set-text-spacing';
 import setTextFormat from './utils/text/set-text-format';
 import duplicateSelection from './utils/duplicate/duplicate';
+import { createByMethod } from './utils/create/create-node';
 
 export interface PropItem {
   name: string;
@@ -62,12 +63,14 @@ export interface PropItem {
   allowsNegative?: boolean;
   supportsModifiers?: boolean;
   supportsOrigin?: boolean;
+  requiresSelection?: boolean;
   getModifierValue?: (node: SceneNode) => number | null;
   unit?: string;
   message?: string;
   description?: string;
   notes?: string;
   examples?: Array<{ token: string; help: string }>;
+  searchText?: string;
   validateValue?: (value: string) => boolean;
   type?: 'GROUP' | 'ACTION';
   action?: ({ param, value, nodes }: parameterRoutingProps) => void | Promise<void>;
@@ -1411,10 +1414,10 @@ const rawPropList: Record<string, PropItem> = {
     description: 'Shortcuts for text spacing, typography, and casing controls.',
     type: 'GROUP',
     subcommands: {
-      fs: {
-        name: 'Font Size',
-        shortcut: 'fs',
-        description: 'Use fs<value> to set Font Size.',
+      ts: {
+        name: 'Text Size',
+        shortcut: 'ts',
+        description: 'Use ts<value> to set Text Size.',
         hasValue: true,
         valueKind: 'number',
         allowedUnits: ['px'],
@@ -1461,6 +1464,70 @@ const rawPropList: Record<string, PropItem> = {
             value.trim()
           ),
         message: 'Set Figma textCase',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      uc: {
+        name: 'Uppercase (Style)',
+        shortcut: 'uc',
+        description: 'Apply uppercase styling without changing characters.',
+        hasValue: false,
+        message: 'Apply uppercase styling',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      lc: {
+        name: 'Lowercase (Style)',
+        shortcut: 'lc',
+        description: 'Apply lowercase styling without changing characters.',
+        hasValue: false,
+        message: 'Apply lowercase styling',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      tc: {
+        name: 'Title Case (Style)',
+        shortcut: 'tc',
+        description: 'Apply title-case styling without changing characters.',
+        hasValue: false,
+        message: 'Apply title-case styling',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      smc: {
+        name: 'Small Caps (Style)',
+        shortcut: 'smc',
+        description: 'Apply small-caps styling without changing characters.',
+        hasValue: false,
+        message: 'Apply small-caps styling',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      ucr: {
+        name: 'Uppercase (Rewrite)',
+        shortcut: 'ucr',
+        description: 'Rewrite actual characters to uppercase.',
+        hasValue: false,
+        message: 'Rewrite selected text to uppercase',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      lcr: {
+        name: 'Lowercase (Rewrite)',
+        shortcut: 'lcr',
+        description: 'Rewrite actual characters to lowercase.',
+        hasValue: false,
+        message: 'Rewrite selected text to lowercase',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      tcr: {
+        name: 'Title Case (Rewrite)',
+        shortcut: 'tcr',
+        description: 'Rewrite actual characters to title case.',
+        hasValue: false,
+        message: 'Rewrite selected text to title case',
+        action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
+      },
+      senr: {
+        name: 'Sentence Case (Rewrite)',
+        shortcut: 'senr',
+        description: 'Rewrite actual characters to sentence case.',
+        hasValue: false,
+        message: 'Rewrite selected text to sentence case',
         action: ({ param, value, nodes }) => setTextFormat({ param, value, nodes }),
       },
       upper: {
@@ -1553,6 +1620,178 @@ const rawPropList: Record<string, PropItem> = {
         hasValue: false,
         message: 'Convert current line height to px',
         action: ({ param, value, nodes }) => setTextSpacing({ param, value, nodes }),
+      },
+    },
+  },
+
+  // Create
+  create: {
+    name: 'Create',
+    shortcut: 'n',
+    description: 'Create new nodes directly from command shortcuts.',
+    type: 'GROUP',
+    subcommands: {
+      nr: {
+        name: 'Create Rectangle',
+        shortcut: 'nr',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createRectangle');
+        },
+      },
+      nl: {
+        name: 'Create Line',
+        shortcut: 'nl',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createLine');
+        },
+      },
+      ne: {
+        name: 'Create Ellipse',
+        shortcut: 'ne',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createEllipse');
+        },
+      },
+      np: {
+        name: 'Create Polygon',
+        shortcut: 'np',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createPolygon');
+        },
+      },
+      ns: {
+        name: 'Create Star',
+        shortcut: 'ns',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createStar');
+        },
+      },
+      nv: {
+        name: 'Create Vector',
+        shortcut: 'nv',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createVector');
+        },
+      },
+      nt: {
+        name: 'Create Text',
+        shortcut: 'nt',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createText');
+        },
+      },
+      nf: {
+        name: 'Create Frame',
+        shortcut: 'nf',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createFrame');
+        },
+      },
+      nse: {
+        name: 'Create Section',
+        shortcut: 'nse',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSection');
+        },
+      },
+      nst: {
+        name: 'Create Sticky',
+        shortcut: 'nst',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSticky');
+        },
+      },
+      nct: {
+        name: 'Create Connector',
+        shortcut: 'nct',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createConnector');
+        },
+      },
+      nsh: {
+        name: 'Create Shape With Text',
+        shortcut: 'nsh',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createShapeWithText');
+        },
+      },
+      ncb: {
+        name: 'Create Code Block',
+        shortcut: 'ncb',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createCodeBlock');
+        },
+      },
+      ntb: {
+        name: 'Create Table',
+        shortcut: 'ntb',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createTable');
+        },
+      },
+      nsd: {
+        name: 'Create Slide',
+        shortcut: 'nsd',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSlide');
+        },
+      },
+      nsr: {
+        name: 'Create Slide Row',
+        shortcut: 'nsr',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createSlideRow');
+        },
+      },
+      npg: {
+        name: 'Create Page',
+        shortcut: 'npg',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createPage');
+        },
+      },
+      ndv: {
+        name: 'Create Page Divider',
+        shortcut: 'ndv',
+        hasValue: false,
+        requiresSelection: false,
+        action: () => {
+          createByMethod('createPageDivider');
+        },
       },
     },
   },
@@ -1988,7 +2227,10 @@ function buildGeneratedDescription(
   childShortcuts: string[]
 ) {
   if (command.type === 'GROUP') {
-    const summary = command.groupSummary ?? groupDescriptionOverrides[command.shortcut] ?? `Commands for ${lowerFirst(command.name)}.`;
+    const summary =
+      command.groupSummary ??
+      groupDescriptionOverrides[command.shortcut] ??
+      `Commands for ${lowerFirst(command.name)}.`;
 
     if (childShortcuts.length === 0) return summary;
 
@@ -1999,11 +2241,7 @@ function buildGeneratedDescription(
   const syntax = command.hasValue === false ? `${command.shortcut}` : `${command.shortcut}<value>`;
   const example = examples[0] ?? buildFallbackExamples(command)[0];
   const notes = buildNotes(command);
-  const sections = [
-    buildActionSentence(command),
-    `Usage:\n${syntax}`,
-    `Example:\n${example.token} -> ${example.help}`,
-  ];
+  const sections = [buildActionSentence(command), `Usage:\n${syntax}`, `Example:\n${example.token} -> ${example.help}`];
 
   if (notes.length > 0) {
     sections.push(`Notes:\n${notes.join(' ')}`);
@@ -2040,13 +2278,18 @@ export const propList: Record<string, PropItem> = addExamplesToCommands(rawPropL
 
 export function flattenCommands(
   commands: Record<string, PropItem>,
-  flattenedCommands: Record<string, PropItem> = {}
+  flattenedCommands: Record<string, PropItem> = {},
+  parentSearchText = ''
 ): Record<string, PropItem> {
   for (const key in commands) {
-    if (commands[key].type !== 'GROUP') flattenedCommands[key] = commands[key];
+    const command = commands[key];
+    const searchText = [parentSearchText, command.name, command.shortcut, command.description]
+      .filter(Boolean)
+      .join(' ');
+    if (command.type !== 'GROUP') flattenedCommands[key] = { ...command, searchText };
 
-    if (commands[key].subcommands) {
-      flattenCommands(commands[key].subcommands!, flattenedCommands);
+    if (command.subcommands) {
+      flattenCommands(command.subcommands, flattenedCommands, searchText);
     }
   }
 

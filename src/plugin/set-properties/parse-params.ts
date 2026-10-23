@@ -3,7 +3,12 @@ import parseModifiedToken from './modifiers/parse-modified-token';
 import parseScopedScaleToken from './modifiers/parse-scoped-scale-token';
 import { parseOriginToken, splitOriginPrefixedToken } from './origin';
 import { isFillAddValue, isFillDeleteValue, isFillInsertValue, isFillReplaceValue } from './utils/color/replace-fill';
-import { isStrokeAddValue, isStrokeDeleteValue, isStrokeInsertValue, isStrokeReplaceValue } from './utils/color/replace-stroke';
+import {
+  isStrokeAddValue,
+  isStrokeDeleteValue,
+  isStrokeInsertValue,
+  isStrokeReplaceValue,
+} from './utils/color/replace-stroke';
 
 export interface ParsedParameter {
   param: string;
@@ -13,6 +18,7 @@ export interface ParsedParameter {
   scopedScaleModifier?: boolean;
   originModifier?: boolean;
   textCommand?: boolean;
+  eachCommand?: boolean;
 }
 
 const OP_PREFIX_RE = /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?/;
@@ -23,6 +29,7 @@ function tokenizeParameterInput(input: string): string[] {
   let current = '';
   let inQuotes = false;
   let escaped = false;
+  let parenDepth = 0;
 
   for (const ch of input) {
     if (escaped) {
@@ -43,7 +50,22 @@ function tokenizeParameterInput(input: string): string[] {
       continue;
     }
 
-    if (!inQuotes && /\s/.test(ch)) {
+    if (!inQuotes && ch === '(') {
+      parenDepth++;
+      current += ch;
+      continue;
+    }
+
+    if (!inQuotes && ch === ')') {
+      parenDepth--;
+      if (parenDepth < 0) {
+        throw new Error('Invalid Value: unmatched closing parenthesis');
+      }
+      current += ch;
+      continue;
+    }
+
+    if (!inQuotes && parenDepth === 0 && /\s/.test(ch)) {
       if (current.trim() !== '') tokens.push(current);
       current = '';
       continue;
@@ -55,9 +77,63 @@ function tokenizeParameterInput(input: string): string[] {
   if (inQuotes) {
     throw new Error('Invalid Value: unterminated quote');
   }
+  if (parenDepth !== 0) {
+    throw new Error('Invalid Value: unterminated parenthesis');
+  }
 
   if (current.trim() !== '') tokens.push(current);
   return tokens;
+}
+
+function parseEachCommandToken(token: string): ParsedParameter | null {
+  if (!token.startsWith('each')) return null;
+
+  let index = 4;
+  if (token[index] !== '(') {
+    const rangeMatch = token.slice(index).match(/^(-?\d+)\.\.(-?\d+)\(/);
+    if (!rangeMatch) return null;
+    index += rangeMatch[0].length - 1;
+  }
+
+  if (token[index] !== '(' || !token.endsWith(')')) return null;
+
+  let inQuotes = false;
+  let escaped = false;
+  let depth = 0;
+  let closeIndex = -1;
+
+  for (let i = index; i < token.length; i++) {
+    const ch = token[i];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (ch === '\\') {
+      escaped = true;
+      continue;
+    }
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (inQuotes) continue;
+
+    if (ch === '(') depth++;
+    else if (ch === ')') {
+      depth--;
+      if (depth === 0) {
+        closeIndex = i;
+        break;
+      }
+      if (depth < 0) return null;
+    }
+  }
+
+  if (closeIndex !== token.length - 1) return null;
+  const body = token.slice(index + 1, closeIndex).trim();
+  if (body === '') return null;
+
+  return { param: token, value: '', raw: token, eachCommand: true };
 }
 
 function parseTextCommandToken(token: string): ParsedParameter | null {
@@ -123,7 +199,7 @@ function isValueValidForCommand(shortcut: string, value: string) {
   if (shortcut === 'dup') return /^\d+$/.test(value.trim());
   if (shortcut === 'op') return isNumericValue(value, ['%']);
   if (shortcut === 'rot') return isNumericValue(value, ['deg']);
-  if (shortcut === 'fs') return isNumericValue(value, ['px']);
+  if (shortcut === 'ts') return isNumericValue(value, ['px']);
   if (shortcut === 'fw')
     return /^(?:\d{3}|thin|hairline|extralight|ultralight|light|regular|normal|book|medium|semibold|demibold|bold|extrabold|ultrabold|black|heavy)$/i.test(
       value.trim()
@@ -143,9 +219,7 @@ function isValueValidForCommand(shortcut: string, value: string) {
 }
 
 function parseToken(token: string): ParsedParameter | null {
-  const commands = Object.values(flattenCommands(propList, {})).sort(
-    (a, b) => b.shortcut.length - a.shortcut.length
-  );
+  const commands = Object.values(flattenCommands(propList, {})).sort((a, b) => b.shortcut.length - a.shortcut.length);
 
   for (const command of commands) {
     if (!token.startsWith(command.shortcut)) continue;
@@ -213,6 +287,15 @@ export default function parseParameters(parameters: { [key: string]: string }): 
       if (parsedTextCommand) {
         parsedParams.push(parsedTextCommand);
         continue;
+      }
+
+      const parsedEachCommand = parseEachCommandToken(value);
+      if (parsedEachCommand) {
+        parsedParams.push(parsedEachCommand);
+        continue;
+      }
+      if (value.startsWith('each')) {
+        throw new Error(`Invalid Value: ${value}`);
       }
 
       const mayBeModified =

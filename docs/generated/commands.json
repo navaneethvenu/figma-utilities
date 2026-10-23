@@ -1,9 +1,9 @@
 {
   "generatedFrom": "src/plugin/set-properties/prop-list.ts",
-  "generatedAt": "2026-03-09T16:42:35.116Z",
+  "generatedAt": "2026-08-22T06:03:33.845Z",
   "counts": {
-    "groups": 36,
-    "commands": 144
+    "groups": 37,
+    "commands": 162
   },
   "groups": [
     {
@@ -276,12 +276,20 @@
       "order": 151
     },
     {
+      "id": "n",
+      "shortcut": "n",
+      "name": "Create",
+      "description": "Create new nodes directly from command shortcuts.",
+      "depth": 0,
+      "order": 166
+    },
+    {
       "id": "misc",
       "shortcut": "misc",
       "name": "Misc",
       "description": "Miscellaneous shortcuts that do not fit into other categories.",
       "depth": 0,
-      "order": 166
+      "order": 185
     },
     {
       "id": "misc/count",
@@ -290,7 +298,7 @@
       "description": "These are the shortcuts related to counting elements",
       "parent": "misc",
       "depth": 1,
-      "order": 168
+      "order": 187
     },
     {
       "id": "misc/count/count",
@@ -299,7 +307,7 @@
       "description": "Command group for Count Elements. Start with: countn.",
       "parent": "misc/count",
       "depth": 2,
-      "order": 169
+      "order": 188
     },
     {
       "id": "misc/swap",
@@ -308,7 +316,7 @@
       "description": "Shortcuts for swapping the positions of two selected elements horizontally or vertically.",
       "parent": "misc",
       "depth": 1,
-      "order": 172
+      "order": 191
     },
     {
       "id": "misc/swap/swap",
@@ -317,7 +325,7 @@
       "description": "Command group for Swap Elements. Start with: swapx, swapy.",
       "parent": "misc/swap",
       "depth": 2,
-      "order": 173
+      "order": 192
     }
   ],
   "commands": [
@@ -5660,6 +5668,672 @@
       "order": 165
     },
     {
+      "id": "nr",
+      "token": "nr",
+      "name": "Create Rectangle",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nr",
+      "description": "Use `nr` to create Rectangle. Common usage: `nr`, `nr w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nr",
+          "help": "Run Create Rectangle"
+        },
+        {
+          "token": "nr w160",
+          "help": "Run Create Rectangle, then set width to 160px"
+        },
+        {
+          "token": "nr h96",
+          "help": "Run Create Rectangle, then set height to 96px"
+        },
+        {
+          "token": "nr op80",
+          "help": "Run Create Rectangle, then set opacity to 80%"
+        }
+      ],
+      "order": 167
+    },
+    {
+      "id": "nl",
+      "token": "nl",
+      "name": "Create Line",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nl",
+      "description": "Use `nl` to create Line. Common usage: `nl`, `nl w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nl",
+          "help": "Run Create Line"
+        },
+        {
+          "token": "nl w160",
+          "help": "Run Create Line, then set width to 160px"
+        },
+        {
+          "token": "nl h96",
+          "help": "Run Create Line, then set height to 96px"
+        },
+        {
+          "token": "nl op80",
+          "help": "Run Create Line, then set opacity to 80%"
+        }
+      ],
+      "order": 168
+    },
+    {
+      "id": "ne",
+      "token": "ne",
+      "name": "Create Ellipse",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ne",
+      "description": "Use `ne` to create Ellipse. Common usage: `ne`, `ne w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ne",
+          "help": "Run Create Ellipse"
+        },
+        {
+          "token": "ne w160",
+          "help": "Run Create Ellipse, then set width to 160px"
+        },
+        {
+          "token": "ne h96",
+          "help": "Run Create Ellipse, then set height to 96px"
+        },
+        {
+          "token": "ne op80",
+          "help": "Run Create Ellipse, then set opacity to 80%"
+        }
+      ],
+      "order": 169
+    },
+    {
+      "id": "np",
+      "token": "np",
+      "name": "Create Polygon",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "np",
+      "description": "Use `np` to create Polygon. Common usage: `np`, `np w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "np",
+          "help": "Run Create Polygon"
+        },
+        {
+          "token": "np w160",
+          "help": "Run Create Polygon, then set width to 160px"
+        },
+        {
+          "token": "np h96",
+          "help": "Run Create Polygon, then set height to 96px"
+        },
+        {
+          "token": "np op80",
+          "help": "Run Create Polygon, then set opacity to 80%"
+        }
+      ],
+      "order": 170
+    },
+    {
+      "id": "ns",
+      "token": "ns",
+      "name": "Create Star",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ns",
+      "description": "Use `ns` to create Star. Common usage: `ns`, `ns w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ns",
+          "help": "Run Create Star"
+        },
+        {
+          "token": "ns w160",
+          "help": "Run Create Star, then set width to 160px"
+        },
+        {
+          "token": "ns h96",
+          "help": "Run Create Star, then set height to 96px"
+        },
+        {
+          "token": "ns op80",
+          "help": "Run Create Star, then set opacity to 80%"
+        }
+      ],
+      "order": 171
+    },
+    {
+      "id": "nv",
+      "token": "nv",
+      "name": "Create Vector",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nv",
+      "description": "Use `nv` to create Vector. Common usage: `nv`, `nv w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nv",
+          "help": "Run Create Vector"
+        },
+        {
+          "token": "nv w160",
+          "help": "Run Create Vector, then set width to 160px"
+        },
+        {
+          "token": "nv h96",
+          "help": "Run Create Vector, then set height to 96px"
+        },
+        {
+          "token": "nv op80",
+          "help": "Run Create Vector, then set opacity to 80%"
+        }
+      ],
+      "order": 172
+    },
+    {
+      "id": "nt",
+      "token": "nt",
+      "name": "Create Text",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nt",
+      "description": "Use `nt` to create Text. Common usage: `nt`, `nt w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nt",
+          "help": "Run Create Text"
+        },
+        {
+          "token": "nt w160",
+          "help": "Run Create Text, then set width to 160px"
+        },
+        {
+          "token": "nt h96",
+          "help": "Run Create Text, then set height to 96px"
+        },
+        {
+          "token": "nt op80",
+          "help": "Run Create Text, then set opacity to 80%"
+        }
+      ],
+      "order": 173
+    },
+    {
+      "id": "nf",
+      "token": "nf",
+      "name": "Create Frame",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nf",
+      "description": "Use `nf` to create Frame. Common usage: `nf`, `nf w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nf",
+          "help": "Run Create Frame"
+        },
+        {
+          "token": "nf w160",
+          "help": "Run Create Frame, then set width to 160px"
+        },
+        {
+          "token": "nf h96",
+          "help": "Run Create Frame, then set height to 96px"
+        },
+        {
+          "token": "nf op80",
+          "help": "Run Create Frame, then set opacity to 80%"
+        }
+      ],
+      "order": 174
+    },
+    {
+      "id": "nse",
+      "token": "nse",
+      "name": "Create Section",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nse",
+      "description": "Use `nse` to create Section. Common usage: `nse`, `nse w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nse",
+          "help": "Run Create Section"
+        },
+        {
+          "token": "nse w160",
+          "help": "Run Create Section, then set width to 160px"
+        },
+        {
+          "token": "nse h96",
+          "help": "Run Create Section, then set height to 96px"
+        },
+        {
+          "token": "nse op80",
+          "help": "Run Create Section, then set opacity to 80%"
+        }
+      ],
+      "order": 175
+    },
+    {
+      "id": "nst",
+      "token": "nst",
+      "name": "Create Sticky",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nst",
+      "description": "Use `nst` to create Sticky. Common usage: `nst`, `nst w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nst",
+          "help": "Run Create Sticky"
+        },
+        {
+          "token": "nst w160",
+          "help": "Run Create Sticky, then set width to 160px"
+        },
+        {
+          "token": "nst h96",
+          "help": "Run Create Sticky, then set height to 96px"
+        },
+        {
+          "token": "nst op80",
+          "help": "Run Create Sticky, then set opacity to 80%"
+        }
+      ],
+      "order": 176
+    },
+    {
+      "id": "nct",
+      "token": "nct",
+      "name": "Create Connector",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nct",
+      "description": "Use `nct` to create Connector. Common usage: `nct`, `nct w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nct",
+          "help": "Run Create Connector"
+        },
+        {
+          "token": "nct w160",
+          "help": "Run Create Connector, then set width to 160px"
+        },
+        {
+          "token": "nct h96",
+          "help": "Run Create Connector, then set height to 96px"
+        },
+        {
+          "token": "nct op80",
+          "help": "Run Create Connector, then set opacity to 80%"
+        }
+      ],
+      "order": 177
+    },
+    {
+      "id": "nsh",
+      "token": "nsh",
+      "name": "Create Shape With Text",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nsh",
+      "description": "Use `nsh` to create Shape With Text. Common usage: `nsh`, `nsh w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nsh",
+          "help": "Run Create Shape With Text"
+        },
+        {
+          "token": "nsh w160",
+          "help": "Run Create Shape With Text, then set width to 160px"
+        },
+        {
+          "token": "nsh h96",
+          "help": "Run Create Shape With Text, then set height to 96px"
+        },
+        {
+          "token": "nsh op80",
+          "help": "Run Create Shape With Text, then set opacity to 80%"
+        }
+      ],
+      "order": 178
+    },
+    {
+      "id": "ncb",
+      "token": "ncb",
+      "name": "Create Code Block",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ncb",
+      "description": "Use `ncb` to create Code Block. Common usage: `ncb`, `ncb w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ncb",
+          "help": "Run Create Code Block"
+        },
+        {
+          "token": "ncb w160",
+          "help": "Run Create Code Block, then set width to 160px"
+        },
+        {
+          "token": "ncb h96",
+          "help": "Run Create Code Block, then set height to 96px"
+        },
+        {
+          "token": "ncb op80",
+          "help": "Run Create Code Block, then set opacity to 80%"
+        }
+      ],
+      "order": 179
+    },
+    {
+      "id": "ntb",
+      "token": "ntb",
+      "name": "Create Table",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ntb",
+      "description": "Use `ntb` to create Table. Common usage: `ntb`, `ntb w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ntb",
+          "help": "Run Create Table"
+        },
+        {
+          "token": "ntb w160",
+          "help": "Run Create Table, then set width to 160px"
+        },
+        {
+          "token": "ntb h96",
+          "help": "Run Create Table, then set height to 96px"
+        },
+        {
+          "token": "ntb op80",
+          "help": "Run Create Table, then set opacity to 80%"
+        }
+      ],
+      "order": 180
+    },
+    {
+      "id": "nsd",
+      "token": "nsd",
+      "name": "Create Slide",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nsd",
+      "description": "Use `nsd` to create Slide. Common usage: `nsd`, `nsd w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nsd",
+          "help": "Run Create Slide"
+        },
+        {
+          "token": "nsd w160",
+          "help": "Run Create Slide, then set width to 160px"
+        },
+        {
+          "token": "nsd h96",
+          "help": "Run Create Slide, then set height to 96px"
+        },
+        {
+          "token": "nsd op80",
+          "help": "Run Create Slide, then set opacity to 80%"
+        }
+      ],
+      "order": 181
+    },
+    {
+      "id": "nsr",
+      "token": "nsr",
+      "name": "Create Slide Row",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "nsr",
+      "description": "Use `nsr` to create Slide Row. Common usage: `nsr`, `nsr w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "nsr",
+          "help": "Run Create Slide Row"
+        },
+        {
+          "token": "nsr w160",
+          "help": "Run Create Slide Row, then set width to 160px"
+        },
+        {
+          "token": "nsr h96",
+          "help": "Run Create Slide Row, then set height to 96px"
+        },
+        {
+          "token": "nsr op80",
+          "help": "Run Create Slide Row, then set opacity to 80%"
+        }
+      ],
+      "order": 182
+    },
+    {
+      "id": "npg",
+      "token": "npg",
+      "name": "Create Page",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "npg",
+      "description": "Use `npg` to create Page. Common usage: `npg`, `npg w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "npg",
+          "help": "Run Create Page"
+        },
+        {
+          "token": "npg w160",
+          "help": "Run Create Page, then set width to 160px"
+        },
+        {
+          "token": "npg h96",
+          "help": "Run Create Page, then set height to 96px"
+        },
+        {
+          "token": "npg op80",
+          "help": "Run Create Page, then set opacity to 80%"
+        }
+      ],
+      "order": 183
+    },
+    {
+      "id": "ndv",
+      "token": "ndv",
+      "name": "Create Page Divider",
+      "group": "n",
+      "groupName": "Create",
+      "groupPath": [
+        "n"
+      ],
+      "parent": "n",
+      "path": "Create",
+      "hasValue": false,
+      "value": "none",
+      "flags": [],
+      "syntax": "ndv",
+      "description": "Use `ndv` to create Page Divider. Common usage: `ndv`, `ndv w160`.",
+      "type": "ACTION",
+      "examples": [
+        {
+          "token": "ndv",
+          "help": "Run Create Page Divider"
+        },
+        {
+          "token": "ndv w160",
+          "help": "Run Create Page Divider, then set width to 160px"
+        },
+        {
+          "token": "ndv h96",
+          "help": "Run Create Page Divider, then set height to 96px"
+        },
+        {
+          "token": "ndv op80",
+          "help": "Run Create Page Divider, then set opacity to 80%"
+        }
+      ],
+      "order": 184
+    },
+    {
       "id": "clip",
       "token": "clip",
       "name": "Toggle Clipping",
@@ -5694,7 +6368,7 @@
           "help": "Run Toggle Clipping, then set opacity to 80%"
         }
       ],
-      "order": 167
+      "order": 186
     },
     {
       "id": "count",
@@ -5732,7 +6406,7 @@
           "help": "Run Count Elements, then set opacity to 80%"
         }
       ],
-      "order": 170
+      "order": 189
     },
     {
       "id": "countn",
@@ -5771,7 +6445,7 @@
           "help": "Run Count Nested Elements, then set opacity to 80%"
         }
       ],
-      "order": 171
+      "order": 190
     },
     {
       "id": "swap",
@@ -5809,7 +6483,7 @@
           "help": "Run Swap Elements, then set opacity to 80%"
         }
       ],
-      "order": 174
+      "order": 193
     },
     {
       "id": "swapx",
@@ -5848,7 +6522,7 @@
           "help": "Run Swap Horizontally, then set opacity to 80%"
         }
       ],
-      "order": 175
+      "order": 194
     },
     {
       "id": "swapy",
@@ -5887,7 +6561,7 @@
           "help": "Run Swap Vertically, then set opacity to 80%"
         }
       ],
-      "order": 176
+      "order": 195
     },
     {
       "id": "wf",
@@ -5924,7 +6598,7 @@
           "help": "Run Wrap in Frame, then set opacity to 80%"
         }
       ],
-      "order": 177
+      "order": 196
     },
     {
       "id": "dup",
@@ -5963,7 +6637,7 @@
           "help": "Duplicate ten times for stress-testing layout"
         }
       ],
-      "order": 178
+      "order": 197
     },
     {
       "id": "rot",
@@ -6005,7 +6679,7 @@
           "help": "Progressively rotate backwards across selection"
         }
       ],
-      "order": 179
+      "order": 198
     },
     {
       "id": "op",
@@ -6047,7 +6721,7 @@
           "help": "Progressively reduce opacity across selection"
         }
       ],
-      "order": 180
+      "order": 199
     }
   ]
 }

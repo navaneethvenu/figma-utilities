@@ -77,6 +77,11 @@ Notes:
 
 - `sc` commands are axis-targeted (`sc:w200`, `sc:h120`), including modifier forms (`sc:*w2`, `sc:+h24`).
 - Division operators cannot use `0` (including ranges that touch/cross `0`, for example `/h10..0`).
+- `each` supports loop execution and nesting:
+  - `each(<commands>)` iterates current selection
+  - `eachA..B(<commands>)` iterates numeric range (inclusive)
+  - Variables: `$n`, `$i`, `$name`, `$id`; parent scope uses repeated `$` (for example `$$name`)
+  - `each` always sets selection to the combined iteration results
 - Invalid commands fail with `Invalid Command: ...`.
 
 ## Command Families
@@ -97,6 +102,7 @@ Main families:
 - Auto layout spacing: `gap`, `gapx`, `gapy`
 - Text spacing: `ls`, `lh` (set), `lsp`/`lspx` and `lhp`/`lhpx` (unit conversion)
 - Transform/appearance: `rot`, `op`
+- Create nodes: `nr`, `nl`, `ne`, `np`, `ns`, `nv`, `nt`, `nf`, `nse`, `nst`, `nct`, `nsh`, `ncb`, `ntb`, `nsd`, `nsr`, `npg`, `ndv`
 - Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`, `dup`
 
 ## Project Structure
