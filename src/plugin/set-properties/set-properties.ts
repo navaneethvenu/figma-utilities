@@ -94,7 +94,7 @@ function parseEachToken(token: string): EachSpec | null {
   return { start, end, body };
 }
 
-function resolveLoopVariable(dollarCount: number, key: keyof LoopScope, stack: readonly LoopScope[]) {
+function resolveLoopVariable(dollarCount: number, key: keyof LoopScope | 'n' | 'i', stack: readonly LoopScope[]) {
   const target = stack[stack.length - dollarCount];
   if (!target) return '';
   const scopeKey: keyof LoopScope = key === 'n' ? 'name' : key === 'i' ? 'index' : key;
