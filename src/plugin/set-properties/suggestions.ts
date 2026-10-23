@@ -68,7 +68,7 @@ function buildTextCommandSuggestions(values: string[]): Suggestion[] {
   const lastToken = values[values.length - 1] ?? '';
   const isTexty =
     lastToken === '' ||
-    /^(?:t|t:|\+t|\+t:|pre:\+t|post:\+t|all:t|all:t:|split|split:|\*t|up|upp|upper|low|lower|sent|sentence|tit|title)/i.test(
+    /^(?:t|t:|\+t|\+t:|pre(?:pend)?|post:\+t|all:t|all:t:|split|split:|\*t|up|upp|upper|low|lower|sent|sentence|tit|title|append|replace)/i.test(
       lastToken
     );
   if (!isTexty) return [];
@@ -112,11 +112,22 @@ function buildTextCommandSuggestions(values: string[]): Suggestion[] {
     { token: 'title', desc: 'Transform actual text to title case' },
   ];
 
+  const namedTemplates: Array<{ name: string; token: string; desc: string }> = [
+    { name: 'append', token: '+t""', desc: 'Append text' },
+    { name: 'prepend', token: 'pre:+t""', desc: 'Prepend text' },
+    { name: 'replace', token: 't""=>""', desc: 'Replace first (literal or /regex/flags)' },
+  ];
+
   const base = values
     .slice(0, values.length - 1)
     .filter(Boolean)
     .join(' ');
   const prefix = lastToken.toLowerCase();
+  const namedMatch = namedTemplates.find((item) => item.name.startsWith(prefix));
+  if (namedMatch) {
+    const data = base ? `${base} ${namedMatch.token}` : namedMatch.token;
+    return [{ name: `${data} - ${namedMatch.desc}`, data }];
+  }
   const matches = templates.filter((item) => item.token.toLowerCase().startsWith(prefix) || prefix === '');
   if (matches.length === 0) return [];
 
