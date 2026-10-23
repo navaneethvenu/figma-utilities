@@ -252,6 +252,7 @@ export default async function setProperties(parameters: { [key: string]: string 
     }
 
     await addHistory(parsedParams);
+    figma.commitUndo();
 
     figma.notify('Properties set successfully.');
   } catch (e: any) {

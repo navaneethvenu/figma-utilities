@@ -21,6 +21,7 @@ type TextCaseToken =
   | 'smallcapsforced'
   | 'small_caps_forced';
 type TextCaseTransformToken = 'upper' | 'lower' | 'title' | 'sentence';
+type TextStyleToken = 'uc' | 'lc' | 'tc' | 'smc';
 
 let availableFontsCache: readonly Font[] | null = null;
 
@@ -44,7 +45,10 @@ const WEIGHT_ALIASES: Record<string, number> = {
 };
 
 function parseFontSize(value: string): number | null {
-  const match = value.trim().toLowerCase().match(/^(-?\d*\.?\d+)(px)?$/);
+  const match = value
+    .trim()
+    .toLowerCase()
+    .match(/^(-?\d*\.?\d+)(px)?$/);
   if (!match) return null;
   const numeric = Number(match[1]);
   if (!Number.isFinite(numeric) || numeric <= 0) return null;
@@ -133,13 +137,26 @@ async function loadFontsForTextNode(node: TextNode) {
 function scoreStyleWeight(styleName: string): number {
   const normalized = styleName.toLowerCase();
   if (normalized.includes('thin') || normalized.includes('hairline')) return 100;
-  if (normalized.includes('extra light') || normalized.includes('extralight') || normalized.includes('ultra light')) return 200;
+  if (normalized.includes('extra light') || normalized.includes('extralight') || normalized.includes('ultra light'))
+    return 200;
   if (normalized.includes('light')) return 300;
   if (normalized.includes('regular') || normalized.includes('normal') || normalized.includes('book')) return 400;
   if (normalized.includes('medium')) return 500;
-  if (normalized.includes('semi bold') || normalized.includes('semibold') || normalized.includes('demi bold') || normalized.includes('demibold')) return 600;
+  if (
+    normalized.includes('semi bold') ||
+    normalized.includes('semibold') ||
+    normalized.includes('demi bold') ||
+    normalized.includes('demibold')
+  )
+    return 600;
   if (normalized.includes('bold') && !(normalized.includes('extra') || normalized.includes('ultra'))) return 700;
-  if (normalized.includes('extra bold') || normalized.includes('extrabold') || normalized.includes('ultra bold') || normalized.includes('ultrabold')) return 800;
+  if (
+    normalized.includes('extra bold') ||
+    normalized.includes('extrabold') ||
+    normalized.includes('ultra bold') ||
+    normalized.includes('ultrabold')
+  )
+    return 800;
   if (normalized.includes('black') || normalized.includes('heavy')) return 900;
 
   const numeric = normalized.match(/(^|\D)([1-9]00)(\D|$)/);
@@ -212,7 +229,7 @@ async function setFontWeight(node: TextNode, targetWeight: number) {
 }
 
 export default async function setTextFormat({ param, value, nodes }: SetTextFormatProps) {
-  if (param === 'fs') {
+  if (param === 'ts') {
     const fontSize = parseFontSize(value);
     if (fontSize === null) {
       notifyError({ type: ErrorType.INVALID_VAL, message: param });
@@ -221,7 +238,10 @@ export default async function setTextFormat({ param, value, nodes }: SetTextForm
 
     for (const node of nodes) {
       if (node.type !== 'TEXT') {
-        notifyError({ type: ErrorType.UNSUPPORTED_PROP, message: `${param} is only applicable on text nodes, not ${node.type}` });
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `${param} is only applicable on text nodes, not ${node.type}`,
+        });
         continue;
       }
 
@@ -247,7 +267,10 @@ export default async function setTextFormat({ param, value, nodes }: SetTextForm
 
     for (const node of nodes) {
       if (node.type !== 'TEXT') {
-        notifyError({ type: ErrorType.UNSUPPORTED_PROP, message: `${param} is only applicable on text nodes, not ${node.type}` });
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `${param} is only applicable on text nodes, not ${node.type}`,
+        });
         continue;
       }
 
@@ -272,7 +295,10 @@ export default async function setTextFormat({ param, value, nodes }: SetTextForm
 
     for (const node of nodes) {
       if (node.type !== 'TEXT') {
-        notifyError({ type: ErrorType.UNSUPPORTED_PROP, message: `${param} is only applicable on text nodes, not ${node.type}` });
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `${param} is only applicable on text nodes, not ${node.type}`,
+        });
         continue;
       }
       try {
@@ -297,7 +323,10 @@ export default async function setTextFormat({ param, value, nodes }: SetTextForm
 
     for (const node of nodes) {
       if (node.type !== 'TEXT') {
-        notifyError({ type: ErrorType.UNSUPPORTED_PROP, message: `${param} is only applicable on text nodes, not ${node.type}` });
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `${param} is only applicable on text nodes, not ${node.type}`,
+        });
         continue;
       }
       try {
@@ -313,12 +342,53 @@ export default async function setTextFormat({ param, value, nodes }: SetTextForm
     return;
   }
 
-  if (param === 'upper' || param === 'lower' || param === 'title' || param === 'sentence') {
-    const transform = param as TextCaseTransformToken;
+  if (param === 'uc' || param === 'lc' || param === 'tc' || param === 'smc') {
+    const textCase: TextCase = (
+      { uc: 'UPPER', lc: 'LOWER', tc: 'TITLE', smc: 'SMALL_CAPS' } as Record<TextStyleToken, TextCase>
+    )[param as TextStyleToken];
 
     for (const node of nodes) {
       if (node.type !== 'TEXT') {
-        notifyError({ type: ErrorType.UNSUPPORTED_PROP, message: `${param} is only applicable on text nodes, not ${node.type}` });
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `${param} is only applicable on text nodes, not ${node.type}`,
+        });
+        continue;
+      }
+      try {
+        await loadFontsForTextNode(node);
+        node.textCase = textCase;
+      } catch {
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `Cannot apply text style on ${node.name}: required fonts are not loaded/available`,
+        });
+      }
+    }
+    return;
+  }
+
+  if (
+    param === 'upper' ||
+    param === 'lower' ||
+    param === 'title' ||
+    param === 'sentence' ||
+    param === 'ucr' ||
+    param === 'lcr' ||
+    param === 'tcr' ||
+    param === 'senr'
+  ) {
+    const transform =
+      ({ ucr: 'upper', lcr: 'lower', tcr: 'title', senr: 'sentence' } as Record<string, TextCaseTransformToken>)[
+        param
+      ] ?? (param as TextCaseTransformToken);
+
+    for (const node of nodes) {
+      if (node.type !== 'TEXT') {
+        notifyError({
+          type: ErrorType.UNSUPPORTED_PROP,
+          message: `${param} is only applicable on text nodes, not ${node.type}`,
+        });
         continue;
       }
 

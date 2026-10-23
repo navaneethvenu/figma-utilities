@@ -199,7 +199,7 @@ function isValueValidForCommand(shortcut: string, value: string) {
   if (shortcut === 'dup') return /^\d+$/.test(value.trim());
   if (shortcut === 'op') return isNumericValue(value, ['%']);
   if (shortcut === 'rot') return isNumericValue(value, ['deg']);
-  if (shortcut === 'fs') return isNumericValue(value, ['px']);
+  if (shortcut === 'ts') return isNumericValue(value, ['px']);
   if (shortcut === 'fw')
     return /^(?:\d{3}|thin|hairline|extralight|ultralight|light|regular|normal|book|medium|semibold|demibold|bold|extrabold|ultrabold|black|heavy)$/i.test(
       value.trim()

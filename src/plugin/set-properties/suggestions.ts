@@ -237,7 +237,7 @@ function allowedUnitsForCommand(command: PropItem) {
   const shortcut = command.shortcut;
   if (shortcut === 'op') return ['%'];
   if (shortcut === 'rot') return ['deg'];
-  if (shortcut === 'fs') return ['px'];
+  if (shortcut === 'ts') return ['px'];
   if (shortcut === 'ls' || shortcut === 'lh') return ['px', '%'];
   if (shortcut === 'w' || shortcut === 'h' || shortcut === 'wh') return ['px', '%'];
   return ['px'];
@@ -999,9 +999,7 @@ function generateSuggestions(
 
     const suggestionToken = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''}`;
     const composed = composeTokenWithContext(contextTokens, suggestionToken);
-    const normalizedSearchTerm = lastItem.searchTerm
-      ?.replace(/^\+\+|^--|^\*\*|^\/\/|^\+|^-|^\*|^\//, '')
-      .toLowerCase();
+    const normalizedSearchTerm = lastItem.searchTerm?.replace(/^\+\+|^--|^\*\*|^\/\/|^\+|^-|^\*|^\//, '').toLowerCase();
     const isExactShortcut = command.shortcut === lastItem.command.shortcut && normalizedSearchTerm === command.shortcut;
     const scoreBase = (isExactShortcut ? 95 : lastCommand.nameMatchScore ?? 0) + (hasError ? -50 : 0);
     candidates.push({
@@ -1053,8 +1051,8 @@ function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<str
   const nameQuery = item.searchTerm?.replace(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/, '') ?? '';
   for (const command in flattenedCommands) {
     const candidate = flattenedCommands[command];
-    const shortcutMatch = command === item.command.shortcut ||
-      (nameQuery.length <= command.length && command.startsWith(nameQuery));
+    const shortcutMatch =
+      command === item.command.shortcut || (nameQuery.length <= command.length && command.startsWith(nameQuery));
     const nameScore = fuzzyNameScore(nameQuery, candidate.searchText ?? candidate.name);
     if (shortcutMatch || nameScore !== null) {
       commands.push({
