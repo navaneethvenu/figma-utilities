@@ -41,19 +41,25 @@ async function main() {
     return output;
   };
 
-  const each = parse('each-loop', 'parse each range', 'each(1..3(h$n))');
+  const each = parse('each-loop', 'parse each range', 'each1..3(h$n)');
   assert.strictEqual(each[0].eachCommand, true);
-  assert.strictEqual(each[0].raw, 'each(1..3(h$n))');
+  assert.strictEqual(each[0].raw, 'each1..3(h$n)');
 
   const eachNode = { id: 'n1', name: 'Node', type: 'RECTANGLE', width: 10, height: 10, resize(w, h) { this.width = w; this.height = h; } };
   figma.currentPage.selection = [eachNode];
   try {
-    await setProperties({ smoke: 'each(1..3(h$n))' });
+    await setProperties({ smoke: 'each1..3(h$n)' });
     record('each-loop', 'range expansion heights', { height: eachNode.height, notifications });
     assert.strictEqual(eachNode.height, 3);
   } catch (error) {
     failures.push(`each-loop execution: ${error.message}`);
     console.log(`[each-loop] FAIL-REAL-BUG: ${error.message}`);
+  }
+  for (const [variable, expected] of [['$i', 2], ['$name', 3], ['$id', 3]]) {
+    eachNode.height = 10;
+    await setProperties({ smoke: `each1..3(h${variable})` });
+    record('each-loop', `${variable} range expansion`, eachNode.height);
+    assert.strictEqual(eachNode.height, expected);
   }
 
   const textNode = {
