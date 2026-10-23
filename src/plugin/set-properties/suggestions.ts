@@ -96,26 +96,20 @@ function buildTextCommandSuggestions(values: string[]): Suggestion[] {
     }
   }
 
-  const templates: Array<{ token: string; desc: string }> = [
-    { token: 't""', desc: 'Set text content' },
-    { token: '+t""', desc: 'Append text' },
-    { token: 'pre:+t""', desc: 'Prepend text' },
-    { token: 'post:+t""', desc: 'Append text (explicit)' },
-    { token: 't""=>""', desc: 'Replace first (literal or /regex/flags)' },
-    { token: 'all:t""=>""', desc: 'Replace all (literal or /regex/flags)' },
-    { token: '*t2', desc: 'Repeat text 2x' },
-    { token: 'split', desc: 'Split by space delimiter' },
-    { token: 'split""', desc: 'Split text into sibling clones' },
-    { token: 'upper', desc: 'Transform actual text to uppercase' },
-    { token: 'lower', desc: 'Transform actual text to lowercase' },
-    { token: 'sentence', desc: 'Transform actual text to sentence case' },
-    { token: 'title', desc: 'Transform actual text to title case' },
-  ];
-
-  const namedTemplates: Array<{ name: string; token: string; desc: string }> = [
+  const templates: Array<{ name: string; token: string; desc: string }> = [
+    { name: 't', token: 't""', desc: 'Set text content' },
     { name: 'append', token: '+t""', desc: 'Append text' },
     { name: 'prepend', token: 'pre:+t""', desc: 'Prepend text' },
+    { name: 'append', token: 'post:+t""', desc: 'Append text (explicit)' },
     { name: 'replace', token: 't""=>""', desc: 'Replace first (literal or /regex/flags)' },
+    { name: 'replace-all', token: 'all:t""=>""', desc: 'Replace all (literal or /regex/flags)' },
+    { name: 'repeat', token: '*t2', desc: 'Repeat text 2x' },
+    { name: 'split', token: 'split', desc: 'Split by space delimiter' },
+    { name: 'split', token: 'split""', desc: 'Split text into sibling clones' },
+    { name: 'upper', token: 'upper', desc: 'Transform actual text to uppercase' },
+    { name: 'lower', token: 'lower', desc: 'Transform actual text to lowercase' },
+    { name: 'sentence', token: 'sentence', desc: 'Transform actual text to sentence case' },
+    { name: 'title', token: 'title', desc: 'Transform actual text to title case' },
   ];
 
   const base = values
@@ -123,12 +117,13 @@ function buildTextCommandSuggestions(values: string[]): Suggestion[] {
     .filter(Boolean)
     .join(' ');
   const prefix = lastToken.toLowerCase();
-  const namedMatch = namedTemplates.find((item) => item.name.startsWith(prefix));
-  if (namedMatch) {
-    const data = base ? `${base} ${namedMatch.token}` : namedMatch.token;
-    return [{ name: `${data} - ${namedMatch.desc}`, data }];
-  }
-  const matches = templates.filter((item) => item.token.toLowerCase().startsWith(prefix) || prefix === '');
+  const matches = templates
+    .filter((item) => prefix === '' || item.name.startsWith(prefix) || item.token.toLowerCase().startsWith(prefix))
+    .sort((a, b) => {
+      const score = (item: (typeof templates)[number]) =>
+        item.name === prefix ? 3 : item.token.toLowerCase() === prefix ? 2 : item.name.startsWith(prefix) ? 1 : 0;
+      return score(b) - score(a);
+    });
   if (matches.length === 0) return [];
 
   return matches.slice(0, 10).map((item) => {
