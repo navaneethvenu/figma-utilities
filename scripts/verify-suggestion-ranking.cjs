@@ -22,7 +22,9 @@ const expected = {
   text: 'fw - Set Font Weight to (Enter Value)',
   ts: 'ts - Set Text Size to (Enter Value)',
   fs: 'esb - Exclude Boolean Operations from Selection',
-  prepend: 'pr100 - Set Right Padding to 100',
+  prepend: 'pre:+t"" - Prepend text',
+  append: '+t"" - Append text',
+  replace: 't""=>"" - Replace first (literal or /regex/flags)',
 };
 
 for (const [query, expectedTop] of Object.entries(expected)) {
