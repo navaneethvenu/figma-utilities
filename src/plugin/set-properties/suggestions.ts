@@ -1000,7 +1000,10 @@ function generateSuggestions(
     const suggestionToken = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''}`;
     const composed = composeTokenWithContext(contextTokens, suggestionToken);
     const normalizedSearchTerm = lastItem.searchTerm?.replace(/^\+\+|^--|^\*\*|^\/\/|^\+|^-|^\*|^\//, '').toLowerCase();
-    const isExactShortcut = command.shortcut === lastItem.command.shortcut && normalizedSearchTerm === command.shortcut;
+    const isExactShortcut =
+      command.shortcut === lastItem.command.shortcut &&
+      (normalizedSearchTerm === command.shortcut ||
+        (command.hasValue && value !== '' && normalizedSearchTerm === `${command.shortcut}${value}`));
     const scoreBase = (isExactShortcut ? 95 : lastCommand.nameMatchScore ?? 0) + (hasError ? -50 : 0);
     candidates.push({
       name: `${composed} - ${lastMessage}`,
