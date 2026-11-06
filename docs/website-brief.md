@@ -517,7 +517,7 @@ Important technical realities:
 - The plugin loads the fonts used in the text before editing
 - If required fonts are unavailable, the command fails
 - If the text has mixed font-size, mixed letter-spacing, or mixed line-height situations, some operations fail
-- AUTO line height converts as 100% when running lhp/lhpx: the conversion pins it to an explicit value instead of failing
+- Bare lhp/lhpx on AUTO line height measure the font's actual AUTO value with a temporary probe and pin it (appearance preserved); mixed fonts or mixed font size still error
 
 This is a nuanced area and should be described carefully on the website. The plugin is powerful here, but only inside the limits of Figma’s text model.
 

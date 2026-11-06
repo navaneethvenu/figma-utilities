@@ -17,6 +17,20 @@ global.figma = {
   mixed: Symbol('mixed'),
   currentPage: { selection: [], selectedTextRange: null },
   loadFontAsync: async () => undefined,
+  createText: () => {
+    const probe = {
+      fontName: null,
+      fontSize: 12,
+      textAutoResize: 'WIDTH_AND_HEIGHT',
+      removed: false,
+      _characters: '',
+      get characters() { return this._characters; },
+      set characters(v) { this._characters = v; },
+      get height() { return this._characters ? this.fontSize * 1.2 : 0; },
+      remove() { this.removed = true; },
+    };
+    return probe;
+  },
   notify: (message) => notifications.push(message),
   commitUndo: () => undefined,
   clientStorage: { getAsync: async () => [], setAsync: async () => undefined },
@@ -103,6 +117,58 @@ async function main() {
   }
   parse('axis', 'parse fit/fill/hug', 'fitw fillh hug');
   console.log('[axis] fit geometry mutation: UNTESTED-BY-DESIGN (parent/node geometry and Figma layout APIs)');
+
+  const smokeFont = { family: 'Inter', style: 'Regular' };
+  const mkText = (overrides) => Object.assign({
+    id: 'lt1', name: 'Label', type: 'TEXT', characters: 'hello',
+    fontSize: 10, fontName: smokeFont, lineHeight: { unit: 'AUTO' },
+    getRangeAllFontNames: () => [smokeFont],
+  }, overrides);
+
+  const autoPercent = mkText();
+  figma.currentPage.selection = [autoPercent];
+  await setProperties({ smoke: 'lhp' });
+  record('lineheight', 'AUTO lhp pins measured percent', autoPercent.lineHeight);
+  assert.deepStrictEqual(autoPercent.lineHeight, { value: 120, unit: 'PERCENT' });
+
+  const autoPixels = mkText();
+  figma.currentPage.selection = [autoPixels];
+  await setProperties({ smoke: 'lhpx' });
+  record('lineheight', 'AUTO lhpx pins measured pixels', autoPixels.lineHeight);
+  assert.deepStrictEqual(autoPixels.lineHeight, { value: 12, unit: 'PIXELS' });
+
+  const autoExplicit = mkText();
+  figma.currentPage.selection = [autoExplicit];
+  await setProperties({ smoke: 'lh150' });
+  record('lineheight', 'AUTO lh150 explicit percent', autoExplicit.lineHeight);
+  assert.deepStrictEqual(autoExplicit.lineHeight, { value: 150, unit: 'PERCENT' });
+
+  const autoExplicitPx = mkText();
+  figma.currentPage.selection = [autoExplicitPx];
+  await setProperties({ smoke: 'lh24px' });
+  record('lineheight', 'AUTO lh24px explicit pixels', autoExplicitPx.lineHeight);
+  assert.deepStrictEqual(autoExplicitPx.lineHeight, { value: 24, unit: 'PIXELS' });
+
+  const explicitConvert = mkText({ lineHeight: { value: 50, unit: 'PIXELS' } });
+  figma.currentPage.selection = [explicitConvert];
+  await setProperties({ smoke: 'lhp' });
+  record('lineheight', 'PIXELS to PERCENT conversion', explicitConvert.lineHeight);
+  assert.deepStrictEqual(explicitConvert.lineHeight, { value: 500, unit: 'PERCENT' });
+
+  const noteBeforeMixed = notifications.length;
+  const mixedLh = mkText({ lineHeight: figma.mixed });
+  figma.currentPage.selection = [mixedLh];
+  await setProperties({ smoke: 'lhp' });
+  record('lineheight', 'mixed line height still errors', notifications.slice(noteBeforeMixed));
+  assert.ok(notifications.slice(noteBeforeMixed).some((n) => String(n).includes('mixed line height')));
+
+  const noteBeforeFont = notifications.length;
+  const mixedFont = mkText({ fontName: figma.mixed });
+  figma.currentPage.selection = [mixedFont];
+  await setProperties({ smoke: 'lhp' });
+  record('lineheight', 'mixed font AUTO errors without mutating', { lineHeight: mixedFont.lineHeight, notifications: notifications.slice(noteBeforeFont) });
+  assert.deepStrictEqual(mixedFont.lineHeight, { unit: 'AUTO' });
+  assert.ok(notifications.slice(noteBeforeFont).some((n) => String(n).includes('cannot be measured')));
 
   if (failures.length > 0) {
     console.log(`FAIL: command/parse smoke suite (${failures.length} real failure(s))`);

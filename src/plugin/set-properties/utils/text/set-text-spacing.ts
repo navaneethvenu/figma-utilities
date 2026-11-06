@@ -147,7 +147,32 @@ function convertLetterSpacingUnit(node: TextNode, targetUnit: ValueUnit) {
   };
 }
 
-function convertLineHeightUnit(node: TextNode, targetUnit: ValueUnit) {
+// Measure the font's actual AUTO (intrinsic) line height in pixels with a
+// temporary single-line probe: a single-line text box's height equals its
+// computed line height. The original node is never touched and the probe is
+// removed immediately. Returns null when no single value can represent the
+// node (mixed font size or mixed fonts).
+async function measureAutoLineHeightPx(node: TextNode): Promise<number | null> {
+  const fontSize = getFontSize(node);
+  if (fontSize === null || fontSize <= 0) return null;
+  if (node.fontName === figma.mixed) return null;
+
+  const probe = figma.createText();
+  try {
+    await figma.loadFontAsync(node.fontName as FontName);
+    probe.fontName = node.fontName as FontName;
+    probe.fontSize = fontSize;
+    probe.characters = 'Ag';
+    const measured = probe.height;
+    return measured > 0 ? measured : null;
+  } catch {
+    return null;
+  } finally {
+    probe.remove();
+  }
+}
+
+async function convertLineHeightUnit(node: TextNode, targetUnit: ValueUnit) {
   if (node.lineHeight === figma.mixed) {
     notifyError({
       type: ErrorType.UNSUPPORTED_PROP,
@@ -156,19 +181,26 @@ function convertLineHeightUnit(node: TextNode, targetUnit: ValueUnit) {
     return;
   }
 
-  // AUTO line height converts as 100% (Figma's default): pin it explicitly
-  // instead of erroring, so lhp/lhpx work on untouched text.
-  const current =
-    node.lineHeight.unit === 'AUTO'
-      ? { value: 100, unit: 'PERCENT' as ValueUnit }
-      : node.lineHeight;
-
-  if (current.unit === targetUnit) {
-    if (node.lineHeight.unit === 'AUTO') {
-      node.lineHeight = { value: 100, unit: 'PERCENT' };
+  if (node.lineHeight.unit === 'AUTO') {
+    // Pin the font's real AUTO line height so appearance is preserved.
+    const measured = await measureAutoLineHeightPx(node);
+    if (measured === null) {
+      notifyError({
+        type: ErrorType.UNSUPPORTED_PROP,
+        message: `${node.name} has AUTO line height that cannot be measured (mixed fonts or mixed font size)`,
+      });
+      return;
     }
+    const fontSize = getFontSize(node) as number;
+    node.lineHeight =
+      targetUnit === 'PERCENT'
+        ? { value: (measured / fontSize) * 100, unit: 'PERCENT' }
+        : { value: measured, unit: 'PIXELS' };
     return;
   }
+
+  const current = node.lineHeight;
+  if (current.unit === targetUnit) return;
 
   const fontSize = getFontSize(node);
   if (fontSize === null || fontSize <= 0) {
@@ -236,12 +268,12 @@ export default async function setTextSpacing({ param, value, nodes }: SetTextSpa
     }
 
     if (param === 'lhp') {
-      convertLineHeightUnit(node, 'PERCENT');
+      await convertLineHeightUnit(node, 'PERCENT');
       continue;
     }
 
     if (param === 'lhpx') {
-      convertLineHeightUnit(node, 'PIXELS');
+      await convertLineHeightUnit(node, 'PIXELS');
       continue;
     }
 
