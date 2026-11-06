@@ -13,6 +13,7 @@ Scope: the committed `dev` snapshot at `1e608671a102f94e25b7210dcb208f0fe2a6ebd2
 - Hotkey accepts a required `Property` parameter, parses compact commands, and applies chained commands to the current selection. Evidence: `README.md:3-11,35-48` (source snapshot reviewed 2026-11-06), `manifest.json` (source snapshot reviewed 2026-11-06), `src/plugin/controller.ts`, `src/plugin/set-properties/parse-params.ts`, and `src/plugin/set-properties/set-properties.ts` (latest file commits 2026-10-23 or earlier).
 - The committed command catalog covers 37 groups and 162 commands. Evidence: `docs/generated/commands.json:2-7` (generated 2026-08-22), generated from `src/plugin/set-properties/prop-list.ts`.
 - Supported command areas include position, size, radius, padding, stroke, selection, color, constraints, auto layout, text spacing, transforms, node creation, and miscellaneous utilities. Evidence: `README.md:87-106` (source snapshot reviewed 2026-11-06).
+- 2026-11-06 fix (owner-reported): `lhp`/`lhpx` no longer error on AUTO line height; AUTO converts as 100% and is pinned to an explicit value (previously the command showed an error and made no change). Evidence: `src/plugin/set-properties/utils/text/set-text-spacing.ts` `convertLineHeightUnit`; build verified in `dist/code.js` 2026-11-06.
 - Recent committed work includes `each` loop parsing/execution and suggestion-ranking fixes. Evidence: `README.md:80-84` and `git` history commits `47b929e`, `1e60867`, `780e888`, and `b824093`, all dated 2026-10-23.
 
 ## [partial] Editor and UI support

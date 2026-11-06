@@ -156,16 +156,19 @@ function convertLineHeightUnit(node: TextNode, targetUnit: ValueUnit) {
     return;
   }
 
-  const current = node.lineHeight;
-  if (current.unit === 'AUTO') {
-    notifyError({
-      type: ErrorType.UNSUPPORTED_PROP,
-      message: `${node.name} has AUTO line height; set an explicit lh value first`,
-    });
+  // AUTO line height converts as 100% (Figma's default): pin it explicitly
+  // instead of erroring, so lhp/lhpx work on untouched text.
+  const current =
+    node.lineHeight.unit === 'AUTO'
+      ? { value: 100, unit: 'PERCENT' as ValueUnit }
+      : node.lineHeight;
+
+  if (current.unit === targetUnit) {
+    if (node.lineHeight.unit === 'AUTO') {
+      node.lineHeight = { value: 100, unit: 'PERCENT' };
+    }
     return;
   }
-
-  if (current.unit === targetUnit) return;
 
   const fontSize = getFontSize(node);
   if (fontSize === null || fontSize <= 0) {
