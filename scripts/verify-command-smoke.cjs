@@ -13,6 +13,7 @@ require.extensions['.ts'] = (module, filename) => {
 };
 
 const notifications = [];
+const createdProbes = [];
 global.figma = {
   mixed: Symbol('mixed'),
   currentPage: { selection: [], selectedTextRange: null },
@@ -29,6 +30,7 @@ global.figma = {
       get height() { return this._characters ? this.fontSize * 1.2 : 0; },
       remove() { this.removed = true; },
     };
+    createdProbes.push(probe);
     return probe;
   },
   notify: (message) => notifications.push(message),
@@ -136,6 +138,9 @@ async function main() {
   await setProperties({ smoke: 'lhpx' });
   record('lineheight', 'AUTO lhpx pins measured pixels', autoPixels.lineHeight);
   assert.deepStrictEqual(autoPixels.lineHeight, { value: 12, unit: 'PIXELS' });
+  assert.strictEqual(createdProbes.length, 2);
+  assert.ok(createdProbes.every((probe) => probe.removed), 'every measurement probe removed');
+  record('lineheight', 'probe cleanup verified', { created: createdProbes.length, removed: createdProbes.filter((probe) => probe.removed).length });
 
   const autoExplicit = mkText();
   figma.currentPage.selection = [autoExplicit];
@@ -161,6 +166,7 @@ async function main() {
   await setProperties({ smoke: 'lhp' });
   record('lineheight', 'mixed line height still errors', notifications.slice(noteBeforeMixed));
   assert.ok(notifications.slice(noteBeforeMixed).some((n) => String(n).includes('mixed line height')));
+  assert.ok(mixedLh.lineHeight === figma.mixed, 'mixed line height node left unmutated');
 
   const noteBeforeFont = notifications.length;
   const mixedFont = mkText({ fontName: figma.mixed });
