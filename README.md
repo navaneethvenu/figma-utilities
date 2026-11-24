@@ -57,19 +57,13 @@ This sets X/Y, width/height, corner radius, and fill color in one execution.
 - Flow/sequential operator variants (supported on the same numeric shortcuts): `++`, `--`, `**`, `//`
 - Sequential operators support progression modifiers:
   - `+n` or `-n` for arithmetic progression (for example `++h24+2` gives cumulative `+24, +50, +78, ...`)
-  - `*n` or `/n` for geometric progression (for example `++h24/2` gives `+24, +12, +6, ...`)
+  - `*n` or `/n` for geometric progression (for example `++h24/2` gives cumulative `+24, +36, +42, ...`)
 - `++` is cumulative for additive flow (for example `++h40/2` gives `+40, +60, +70, ...`).
 - Double operators use cumulative flow with their own operator semantics: `++` cumulative add, `--` cumulative subtract, `**` cumulative multiply, `//` cumulative divide.
 - Range operands are supported with `start..end` (for example `h1..20`, `+h1..24`, `++h20..40`, `w10..100`)
 - Double operators also support mixed range expressions (for example `++h20-20..40`, `++h10..20-5..15`, `**w1..2*1.2..1.8`).
 - Origin tokens are standalone modifiers (`tl:`, `t:`, `tr:`, `l:`, `c:`, `r:`, `bl:`, `b:`, `br:`) that apply to following size/scale commands in the same input.
-- Fill color supports `1/2/3/4/6/8` hex lengths with or without `#` (for example `f#F`, `f#FA`, `f#FFAA00`, `fFFAA0080`)
-- Fill targets are optional: `f<color>` (all fills), `f2<color>` (2nd), `f1-3<color>` (range), `f3+<color>` (3rd onward), `f-2<color>` (up to 2nd)
-- Optional alpha can be appended as percent or decimal: `@10`, `@10%`, `@0.1` (for example `f#1A73E8@10`)
-- Fill options can be appended using `:option` tokens: blend (`:m`, `:screen`, `:overlay`, etc.) and visibility (`:on`, `:off`)
-- Add/insert/delete fills: `fa<color>`, `fi<index><color>`, `fd<target>` (for example `fa#000@10:m`, `fi2#1A73E8:off`, `fd2+`)
-- Stroke color supports the same `1/2/3/4/6/8` hex, target selectors, `@alpha`, and `:option` tokens
-- Add/insert/delete strokes: `sa<color>`, `si<index><color>`, `sd<target>` (for example `sa#000@10:m`, `si2#1A73E8:off`, `sd2+`)
+- Fill color uses hex-like values with or without `#` (for example `f#FFAA00`, `fF80`)
 - Some text spacing commands support units (`px`, `%`) such as `ls2px`, `lh140%`
 - Size commands support `%` values (`w50%`, `h200%`) and dedicated fit/fill/hug commands (`fit`, `fitw`, `fith`, `fill`, `fillw`, `fillh`, `hug`, `hugw`, `hugh`)
 
@@ -77,11 +71,6 @@ Notes:
 
 - `sc` commands are axis-targeted (`sc:w200`, `sc:h120`), including modifier forms (`sc:*w2`, `sc:+h24`).
 - Division operators cannot use `0` (including ranges that touch/cross `0`, for example `/h10..0`).
-- `each` supports loop execution and nesting:
-  - `each(<commands>)` iterates current selection
-  - `eachA..B(<commands>)` iterates numeric range (inclusive)
-  - Variables: `$n`, `$i`, `$name`, `$id`; parent scope uses repeated `$` (for example `$$name`)
-  - `each` always sets selection to the combined iteration results
 - Invalid commands fail with `Invalid Command: ...`.
 
 ## Command Families
@@ -96,13 +85,12 @@ Main families:
 - Padding: `p`, `px`, `py`, `pt`, `pr`, ...
 - Stroke: width (`sw`, `swl`, `swy`, ...), align (`sai`, `sac`, `sao`)
 - Selection tools: quick select (`selr`/`sell`/`selt`/`selb`), traversal (`root`/`leaf`/`selp`/`selc`/`selns`/`selps`/`seli`), filter (`fs*`), exclude (`es*`)
-- Color: fill/stroke replace/add/insert/delete (`f`, `fa`, `fi`, `fd`, `s`, `sa`, `si`, `sd`)
+- Color: fill replace (`f<hex>`)
 - Constraints: `c`, `cc`, `cs`, `cx*`, `cy*`
-- Auto layout behavior: toggles (`ax`, `ay`), smart sizing (`aa`), apply auto layout (`al`, `alx`, `aly`)
+- Auto layout behavior: toggles (`ax`, `ay`), smart (`aa`)
 - Auto layout spacing: `gap`, `gapx`, `gapy`
 - Text spacing: `ls`, `lh` (set), `lsp`/`lspx` and `lhp`/`lhpx` (unit conversion)
 - Transform/appearance: `rot`, `op`
-- Create nodes: `nr`, `nl`, `ne`, `np`, `ns`, `nv`, `nt`, `nf`, `nse`, `nst`, `nct`, `nsh`, `ncb`, `ntb`, `nsd`, `nsr`, `npg`, `ndv`
 - Misc: `clip`, `count`, `countn`, `swap`, `swapx`, `swapy`, `wf`, `dup`
 
 ## Project Structure

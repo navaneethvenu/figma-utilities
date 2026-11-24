@@ -10,8 +10,6 @@ interface BindedCommand {
   command: PropItem;
   value: string;
   prefix: string;
-  searchTerm?: string;
-  nameMatchScore?: number;
 }
 
 interface Suggestion {
@@ -19,119 +17,8 @@ interface Suggestion {
   data: string;
 }
 
-type CandidateBucket = 'exact' | 'example' | 'next' | 'error';
-
-interface SuggestionCandidate extends Suggestion {
-  score: number;
-  bucket: CandidateBucket;
-}
-
-function tokenizeSuggestionInput(input: string): string[] {
-  const tokens: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  let escaped = false;
-
-  for (const ch of input) {
-    if (escaped) {
-      current += ch;
-      escaped = false;
-      continue;
-    }
-
-    if (ch === '\\') {
-      current += ch;
-      escaped = true;
-      continue;
-    }
-
-    if (ch === '"') {
-      current += ch;
-      inQuotes = !inQuotes;
-      continue;
-    }
-
-    if (!inQuotes && /\s/.test(ch)) {
-      if (current.trim() !== '') tokens.push(current);
-      current = '';
-      continue;
-    }
-
-    current += ch;
-  }
-
-  if (current.trim() !== '') tokens.push(current);
-  return tokens;
-}
-
-function buildTextCommandSuggestions(values: string[]): Suggestion[] {
-  const lastToken = values[values.length - 1] ?? '';
-  const isTexty =
-    lastToken === '' ||
-    /^(?:t|t:|\+t|\+t:|pre:\+t|post:\+t|all:t|all:t:|split|split:|\*t|up|upp|upper|low|lower|sent|sentence|tit|title)/i.test(
-      lastToken
-    );
-  if (!isTexty) return [];
-
-  // Live payload suggestions while typing quoted text commands.
-  const livePatterns: Array<{ re: RegExp; desc: string }> = [
-    { re: /^t:?"(?:\\.|[^"\\])*"?$/, desc: 'Set text content' },
-    { re: /^\+t:?"(?:\\.|[^"\\])*"?$/, desc: 'Append text' },
-    { re: /^pre:\+t:?"(?:\\.|[^"\\])*"?$/, desc: 'Prepend text' },
-    { re: /^post:\+t:?"(?:\\.|[^"\\])*"?$/, desc: 'Append text (explicit)' },
-    { re: /^t:?"(?:\\.|[^"\\])*"=>(?:"(?:\\.|[^"\\])*"?)?$/, desc: 'Replace first (literal or /regex/flags)' },
-    { re: /^all:t:?"(?:\\.|[^"\\])*"=>(?:"(?:\\.|[^"\\])*"?)?$/, desc: 'Replace all (literal or /regex/flags)' },
-    { re: /^\*t\d*$/, desc: 'Repeat text N times' },
-    { re: /^split:?$/, desc: 'Split by space delimiter' },
-    { re: /^split:?"(?:\\.|[^"\\])*"?$/, desc: 'Split text into sibling clones' },
-  ];
-  for (const item of livePatterns) {
-    if (item.re.test(lastToken)) {
-      const base = values
-        .slice(0, values.length - 1)
-        .filter(Boolean)
-        .join(' ');
-      const data = base ? `${base} ${lastToken}` : lastToken;
-      return [{ name: `${data} - ${item.desc}`, data }];
-    }
-  }
-
-  const templates: Array<{ token: string; desc: string }> = [
-    { token: 't""', desc: 'Set text content' },
-    { token: '+t""', desc: 'Append text' },
-    { token: 'pre:+t""', desc: 'Prepend text' },
-    { token: 'post:+t""', desc: 'Append text (explicit)' },
-    { token: 't""=>""', desc: 'Replace first (literal or /regex/flags)' },
-    { token: 'all:t""=>""', desc: 'Replace all (literal or /regex/flags)' },
-    { token: '*t2', desc: 'Repeat text 2x' },
-    { token: 'split', desc: 'Split by space delimiter' },
-    { token: 'split""', desc: 'Split text into sibling clones' },
-    { token: 'upper', desc: 'Transform actual text to uppercase' },
-    { token: 'lower', desc: 'Transform actual text to lowercase' },
-    { token: 'sentence', desc: 'Transform actual text to sentence case' },
-    { token: 'title', desc: 'Transform actual text to title case' },
-  ];
-
-  const base = values
-    .slice(0, values.length - 1)
-    .filter(Boolean)
-    .join(' ');
-  const prefix = lastToken.toLowerCase();
-  const matches = templates.filter((item) => item.token.toLowerCase().startsWith(prefix) || prefix === '');
-  if (matches.length === 0) return [];
-
-  return matches.slice(0, 10).map((item) => {
-    const data = base ? `${base} ${item.token}` : item.token;
-    return { name: `${data} - ${item.desc}`, data };
-  });
-}
-
 function isSequentialPrefix(prefix: string) {
   return ['++', '--', '**', '//'].includes(prefix);
-}
-
-function isFactorPrefix(prefix: string) {
-  return ['*', '/', '**', '//'].includes(prefix);
 }
 
 function hasOperatorPrefix(token: string) {
@@ -160,11 +47,6 @@ function isOriginQueryToken(token: string) {
   return ORIGIN_TOKENS.some((origin) => origin.startsWith(candidate));
 }
 
-function isExactCommandShortcut(token: string, flattenedCommands: Record<string, PropItem>) {
-  const normalized = normalizeScopedScaleToken(token.trim().toLowerCase());
-  return normalized in flattenedCommands;
-}
-
 function buildOriginSuggestions(values: string[], lastToken: string): Suggestion[] {
   const trimmed = lastToken.trim().toLowerCase();
   const prefix = trimmed.endsWith(':') ? trimmed.slice(0, -1) : trimmed;
@@ -180,9 +62,7 @@ function buildOriginSuggestions(values: string[], lastToken: string): Suggestion
 
     const token = `${origin}:`;
     const label = getOriginLabel(origin);
-    const name = base
-      ? `${base} ${token} - Set transform origin to ${label}`
-      : `${token} - Set transform origin to ${label}`;
+    const name = base ? `${base} ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
     const data = base ? `${base} ${token}` : token;
     suggestions.push({ name, data });
   }
@@ -192,9 +72,7 @@ function buildOriginSuggestions(values: string[], lastToken: string): Suggestion
     if (exact) {
       const token = `${exact}:`;
       const label = getOriginLabel(exact);
-      const name = base
-        ? `${base} ${token} - Set transform origin to ${label}`
-        : `${token} - Set transform origin to ${label}`;
+      const name = base ? `${base} ${token} - Set transform origin to ${label}` : `${token} - Set transform origin to ${label}`;
       const data = base ? `${base} ${token}` : token;
       suggestions.push({ name, data });
     }
@@ -222,35 +100,21 @@ function isPairNumericValue(value: string, allowedUnits: readonly string[] = [])
   return isNumericValue(left, allowedUnits) && isNumericValue(right, allowedUnits);
 }
 
-function isAxisModeCommand(command: PropItem) {
-  if (command.valueKind) return command.valueKind === 'axis';
-  return ['fit', 'fill', 'hug'].includes(command.shortcut);
-}
-
-function isAxisValue(value: string) {
-  const normalized = value.trim().toLowerCase();
-  return normalized === '' || normalized === 'w' || normalized === 'h';
-}
-
-function allowedUnitsForCommand(command: PropItem) {
-  if (command.allowedUnits && command.allowedUnits.length > 0) return command.allowedUnits;
-  const shortcut = command.shortcut;
+function allowedUnitsForCommand(shortcut: string) {
   if (shortcut === 'op') return ['%'];
   if (shortcut === 'rot') return ['deg'];
-  if (shortcut === 'ts') return ['px'];
-  if (shortcut === 'ls' || shortcut === 'lh') return ['px', '%'];
-  if (shortcut === 'w' || shortcut === 'h' || shortcut === 'wh') return ['px', '%'];
+  if (shortcut === 'ls' || shortcut === 'lh' || shortcut === 'w' || shortcut === 'h' || shortcut === 'wh') return ['px', '%'];
   return ['px'];
 }
 
 function isScalarAllowedForCommand(command: PropItem, value: string, scalarUnit: string) {
-  if (command.valueKind === 'integer') return /^\d+$/.test(value.trim());
-  if (command.valueKind === 'pair' && value.includes(','))
-    return isPairNumericValue(value, allowedUnitsForCommand(command));
+  if (command.shortcut === 'f') return /^#?[0-9a-fA-F]+$/.test(value);
+  if (command.shortcut === 'dup') return /^\d+$/.test(value.trim());
+  if (command.shortcut === 'wh' && value.includes(',')) return isPairNumericValue(value, ['px', '%']);
 
   const unit = scalarUnit.toLowerCase();
   if (!unit) return true;
-  return allowedUnitsForCommand(command).includes(unit);
+  return allowedUnitsForCommand(command.shortcut).includes(unit);
 }
 
 function parseScalarValue(value: string) {
@@ -284,7 +148,9 @@ function parseRangeValue(value: string) {
 }
 
 function parseRangeExpression(value: string) {
-  const match = value.match(/^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/);
+  const match = value.match(
+    /^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/
+  );
   if (!match) return null;
 
   const left = parseRangeValue(match[1]) ?? parseScalarValue(match[1]);
@@ -347,33 +213,8 @@ function formatOperatorMessage(prefix: string, command: PropItem, renderedValue:
       return `Cumulatively divide ${command.name} by ${renderedValue}`;
     default:
       if (command.message) return `${command.message} ${renderedValue}`;
-      return `${defaultSetLabel(command.name)} ${renderedValue}`;
+      return `Set ${command.name} to ${renderedValue}`;
   }
-}
-
-function formatAxisMessage(prefix: string, command: PropItem, value: string) {
-  if (prefix && !command.supportsModifiers) {
-    return `Error: ${command.name} does not support modifier operators`;
-  }
-
-  const normalized = value.trim().toLowerCase();
-  if (command.shortcut === 'fit') {
-    if (normalized === 'w') return 'Fit element to parent width';
-    if (normalized === 'h') return 'Fit element to parent height';
-    return 'Fit element to parent width and height';
-  }
-  if (command.shortcut === 'fill') {
-    if (normalized === 'w') return 'Set auto-layout sizing to fill width';
-    if (normalized === 'h') return 'Set auto-layout sizing to fill height';
-    return 'Set auto-layout sizing to fill width and height';
-  }
-  if (command.shortcut === 'hug') {
-    if (normalized === 'w') return 'Set auto-layout sizing to hug width';
-    if (normalized === 'h') return 'Set auto-layout sizing to hug height';
-    return 'Set auto-layout sizing to hug width and height';
-  }
-
-  return `Set ${command.name} to ${value}`;
 }
 
 function withOriginHint(baseMessage: string, command: PropItem, origin: TransformOrigin | null) {
@@ -405,29 +246,16 @@ function formatOperatorPlaceholder(prefix: string, command: PropItem) {
     case '//':
       return `Cumulatively divide ${command.name} by (Enter Value)`;
     default:
-      return `${defaultSetLabel(command.name)} (Enter Value)`;
+      return `Set ${command.name} to (Enter Value)`;
   }
 }
 
-function defaultSetLabel(commandName: string) {
-  const trimmed = commandName.trim();
-  if (/^set\s+/i.test(trimmed)) {
-    return `${trimmed} to`;
-  }
-  return `Set ${trimmed} to`;
-}
-
-function renderScalarValue(raw: string, defaultUnit: string, prefix: string) {
+function renderScalarValue(raw: string, defaultUnit: string) {
   const parsed = parseScalarValue(raw);
   if (!parsed) return raw;
 
   const normalized = String(parsed.num);
-  const shouldAppendDefaultUnit = !isFactorPrefix(prefix);
-  const withUnit = parsed.unit
-    ? `${normalized}${parsed.unit}`
-    : shouldAppendDefaultUnit
-    ? `${normalized}${defaultUnit}`.trim()
-    : normalized;
+  const withUnit = parsed.unit ? `${normalized}${parsed.unit}` : `${normalized}${defaultUnit}`.trim();
   if (parsed.progressionOp && parsed.progressionValue !== null) {
     const op = parsed.progressionOp;
     const val = parsed.progressionValue;
@@ -475,34 +303,13 @@ function formatRangeMessage(prefix: string, command: PropItem, start: number, en
   }
 }
 
-function splitToken(token: string, flattenedCommands?: Record<string, PropItem>) {
-  const operatorMatch = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?(.*)$/);
-  if (!operatorMatch) return null;
-
-  const prefix = operatorMatch[1] ?? '';
-  const rest = operatorMatch[2] ?? '';
-  if (!rest) return null;
-
-  if (flattenedCommands) {
-    const commands = Object.values(flattenedCommands).sort((a, b) => b.shortcut.length - a.shortcut.length);
-
-    for (const command of commands) {
-      if (!rest.startsWith(command.shortcut)) continue;
-
-      const value = rest.slice(command.shortcut.length);
-      if (command.hasValue === false) {
-        if (value === '') return { prefix, param: command.shortcut, value: '' };
-        continue;
-      }
-
-      return { prefix, param: command.shortcut, value };
-    }
-  }
-
-  const fallbackMatch = rest.match(/^([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
-  if (!fallbackMatch) return null;
-
-  return { prefix, param: fallbackMatch[1], value: fallbackMatch[2] ?? '' };
+function splitToken(token: string) {
+  // Axis suffixes are values, not autocomplete command names.
+  const axis = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?(fit|fill|hug)([wh])?$/);
+  if (axis) return { prefix: axis[1] ?? '', param: axis[2], value: axis[3] ?? '' };
+  const match = token.match(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?([A-Za-z]+(?::[A-Za-z]+)?)(.*)$/);
+  if (!match) return null;
+  return { prefix: match[1] ?? '', param: match[2], value: match[3] ?? '' };
 }
 
 function composeTokenWithContext(contextTokens: string[], nextToken: string) {
@@ -519,273 +326,21 @@ function composeTokenWithContext(contextTokens: string[], nextToken: string) {
   return tokens.join(' ');
 }
 
-function getCommandExamples(command: PropItem) {
-  return command.examples ?? [];
-}
-
-function invalidValueHint(command: PropItem) {
-  if (command.invalidValueHint) return command.invalidValueHint;
-  const usage = command.hasValue === false ? command.shortcut : `${command.shortcut}<value>`;
-
-  if (command.valueKind === 'axis') {
-    return `Use optional axis value: empty, w, or h (e.g. ${command.shortcut}, ${command.shortcut}w, ${command.shortcut}h)`;
-  }
-  if (command.valueKind === 'integer') {
-    return `Use a whole number (e.g. ${command.shortcut}3)`;
-  }
-  if (command.valueKind === 'pair') {
-    return `Use a pair value (e.g. ${command.shortcut}120,80 or ${command.shortcut}80%,50%)`;
-  }
-
-  const allowedUnits = allowedUnitsForCommand(command);
-  if (allowedUnits.length > 1) {
-    return `Use a number with optional ${allowedUnits.join('/')} (e.g. ${command.shortcut}16${allowedUnits[0]})`;
-  }
-  if (allowedUnits.length === 1 && allowedUnits[0] !== 'px') {
-    return `Use a number with optional ${allowedUnits[0]} (e.g. ${command.shortcut}80${allowedUnits[0]})`;
-  }
-
-  return `Enter a valid value (e.g. ${usage})`;
-}
-
-function displayUnitForCommand(command: PropItem) {
-  if (command.defaultUnit !== undefined) return command.defaultUnit;
-  if (command.unit && command.unit !== 'hex') return command.unit;
-  if (command.valueKind === 'paint' || command.valueKind === 'integer') return '';
-  if (command.hasValue) return 'px';
-  return '';
-}
-
-function getAlternateUnitsForCommand(command: PropItem, explicitUnit: string, prefix: string) {
-  if (explicitUnit) return [];
-  if (prefix !== '') return [];
-
-  const defaultUnit = displayUnitForCommand(command);
-  if (!defaultUnit) return [];
-
-  const validUnits = allowedUnitsForCommand(command);
-  if (validUnits.length <= 1) return [];
-
-  return validUnits.filter((unit) => unit !== defaultUnit);
-}
-
-function getLikelyNextShortcuts(previousCommand: string | undefined, flattenedCommands: Record<string, PropItem>) {
-  if (previousCommand) {
-    const configured = flattenedCommands[previousCommand]?.nextShortcuts;
-    if (configured && configured.length > 0) return configured;
-  }
-
-  const fallback = ['w', 'h', 'fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot', 'p', 'sw', 'gap'];
-  if (!previousCommand) return fallback;
-
-  if (['w', 'h', 'wh', 'sc:w', 'sc:h'].includes(previousCommand))
-    return ['fit', 'fill', 'hug', 'x', 'y', 'r', 'f', 's', 'op', 'rot'];
-  if (['fit', 'fill', 'hug'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'r', 'f', 's'];
-  if (['x', 'y'].includes(previousCommand)) return ['w', 'h', 'r', 'f', 'op'];
-  if (['f', 's'].includes(previousCommand)) return ['op', 'sw', 'r', 'w', 'h'];
-  if (['r', 'sw', 'p', 'gap'].includes(previousCommand)) return ['f', 's', 'op', 'w', 'h'];
-  if (['op', 'rot'].includes(previousCommand)) return ['w', 'h', 'x', 'y', 'f'];
-
-  return fallback;
-}
-
-function selectDiverseCandidates(candidates: SuggestionCandidate[], limit = 12): Suggestion[] {
-  const byData = new Map<string, SuggestionCandidate>();
-  for (const candidate of candidates) {
-    const existing = byData.get(candidate.data);
-    if (!existing || candidate.score > existing.score) {
-      byData.set(candidate.data, candidate);
-    }
-  }
-
-  const deduped = Array.from(byData.values()).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
-  const quotas: Record<CandidateBucket, number> = { exact: 5, example: 3, next: 3, error: 1 };
-  const picked: SuggestionCandidate[] = [];
-
-  for (const bucket of ['exact', 'example', 'next', 'error'] as CandidateBucket[]) {
-    for (const candidate of deduped) {
-      if (picked.length >= limit) break;
-      if (candidate.bucket !== bucket) continue;
-      if (picked.filter((entry) => entry.bucket === bucket).length >= quotas[bucket]) continue;
-      if (picked.some((entry) => entry.data === candidate.data)) continue;
-      picked.push(candidate);
-    }
-  }
-
-  for (const candidate of deduped) {
-    if (picked.length >= limit) break;
-    if (picked.some((entry) => entry.data === candidate.data)) continue;
-    picked.push(candidate);
-  }
-
-  return picked.map((candidate) => ({ name: candidate.name, data: candidate.data }));
-}
-
-function buildNextCommandSuggestions(
-  flattenedCommands: Record<string, PropItem>,
-  contextTokens: string[],
-  previousCommand?: string
-) {
-  const suggestions: SuggestionCandidate[] = [];
-  const nextShortcuts = getLikelyNextShortcuts(previousCommand, flattenedCommands);
-
-  for (let i = 0; i < nextShortcuts.length; i++) {
-    const shortcut = nextShortcuts[i];
-    const command = flattenedCommands[shortcut];
-    if (!command || !command.action) continue;
-
-    const example = getCommandExamples(command)[0];
-    const token = command.hasValue ? example?.token ?? `${shortcut}100` : shortcut;
-    const composed = composeTokenWithContext(contextTokens, token);
-    suggestions.push({
-      name: `${composed} - Next: ${example?.help ?? command.name}`,
-      data: composed,
-      score: 80 - i,
-      bucket: 'next',
-    });
-  }
-
-  return selectDiverseCandidates(suggestions, 10);
-}
-
-function buildPendingValueSuggestions(command: PropItem, contextTokens: string[]) {
-  const examples = getCommandExamples(command);
-  if (examples.length === 0) return [];
-
-  const suggestions: SuggestionCandidate[] = [];
-  for (let i = 0; i < Math.min(examples.length, 3); i++) {
-    const example = examples[i];
-    const composed = composeTokenWithContext(contextTokens, example.token);
-    suggestions.push({
-      name: `${composed} - ${example.help}`,
-      data: composed,
-      score: 96 - i,
-      bucket: 'example',
-    });
-  }
-
-  return selectDiverseCandidates(suggestions, 8);
-}
-
-function buildErrorSuggestion(query: string, message: string): Suggestion[] {
-  return [
-    {
-      name: `${query} - Error: ${message}`,
-      data: query,
-    },
-  ];
-}
-
-function buildPendingValueRecoverySuggestions(
-  command: PropItem,
-  contextTokens: string[],
-  nextToken: string
-): Suggestion[] {
-  const examples = getCommandExamples(command);
-  if (examples.length === 0) {
-    return buildErrorSuggestion(
-      composeTokenWithContext(contextTokens, `${command.shortcut} ${nextToken}`),
-      `${command.shortcut} needs a value before ${nextToken}`
-    );
-  }
-
-  const recovery: SuggestionCandidate[] = [];
-  for (let i = 0; i < Math.min(examples.length, 3); i++) {
-    const example = examples[i];
-    const composed = composeTokenWithContext(contextTokens, `${example.token} ${nextToken}`);
-    recovery.push({
-      name: `${composed} - ${example.help}, then continue with ${nextToken}`,
-      data: composed,
-      score: 96 - i,
-      bucket: 'example',
-    });
-  }
-
-  const query = composeTokenWithContext(contextTokens, `${command.shortcut} ${nextToken}`);
-  recovery.push({
-    name: `${query} - Error: ${command.shortcut} needs a value before ${nextToken}`,
-    data: query,
-    score: 70,
-    bucket: 'error',
-  });
-
-  return selectDiverseCandidates(recovery, 8);
-}
-
-function isKnownCommandToken(token: string, flattenedCommands: Record<string, PropItem>) {
-  const parsed = splitToken(token, flattenedCommands);
-  if (!parsed) return false;
-
-  const { prefix, param } = parsed;
-  const directPrefixedShortcut = `${prefix}${param}`;
-  const directPrefixedCommand = prefix ? flattenedCommands[directPrefixedShortcut] : undefined;
-  const key = directPrefixedCommand ? directPrefixedShortcut : param;
-  if (key in flattenedCommands) return true;
-
-  for (const command in flattenedCommands) {
-    if (command.startsWith(param)) return true;
-  }
-
-  return false;
-}
-
-function isOperatorOnlyToken(token: string) {
-  return /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)$/.test(token.trim());
-}
-
-export function fuzzyNameScore(query: string, name: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-  const normalizedName = name.trim().toLowerCase();
-  if (!normalizedQuery || !normalizedName) return null;
-  if (normalizedName === normalizedQuery) return 92;
-  const substringIndex = normalizedName.indexOf(normalizedQuery);
-  if (substringIndex >= 0) return 90 - substringIndex / 100;
-
-  const words = normalizedName.split(/[^a-z0-9]+/).filter(Boolean);
-  const initials = words.map((word) => word[0]).join('');
-  if (initials.includes(normalizedQuery)) return 82 - initials.indexOf(normalizedQuery) / 100;
-
-  for (const word of words) {
-    let queryIndex = 0;
-    let lastIndex = -1;
-    let gap = 0;
-    for (let index = 0; index < word.length && queryIndex < normalizedQuery.length; index++) {
-      if (word[index] !== normalizedQuery[queryIndex]) continue;
-      if (lastIndex >= 0) gap += index - lastIndex - 1;
-      lastIndex = index;
-      queryIndex++;
-    }
-    if (queryIndex === normalizedQuery.length && gap <= normalizedQuery.length) {
-      return 70 - gap - (word.length - normalizedQuery.length) / 100;
-    }
-  }
-  return null;
-}
-
 export default function getSuggestions({ query }: getSuggestionsProps) {
   const flattenedCommands = flattenCommands(propList, {});
 
   if (!query) return [];
 
-  const values = tokenizeSuggestionInput(query)
+  const values = query
+    .split(' ')
     .flatMap((value) => splitOriginPrefixedToken(value))
     .map((value) => normalizeScopedScaleToken(value))
     .filter((value) => value.trim() !== '');
   if (query.endsWith(' ')) values.push('');
   if (values.length === 0) return [];
-
-  const textSuggestions = buildTextCommandSuggestions(values);
-  if (textSuggestions.length > 0) return textSuggestions;
-
   const lastToken = values[values.length - 1];
 
-  const trimmedLastToken = lastToken.trim();
-  const shouldPrioritizeOriginSuggestions =
-    trimmedLastToken !== '' &&
-    isOriginQueryToken(lastToken) &&
-    (trimmedLastToken.endsWith(':') || !isExactCommandShortcut(lastToken, flattenedCommands));
-
-  if (shouldPrioritizeOriginSuggestions) {
+  if (lastToken !== '' && isOriginQueryToken(lastToken)) {
     return buildOriginSuggestions(values, lastToken);
   }
 
@@ -793,8 +348,7 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
   let activeOrigin: TransformOrigin | null = null;
   const contextTokens = values.slice(0, values.length - 1);
 
-  for (let i = 0; i < contextTokens.length; i++) {
-    const token = contextTokens[i];
+  for (const token of contextTokens) {
     if (token.trim() === '') continue;
 
     const parsedOrigin = parseOriginToken(token);
@@ -803,59 +357,34 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
       continue;
     }
 
-    const parsed = splitToken(token, flattenedCommands);
+    const parsed = splitToken(token);
     if (!parsed) {
-      return buildErrorSuggestion(query, `Invalid command token "${token}"`);
+      return [];
     }
 
     const { prefix, param, value: paramVal } = parsed;
     const directPrefixedShortcut = `${prefix}${param}`;
     const directPrefixedCommand = prefix ? flattenedCommands[directPrefixedShortcut] : undefined;
     const key = directPrefixedCommand ? directPrefixedShortcut : param;
-    if (!(key in flattenedCommands)) {
-      return buildErrorSuggestion(query, `Invalid command "${param}"`);
-    }
-
-    const contextCommand = flattenedCommands[key];
-    if (contextCommand.hasValue && paramVal === '') {
-      const priorContext = contextTokens.slice(0, i).filter(Boolean);
-      const nextToken = values[i + 1] ?? '';
-      if (nextToken) {
-        if (!isKnownCommandToken(nextToken, flattenedCommands)) {
-          const pending = buildPendingValueSuggestions(contextCommand, priorContext);
-          const error = buildErrorSuggestion(query, `Invalid command "${nextToken}"`);
-          return [...error, ...pending];
-        }
-        return buildPendingValueRecoverySuggestions(contextCommand, priorContext, nextToken);
-      }
-      return buildPendingValueSuggestions(contextCommand, priorContext);
-    }
+    if (!(key in flattenedCommands)) return [];
 
     suggestionRow.push({
-      command: contextCommand,
+      command: flattenedCommands[key],
       value: paramVal,
       prefix: directPrefixedCommand ? '' : prefix,
-      searchTerm: token,
     });
   }
 
   if (lastToken === '') {
-    const previous = suggestionRow.length > 0 ? suggestionRow[suggestionRow.length - 1] : undefined;
-    if (previous && previous.command.hasValue && previous.value === '') {
-      const baseContext = contextTokens.filter(Boolean).slice(0, -1);
-      return buildPendingValueSuggestions(previous.command, baseContext);
-    }
-
-    const previousCommand = previous?.command.shortcut;
-    return buildNextCommandSuggestions(flattenedCommands, contextTokens.filter(Boolean), previousCommand);
+    const wildcardCommand: PropItem = { name: '', shortcut: '', hasValue: true };
+    suggestionRow.push({
+      command: wildcardCommand,
+      value: '',
+      prefix: '',
+    });
   } else {
-    const parsedLast = splitToken(lastToken, flattenedCommands);
-    if (!parsedLast) {
-      if (isOperatorOnlyToken(lastToken)) {
-        return buildErrorSuggestion(query, `Use operator with a command (e.g. ++h8 or ++w8+2)`);
-      }
-      return buildErrorSuggestion(query, `Invalid token "${lastToken}"`);
-    }
+    const parsedLast = splitToken(lastToken);
+    if (!parsedLast) return [];
 
     const { prefix, param, value: paramVal } = parsedLast;
     const directPrefixedShortcut = `${prefix}${param}`;
@@ -866,14 +395,12 @@ export default function getSuggestions({ query }: getSuggestionsProps) {
         command: directPrefixedCommand,
         value: paramVal,
         prefix: '',
-        searchTerm: lastToken,
       });
     } else {
       suggestionRow.push({
         command: { name: '', shortcut: param, hasValue: true },
         value: paramVal,
         prefix,
-        searchTerm: lastToken,
       });
     }
   }
@@ -887,7 +414,7 @@ function generateSuggestions(
   activeOrigin: TransformOrigin | null,
   contextTokens: string[]
 ): Suggestion[] {
-  const candidates: SuggestionCandidate[] = [];
+  let suggestions: Suggestion[] = [];
   const suggestionCommands: BindedCommand[][] = [];
 
   if (suggestionRow.length === 0) return [];
@@ -900,97 +427,61 @@ function generateSuggestions(
   }
 
   for (const suggestionCommandList of suggestionCommands) {
+    let suggestionData: { name: string; data: string } = { name: '', data: '' };
+
     const lastCommand = suggestionCommandList[suggestionCommandList.length - 1];
 
     let lastMessage = '';
-    const alternateUnitCandidates: Array<{ renderedValue: string; unitIndex: number }> = [];
     const { value, command } = lastCommand;
-    let hasError = false;
 
-    if (command.hasValue) {
+    if (['fit', 'fill', 'hug'].includes(command.shortcut)) {
+      const axis = value === 'w' ? 'width' : value === 'h' ? 'height' : 'width and height';
+      lastMessage = lastCommand.prefix
+        ? `Error: ${command.name} does not support modifier operators`
+        : !['', 'w', 'h'].includes(value)
+          ? 'Error: Use an optional w or h axis'
+          : command.shortcut === 'fit'
+            ? `Fit element to parent ${axis}`
+            : `Set auto-layout sizing to ${command.shortcut} ${axis}`;
+    } else if (command.hasValue) {
       if (lastCommand.value !== '') {
-        if (command.valueKind === 'paint') {
-          if (lastCommand.prefix !== '') {
-            lastMessage = `Error: ${command.name} does not support modifier operators`;
-            hasError = true;
-          } else if (command.validateValue ? command.validateValue(value) : true) {
-            lastMessage = command.message ? `${command.message} ${value}` : `${defaultSetLabel(command.name)} ${value}`;
+        const range = parseRangeValue(value);
+        const rangeExpression = parseRangeExpression(value);
+        const scalar = parseScalarValue(value);
+        const pairValue = command.shortcut === 'wh' && isPairNumericValue(value, ['px', '%']);
+
+        const supportsRange = Boolean(command.supportsModifiers);
+        const isValidScalarValue =
+          scalar !== null &&
+          (scalar.num >= 0 || command.allowsNegative === true) &&
+          (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)) &&
+          isScalarAllowedForCommand(command, value, scalar.unit);
+        const isValidValue =
+          (supportsRange && range !== null) ||
+          (supportsRange && rangeExpression !== null && isSequentialPrefix(lastCommand.prefix)) ||
+          pairValue ||
+          isValidScalarValue;
+
+        if (hasMalformedRangeValue(value)) {
+          lastMessage = `Error: Invalid range format. Use start..end`;
+        } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
+          lastMessage = `Error: Progression suffix requires sequential operators (++, --, **, //)`;
+        } else if (isValidValue) {
+          const defaultUnit = command.unit === undefined || command.unit === 'hex' ? '' : command.unit;
+          if (range) {
+            lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
+          } else if (pairValue) {
+            lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
+          } else if (rangeExpression) {
+            lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
           } else {
-            lastMessage = invalidValueHint(command);
-            hasError = true;
-          }
-        } else if (command.valueKind === 'none' && command.validateValue) {
-          if (lastCommand.prefix !== '') {
-            lastMessage = `Error: ${command.name} does not support modifier operators`;
-            hasError = true;
-          } else if (command.validateValue(value)) {
-            lastMessage = command.message ? `${command.message} ${value}` : `${defaultSetLabel(command.name)} ${value}`;
-          } else {
-            lastMessage = invalidValueHint(command);
-            hasError = true;
+            const renderedValue = renderScalarValue(value, defaultUnit);
+            lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
           }
         } else {
-          const range = parseRangeValue(value);
-          const rangeExpression = parseRangeExpression(value);
-          const scalar = parseScalarValue(value);
-          const pairValue = command.valueKind === 'pair' && isPairNumericValue(value, allowedUnitsForCommand(command));
-          const axisValue = isAxisModeCommand(command) && isAxisValue(value);
-
-          const supportsRange = Boolean(command.supportsModifiers);
-          const requiresUnitlessScalar = lastCommand.prefix !== '';
-          const isValidScalarValue =
-            scalar !== null &&
-            (scalar.num >= 0 || command.allowsNegative === true) &&
-            (scalar.progressionOp === null || ['++', '--', '**', '//'].includes(lastCommand.prefix)) &&
-            (!requiresUnitlessScalar || scalar.unit === '') &&
-            isScalarAllowedForCommand(command, value, scalar.unit);
-          const isValidAxisValue = axisValue && lastCommand.prefix === '';
-          const isValidValue =
-            (supportsRange && range !== null) ||
-            (supportsRange && rangeExpression !== null && isSequentialPrefix(lastCommand.prefix)) ||
-            pairValue ||
-            isValidAxisValue ||
-            isValidScalarValue;
-
-          if (hasMalformedRangeValue(value)) {
-            lastMessage = `Invalid range format. Use start..end (e.g. ${command.shortcut}100..300)`;
-            hasError = true;
-          } else if (hasProgressionSuffix(value) && !isSequentialPrefix(lastCommand.prefix)) {
-            lastMessage = `Progression needs sequential operators (++, --, **, //)`;
-            hasError = true;
-          } else if (isValidValue) {
-            const defaultUnit = displayUnitForCommand(command);
-            if (range) {
-              lastMessage = formatRangeMessage(lastCommand.prefix, command, range.start, range.end, defaultUnit);
-            } else if (pairValue) {
-              lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
-            } else if (rangeExpression) {
-              lastMessage = formatOperatorMessage(lastCommand.prefix, command, value);
-            } else if (isValidAxisValue) {
-              lastMessage = formatAxisMessage(lastCommand.prefix, command, value);
-            } else {
-              const renderedValue = renderScalarValue(value, defaultUnit, lastCommand.prefix);
-              lastMessage = formatOperatorMessage(lastCommand.prefix, command, renderedValue);
-
-              const alternateUnits = getAlternateUnitsForCommand(command, scalar?.unit ?? '', lastCommand.prefix);
-              for (let i = 0; i < alternateUnits.length; i++) {
-                const altUnit = alternateUnits[i];
-                const altRenderedValue = renderScalarValue(value, altUnit, lastCommand.prefix);
-                alternateUnitCandidates.push({ renderedValue: altRenderedValue, unitIndex: i });
-              }
-            }
-          } else {
-            lastMessage = invalidValueHint(command);
-            hasError = true;
-          }
+          lastMessage = `Error: ${command.name} cannot have invalid or negative values`;
         }
-      } else {
-        if (isAxisModeCommand(command) && lastCommand.prefix === '') {
-          lastMessage = formatAxisMessage(lastCommand.prefix, command, '');
-        } else {
-          lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
-        }
-      }
+      } else lastMessage = formatOperatorPlaceholder(lastCommand.prefix, command);
     } else {
       if (command.message) lastMessage = command.message;
       else lastMessage = command.name;
@@ -999,83 +490,25 @@ function generateSuggestions(
 
     const suggestionToken = `${lastCommand.prefix}${command.shortcut}${command.hasValue ? value : ''}`;
     const composed = composeTokenWithContext(contextTokens, suggestionToken);
-    const normalizedSearchTerm = lastItem.searchTerm?.replace(/^\+\+|^--|^\*\*|^\/\/|^\+|^-|^\*|^\//, '').toLowerCase();
-    const isExactShortcut = command.shortcut === lastItem.command.shortcut && normalizedSearchTerm === command.shortcut;
-    const scoreBase = (isExactShortcut ? 95 : lastCommand.nameMatchScore ?? 0) + (hasError ? -50 : 0);
-    candidates.push({
-      name: `${composed} - ${lastMessage}`,
-      data: composed,
-      score: scoreBase,
-      bucket: hasError ? 'error' : 'exact',
-    });
+    suggestionData.name = `${composed} - ${lastMessage}`;
 
-    for (const alt of alternateUnitCandidates) {
-      const altSuggestionToken = `${lastCommand.prefix}${command.shortcut}${alt.renderedValue}`;
-      const altComposed = composeTokenWithContext(contextTokens, altSuggestionToken);
-      const altMessage = withOriginHint(
-        formatOperatorMessage(lastCommand.prefix, command, alt.renderedValue),
-        command,
-        activeOrigin
-      );
-
-      candidates.push({
-        name: `${altComposed} - ${altMessage}`,
-        data: altComposed,
-        score: scoreBase - 5 - alt.unitIndex,
-        bucket: 'example',
-      });
-    }
-
+    suggestionData.data = composed;
     if (command.action) {
-      const examples = getCommandExamples(command);
-      if (command.hasValue && (lastCommand.value === '' || hasError) && examples.length > 0) {
-        for (let i = 0; i < Math.min(examples.length, 2); i++) {
-          const example = examples[i];
-          const composedExample = composeTokenWithContext(contextTokens, example.token);
-          candidates.push({
-            name: `${composedExample} - ${example.help}`,
-            data: composedExample,
-            score: scoreBase - 10 - i,
-            bucket: 'example',
-          });
-        }
-      }
+      suggestions.push(suggestionData);
     }
   }
 
-  return selectDiverseCandidates(candidates);
+  return suggestions;
 }
 
 function getSuggestedCommands(item: BindedCommand, flattenedCommands: Record<string, PropItem>) {
   const commands: BindedCommand[] = [];
-  const nameQuery = item.searchTerm?.replace(/^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)/, '') ?? '';
   for (const command in flattenedCommands) {
-    const candidate = flattenedCommands[command];
-    const shortcutMatch =
-      command === item.command.shortcut || (nameQuery.length <= command.length && command.startsWith(nameQuery));
-    const nameScore = fuzzyNameScore(nameQuery, candidate.searchText ?? candidate.name);
-    if (shortcutMatch || nameScore !== null) {
-      commands.push({
-        command: candidate,
-        value: item.value,
-        prefix: item.prefix,
-        searchTerm: item.searchTerm,
-        nameMatchScore: nameScore ?? 0,
-      });
+    if (command.startsWith(item.command.shortcut)) {
+      commands.push({ command: flattenedCommands[command], value: item.value, prefix: item.prefix });
     }
   }
-
-  commands.sort((a, b) => {
-    const aExact = a.command.shortcut === item.command.shortcut ? 1 : 0;
-    const bExact = b.command.shortcut === item.command.shortcut ? 1 : 0;
-    if (aExact !== bExact) return bExact - aExact;
-    const aNameScore = a.nameMatchScore ?? fuzzyNameScore(nameQuery, a.command.searchText ?? a.command.name) ?? 0;
-    const bNameScore = b.nameMatchScore ?? fuzzyNameScore(nameQuery, b.command.searchText ?? b.command.name) ?? 0;
-    if (aNameScore !== bNameScore) return bNameScore - aNameScore;
-    return a.command.shortcut.length - b.command.shortcut.length;
-  });
-
-  return commands.slice(0, 24);
+  return commands;
 }
 
 export async function getDefaultSuggestions() {

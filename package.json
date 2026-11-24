@@ -6,7 +6,6 @@
   "scripts": {
     "build": "webpack --mode=production",
     "build:watch": "webpack --mode=development --watch",
-    "docs:commands": "node scripts/generate-commands.cjs",
     "prettier:format": "prettier --write '**/*.{js,jsx,ts,tsx,css,json}' "
   },
   "dependencies": {
@@ -14,7 +13,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "^1.123.0",
+    "@figma/plugin-typings": "^1.112.0",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "css-loader": "^6.7.1",
