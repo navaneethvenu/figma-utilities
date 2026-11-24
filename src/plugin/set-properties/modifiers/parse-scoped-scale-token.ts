@@ -1,14 +1,5 @@
 export type ScopedScaleAxis = 'w' | 'h';
-export type ScopedScaleMode =
-  | 'set'
-  | 'add'
-  | 'sub'
-  | 'mul'
-  | 'div'
-  | 'seq_sub'
-  | 'seq_mul'
-  | 'seq_div'
-  | 'cum_add';
+export type ScopedScaleMode = 'set' | 'add' | 'sub' | 'mul' | 'div' | 'seq_sub' | 'seq_mul' | 'seq_div' | 'cum_add';
 export type ScopedScaleOperandMode = 'scalar' | 'range';
 
 export interface ScopedScaleToken {
@@ -83,7 +74,9 @@ export default function parseScopedScaleToken(token: string): ScopedScaleToken |
   const axis = match[2].toLowerCase() as ScopedScaleAxis;
   const valueExpr = match[3];
 
-  const expressionMatch = valueExpr.match(/^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/);
+  const expressionMatch = valueExpr.match(
+    /^(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)([+\-*/])(-?\d*\.?\d+(?:\.\.-?\d*\.?\d+)?)$/
+  );
   if (expressionMatch && isSequentialMode(mode)) {
     const lhs = parseOperandExpr(expressionMatch[1]);
     const rhs = parseOperandExpr(expressionMatch[3]);
@@ -106,6 +99,12 @@ export default function parseScopedScaleToken(token: string): ScopedScaleToken |
     }
   }
 
+  if (valueExpr.includes('..')) {
+    const parsedOperand = parseOperandExpr(valueExpr);
+    if (!parsedOperand || parsedOperand.mode !== 'range') return null;
+    return { mode, axis, operandMode: 'range', start: parsedOperand.start, end: parsedOperand.end };
+  }
+
   const scalarMatch = valueExpr.match(/^(-?\d*\.?\d+)(?:([+\-*/])(-?\d*\.?\d+))?$/);
   if (!scalarMatch) return null;
 
@@ -118,12 +117,6 @@ export default function parseScopedScaleToken(token: string): ScopedScaleToken |
     if (!(mode.startsWith('seq_') || mode === 'cum_add')) return null;
     if (progressionValue === undefined || !Number.isFinite(progressionValue)) return null;
     if (progressionOp === '/' && progressionValue === 0) return null;
-  }
-
-  if (valueExpr.includes('..')) {
-    const parsedOperand = parseOperandExpr(valueExpr);
-    if (!parsedOperand || parsedOperand.mode !== 'range') return null;
-    return { mode, axis, operandMode: 'range', start: parsedOperand.start, end: parsedOperand.end };
   }
 
   return {

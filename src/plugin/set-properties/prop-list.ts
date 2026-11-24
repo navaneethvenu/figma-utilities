@@ -33,6 +33,14 @@ export interface PropItem {
   name: string;
   shortcut: string;
   hasValue?: boolean;
+  valueKind?: 'none' | 'number' | 'pair' | 'axis' | 'paint' | 'integer';
+  allowedUnits?: string[];
+  defaultUnit?: string;
+  invalidValueHint?: string;
+  nextShortcuts?: string[];
+  examples?: Array<{ token: string; help: string }>;
+  validateValue?: (value: string) => boolean;
+
   subcommands?: Record<string, PropItem>;
   allowsNegative?: boolean;
   supportsModifiers?: boolean;
@@ -118,7 +126,7 @@ function readLineHeight(node: SceneNode): number | null {
   return asFiniteNumber(node.lineHeight.value);
 }
 
-export const propList: Record<string, PropItem> = {
+const rawPropList: Record<string, PropItem> = {
   //Position
   pos: {
     name: 'Position',
@@ -1271,6 +1279,7 @@ export const propList: Record<string, PropItem> = {
       rot: {
         name: 'Set Rotation',
         shortcut: 'rot',
+        allowsNegative: true,
         hasValue: true,
         supportsModifiers: true,
         getModifierValue: readNumberProp('rotation'),
@@ -1290,12 +1299,67 @@ export const propList: Record<string, PropItem> = {
   },
 };
 
+// Suggestion metadata only: no command actions are added or replaced.
+function addSuggestionMetadata(commands: Record<string, PropItem>): Record<string, PropItem> {
+  const result: Record<string, PropItem> = {};
+  for (const [key, source] of Object.entries(commands)) {
+    const c: PropItem = { ...source };
+    if (c.subcommands) c.subcommands = addSuggestionMetadata(c.subcommands);
+    if (c.type !== 'GROUP' && c.action) {
+      const shortcut = c.shortcut;
+      c.valueKind =
+        c.hasValue === false
+          ? 'none'
+          : shortcut === 'f'
+          ? 'paint'
+          : ['fit', 'fill', 'hug'].includes(shortcut)
+          ? 'axis'
+          : ['wh', 'xy'].includes(shortcut)
+          ? 'pair'
+          : shortcut === 'dup'
+          ? 'integer'
+          : 'number';
+      c.allowedUnits = ['w', 'h', 'wh', 'ls', 'lh'].includes(shortcut)
+        ? ['px', '%']
+        : shortcut === 'op'
+        ? ['%']
+        : shortcut === 'rot'
+        ? ['deg']
+        : ['px'];
+      c.defaultUnit = shortcut === 'op' ? '%' : shortcut === 'rot' ? 'deg' : 'px';
+      if (shortcut === 'f')
+        c.validateValue = (value) =>
+          /^#?[0-9a-f]+$/i.test(value) && [1, 2, 3, 4, 6, 8].includes(value.replace(/^#/, '').length);
+      const token =
+        c.hasValue === false
+          ? shortcut
+          : c.valueKind === 'axis'
+          ? shortcut
+          : shortcut === 'f'
+          ? 'f#123456'
+          : c.valueKind === 'pair'
+          ? `${shortcut}120,80`
+          : `${shortcut}100`;
+      c.examples = [
+        { token, help: c.name },
+        { token: `${token} w160`, help: `${c.name}, then set width` },
+        { token: `${token} h96`, help: `${c.name}, then set height` },
+        { token: `${token} op80`, help: `${c.name}, then set opacity` },
+      ];
+    }
+    result[key] = c;
+  }
+  return result;
+}
+
+export const propList = addSuggestionMetadata(rawPropList);
+
 export function flattenCommands(
   commands: Record<string, PropItem>,
   flattenedCommands: Record<string, PropItem> = {}
 ): Record<string, PropItem> {
   for (const key in commands) {
-    if (commands[key].type !== 'GROUP') flattenedCommands[key] = commands[key];
+    if (commands[key].type !== 'GROUP' && commands[key].action) flattenedCommands[key] = commands[key];
 
     if (commands[key].subcommands) {
       flattenCommands(commands[key].subcommands!, flattenedCommands);

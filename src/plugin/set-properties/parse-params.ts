@@ -1,3 +1,5 @@
+import { tokenizeParameterInput } from './tokenize-input';
+import { isValueValidForCommand } from './value-validation';
 import { flattenCommands, propList } from './prop-list';
 import parseModifiedToken from './modifiers/parse-modified-token';
 import parseScopedScaleToken from './modifiers/parse-scoped-scale-token';
@@ -12,50 +14,13 @@ export interface ParsedParameter {
   originModifier?: boolean;
 }
 
+const commandCatalog = flattenCommands(propList, {});
+const sortedCommands = Object.values(commandCatalog).sort((a, b) => b.shortcut.length - a.shortcut.length);
+
 const OP_PREFIX_RE = /^(\+\+|--|\*\*|\/\/|\+|-|\*|\/)?/;
 
-function isNumericValue(value: string, allowedUnits: readonly string[] = []) {
-  const match = value.trim().match(/^(-?\d*\.?\d+)([a-z%]+)?$/i);
-  if (!match) return false;
-
-  const unit = (match[2] ?? '').toLowerCase();
-  if (!unit) return true;
-  return allowedUnits.map((entry) => entry.toLowerCase()).includes(unit);
-}
-
-function isPairNumericValue(value: string, allowedUnits: readonly string[] = []) {
-  const [left, right] = value.split(',');
-  if (right === undefined) return false;
-  return isNumericValue(left, allowedUnits) && isNumericValue(right, allowedUnits);
-}
-
-function isAxisValue(value: string) {
-  const normalized = value.trim().toLowerCase();
-  return normalized === '' || normalized === 'w' || normalized === 'h';
-}
-
-function isHexColorValue(value: string) {
-  return /^#?[0-9a-fA-F]+$/.test(value);
-}
-
-function isValueValidForCommand(shortcut: string, value: string) {
-  if (shortcut === 'f') return isHexColorValue(value);
-  if (shortcut === 'dup') return /^\d+$/.test(value.trim());
-  if (shortcut === 'op') return isNumericValue(value, ['%']);
-  if (shortcut === 'rot') return isNumericValue(value, ['deg']);
-  if (shortcut === 'ls' || shortcut === 'lh') return isNumericValue(value, ['px', '%']);
-  if (shortcut === 'w' || shortcut === 'h') return isNumericValue(value, ['px', '%']);
-  if (shortcut === 'wh') return isNumericValue(value, ['px', '%']) || isPairNumericValue(value, ['px', '%']);
-  if (shortcut === 'fit' || shortcut === 'fill' || shortcut === 'hug') return isAxisValue(value);
-  if (shortcut.startsWith('sc:')) return isNumericValue(value, ['px']);
-
-  return isNumericValue(value, ['px']);
-}
-
 function parseToken(token: string): ParsedParameter | null {
-  const commands = Object.values(flattenCommands(propList, {})).sort(
-    (a, b) => b.shortcut.length - a.shortcut.length
-  );
+  const commands = sortedCommands;
 
   for (const command of commands) {
     if (!token.startsWith(command.shortcut)) continue;
@@ -63,11 +28,11 @@ function parseToken(token: string): ParsedParameter | null {
     const value = token.slice(command.shortcut.length);
 
     if (command.hasValue === false) {
-      if (value === '') return { param: command.shortcut, value: '' };
+      if (value === '' && command.action) return { param: command.shortcut, value: '' };
       continue;
     }
 
-    if (isValueValidForCommand(command.shortcut, value)) {
+    if (isValueValidForCommand(command, value)) {
       return { param: command.shortcut, value };
     }
   }
@@ -76,14 +41,13 @@ function parseToken(token: string): ParsedParameter | null {
 }
 
 function isModifierEnabledCommand(command: string) {
-  const flattened = flattenCommands(propList, {});
+  const flattened = commandCatalog;
   const prop = flattened[command];
   return Boolean(prop?.supportsModifiers);
 }
 
 function isInvalidValueForKnownCommand(token: string): boolean {
-  const flattened = flattenCommands(propList, {});
-  const commands = Object.values(flattened).sort((a, b) => b.shortcut.length - a.shortcut.length);
+  const commands = sortedCommands;
 
   const prefixMatch = token.match(OP_PREFIX_RE);
   const prefix = prefixMatch?.[0] ?? '';
@@ -94,8 +58,8 @@ function isInvalidValueForKnownCommand(token: string): boolean {
     if (command.hasValue === false) return false;
 
     const value = rest.slice(command.shortcut.length);
-    if (value === '') return false;
-    if (isValueValidForCommand(command.shortcut, value)) return false;
+    if (value === '' && command.action) return false;
+    if (isValueValidForCommand(command, value)) return false;
     if (value.includes('..')) return true;
     if (value.startsWith('.') || value.endsWith('.')) return true;
     return true;
@@ -108,8 +72,7 @@ export default function parseParameters(parameters: { [key: string]: string }): 
   const parsedParams: ParsedParameter[] = [];
 
   for (const key in parameters) {
-    const values = parameters[key]
-      .split(' ')
+    const values = tokenizeParameterInput(parameters[key])
       .flatMap((value) => splitOriginPrefixedToken(value))
       .filter((value) => value.trim() !== '');
 
